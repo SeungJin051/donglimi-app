@@ -1,0 +1,9 @@
+# Ignore artifacts:
+build
+dist
+.expo
+node_modules
+
+# Ignore files:
+package.json
+pnpm-lock.yaml
