@@ -4,6 +4,8 @@ import { Tabs } from 'expo-router';
 import { Platform } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import { HomeHeader } from '@/components/layout/HomeHeader';
+
 export default function TabLayout() {
   return (
     // 안전 영역
@@ -28,11 +30,12 @@ export default function TabLayout() {
         <Tabs.Screen
           name='index'
           options={{
-            headerShown: true,
+            headerShown: true, // 헤더 표시
             title: '홈',
             tabBarIcon: ({ color }: { color: string }) => (
               <Ionicons name='home' color={color} size={28} />
             ),
+            header: () => <HomeHeader />,
             tabBarShowLabel: false,
           }}
         />
