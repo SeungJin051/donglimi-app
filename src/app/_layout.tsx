@@ -12,10 +12,13 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <BottomSheetModalProvider>
-        <Drawer drawerContent={() => <HomeDrawer />}>
+        <Drawer
+          drawerContent={(props) => <HomeDrawer {...props} />}
+          screenOptions={{ headerShown: false }}
+        >
           <Drawer.Screen
             name="(tabs)"
-            options={{ drawerLabel: '홈', title: '홈', headerShown: false }}
+            options={{ drawerLabel: '홈', title: '홈' }}
           />
         </Drawer>
       </BottomSheetModalProvider>

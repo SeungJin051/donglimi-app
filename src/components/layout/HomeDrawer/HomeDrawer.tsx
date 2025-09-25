@@ -7,7 +7,12 @@ import {
   BottomSheetModal,
   BottomSheetView,
 } from '@gorhom/bottom-sheet'
-import { DrawerContentScrollView } from '@react-navigation/drawer'
+import {
+  DrawerContentComponentProps,
+  DrawerContentScrollView,
+} from '@react-navigation/drawer'
+import { DrawerActions } from '@react-navigation/native'
+import { useRouter } from 'expo-router'
 import { View, Text, TouchableOpacity } from 'react-native'
 
 // 구독 아이템 타입 정의
@@ -23,7 +28,11 @@ const MOCK_DATA: Subscription[] = [
   { id: '3', name: '건축학과' },
 ]
 
-export default function HomeDrawer() {
+export default function HomeDrawer({
+  navigation,
+}: DrawerContentComponentProps) {
+  const router = useRouter()
+
   // BottomSheet를 제어하기 위한 ref 생성
   const bottomSheetRef = useRef<BottomSheetModal>(null)
 
@@ -34,6 +43,12 @@ export default function HomeDrawer() {
   const handleOpenPress = useCallback(() => {
     bottomSheetRef.current?.present()
   }, [])
+
+  // 공지 추가 버튼 클릭 시 공지 추가 페이지로 이동
+  const handleAddNoticePress = () => {
+    navigation.dispatch(DrawerActions.closeDrawer())
+    router.push('/add-noti-subscription')
+  }
 
   // 백드랍 렌더
   const renderBackdrop = useCallback(
@@ -67,7 +82,7 @@ export default function HomeDrawer() {
         <View className="mb-3 w-full flex-row items-center justify-between px-4 py-4">
           <Text className="text-2xl font-bold">공지</Text>
           <View className="flex-row items-center gap-7">
-            <TouchableOpacity onPress={() => {}}>
+            <TouchableOpacity onPress={handleAddNoticePress}>
               <AntDesign name="plus-circle" size={24} color="black" />
             </TouchableOpacity>
             <TouchableOpacity onPress={handleOpenPress}>
