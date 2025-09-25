@@ -1,9 +1,9 @@
-import eslintConfigPrettier from 'eslint-config-prettier';
-import importPlugin from 'eslint-plugin-import';
-import react from 'eslint-plugin-react';
-import reactHooks from 'eslint-plugin-react-hooks';
-import globals from 'globals';
-import tseslint from 'typescript-eslint';
+import eslintConfigPrettier from 'eslint-config-prettier'
+import importPlugin from 'eslint-plugin-import'
+import react from 'eslint-plugin-react'
+import reactHooks from 'eslint-plugin-react-hooks'
+import globals from 'globals'
+import tseslint from 'typescript-eslint'
 
 export default tseslint.config(
   // 1. Global Ignores: 프로젝트 전체에서 린트를 무시할 파일/폴더
@@ -92,4 +92,4 @@ export default tseslint.config(
 
   // 5. Prettier 설정 (항상 마지막에 위치)
   eslintConfigPrettier
-);
+)

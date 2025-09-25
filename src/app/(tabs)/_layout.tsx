@@ -1,10 +1,10 @@
-import Ionicons from '@expo/vector-icons/Ionicons';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { Tabs } from 'expo-router';
-import { Platform } from 'react-native';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import Ionicons from '@expo/vector-icons/Ionicons'
+import MaterialIcons from '@expo/vector-icons/MaterialIcons'
+import { Tabs } from 'expo-router'
+import { Platform } from 'react-native'
+import { SafeAreaProvider } from 'react-native-safe-area-context'
 
-import { HomeHeader } from '@/components/layout/HomeHeader';
+import { HomeHeader } from '@/components/layout/HomeHeader'
 
 export default function TabLayout() {
   return (
@@ -28,58 +28,58 @@ export default function TabLayout() {
         }}
       >
         <Tabs.Screen
-          name='index'
+          name="index"
           options={{
             headerShown: true, // 헤더 표시
             title: '홈',
             tabBarIcon: ({ color }: { color: string }) => (
-              <Ionicons name='home' color={color} size={28} />
+              <Ionicons name="home" color={color} size={28} />
             ),
             header: () => <HomeHeader />,
             tabBarShowLabel: false,
           }}
         />
         <Tabs.Screen
-          name='notification'
+          name="notification"
           options={{
             title: '알림',
             tabBarIcon: ({ color }: { color: string }) => (
-              <MaterialIcons name='notifications' color={color} size={28} />
+              <MaterialIcons name="notifications" color={color} size={28} />
             ),
             tabBarShowLabel: false,
           }}
         />
         <Tabs.Screen
-          name='util'
+          name="util"
           options={{
             title: '유틸',
             tabBarIcon: ({ color }: { color: string }) => (
-              <MaterialIcons name='settings' color={color} size={28} />
+              <MaterialIcons name="settings" color={color} size={28} />
             ),
             tabBarShowLabel: false,
           }}
         />
         <Tabs.Screen
-          name='scrap'
+          name="scrap"
           options={{
             title: '스크랩',
             tabBarIcon: ({ color }: { color: string }) => (
-              <MaterialIcons name='bookmark' color={color} size={28} />
+              <MaterialIcons name="bookmark" color={color} size={28} />
             ),
             tabBarShowLabel: false,
           }}
         />
         <Tabs.Screen
-          name='profile'
+          name="profile"
           options={{
             title: '프로필',
             tabBarIcon: ({ color }: { color: string }) => (
-              <MaterialIcons name='person' color={color} size={32} />
+              <MaterialIcons name="person" color={color} size={32} />
             ),
             tabBarShowLabel: false,
           }}
         />
       </Tabs>
     </SafeAreaProvider>
-  );
+  )
 }
