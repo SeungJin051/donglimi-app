@@ -1,7 +1,12 @@
-import React from 'react'
+import React, { useCallback, useMemo, useRef } from 'react'
 
-import { AntDesign } from '@expo/vector-icons'
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons'
+import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons'
+import {
+  BottomSheetBackdrop,
+  BottomSheetBackdropProps,
+  BottomSheetModal,
+  BottomSheetView,
+} from '@gorhom/bottom-sheet'
 import { DrawerContentScrollView } from '@react-navigation/drawer'
 import { View, Text, TouchableOpacity } from 'react-native'
 
@@ -19,6 +24,30 @@ const MOCK_DATA: Subscription[] = [
 ]
 
 export default function HomeDrawer() {
+  // BottomSheet를 제어하기 위한 ref 생성
+  const bottomSheetRef = useRef<BottomSheetModal>(null)
+
+  //  바텀 시트가 펼쳐질 높이(snap points) 설정
+  const snapPoints = useMemo(() => ['90%'], [])
+
+  // 바텀 시트를 펼치는 함수
+  const handleOpenPress = useCallback(() => {
+    bottomSheetRef.current?.present()
+  }, [])
+
+  // 백드랍 렌더
+  const renderBackdrop = useCallback(
+    (props: BottomSheetBackdropProps) => (
+      <BottomSheetBackdrop
+        {...props}
+        disappearsOnIndex={-1}
+        appearsOnIndex={0}
+        pressBehavior="close"
+      />
+    ),
+    []
+  )
+
   // 구독 아이템 렌더링 함수
   const renderSubscriptionItem = (item: Subscription, index: number) => (
     <TouchableOpacity
@@ -41,7 +70,7 @@ export default function HomeDrawer() {
             <TouchableOpacity onPress={() => {}}>
               <AntDesign name="plus-circle" size={24} color="black" />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => {}}>
+            <TouchableOpacity onPress={handleOpenPress}>
               <MaterialCommunityIcons
                 name="pencil-outline"
                 size={24}
@@ -61,8 +90,6 @@ export default function HomeDrawer() {
                 </Text>
               </TouchableOpacity>
             </View>
-
-            {/* === 구독 목록 (하단에 쌓이는 구조) === */}
             <View className="w-full flex-col">
               {MOCK_DATA.map((item, index) =>
                 renderSubscriptionItem(item, index)
@@ -71,8 +98,19 @@ export default function HomeDrawer() {
           </View>
         </View>
       </DrawerContentScrollView>
+
+      {/* 화면에 보일 BottomSheet */}
+      <BottomSheetModal
+        ref={bottomSheetRef}
+        snapPoints={snapPoints}
+        index={1}
+        enablePanDownToClose={true}
+        backdropComponent={renderBackdrop}
+      >
+        <BottomSheetView className="flex-1 p-6">
+          <Text className="text-lg font-semibold mb-4">공지 수정</Text>
+        </BottomSheetView>
+      </BottomSheetModal>
     </View>
   )
 }
-
-// Todo: 백그라운드 색상, 아이콘 색상 조정

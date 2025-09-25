@@ -1,5 +1,6 @@
 import 'react-native-gesture-handler'
 
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet'
 import { Drawer } from 'expo-router/drawer'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 
@@ -10,12 +11,14 @@ import HomeDrawer from '@/components/layout/HomeDrawer/HomeDrawer'
 export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <Drawer drawerContent={() => <HomeDrawer />}>
-        <Drawer.Screen
-          name="(tabs)"
-          options={{ drawerLabel: '홈', title: '홈', headerShown: false }}
-        />
-      </Drawer>
+      <BottomSheetModalProvider>
+        <Drawer drawerContent={() => <HomeDrawer />}>
+          <Drawer.Screen
+            name="(tabs)"
+            options={{ drawerLabel: '홈', title: '홈', headerShown: false }}
+          />
+        </Drawer>
+      </BottomSheetModalProvider>
     </GestureHandlerRootView>
   )
 }
