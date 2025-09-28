@@ -11,7 +11,7 @@ import {
   SUBSCRIPTION_TAB_DEPARTMENT,
 } from '@/types/category.type'
 
-export default function CreateNotice() {
+export default function ManagingNotificationSubscriptions() {
   const router = useRouter()
 
   const [activeTab, setActiveTab] = useState(SUBSCRIPTION_TAB[0])
