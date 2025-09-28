@@ -73,20 +73,20 @@ export default function HomeDrawer({
   )
 
   return (
-    <View className="flex-1 bg-gray-200">
+    <View className="flex-1 bg-[#F0F0F0]">
       <DrawerContentScrollView>
         {/* === 상단 컨트롤 === */}
-        <View className="mb-3 w-full flex-row items-center justify-between px-4 py-4">
+        <View className="mb-3 mt-[-10px] w-full flex-row items-center justify-between px-4 py-2">
           <Text className="text-2xl font-bold">공지 피드</Text>
           <View className="flex-row items-center gap-7">
             <TouchableOpacity onPress={handleManageNoticePress}>
-              <AntDesign name="plus-circle" size={24} color="black" />
+              <AntDesign name="plus-circle" size={24} color="#999999" />
             </TouchableOpacity>
             <TouchableOpacity onPress={handleOpenPress}>
               <MaterialCommunityIcons
                 name="pencil-outline"
                 size={24}
-                color="black"
+                color="#999999"
               />
             </TouchableOpacity>
           </View>
@@ -97,7 +97,11 @@ export default function HomeDrawer({
           <View className="flex-col items-center overflow-hidden rounded-3xl border border-gray-300 bg-white">
             <View className="w-full">
               <TouchableOpacity onPress={() => {}}>
-                <Text className="ml-5 w-full border-b border-gray-300 py-6 text-base font-semibold">
+                <Text
+                  className={`ml-5 w-full flex-row border-b border-gray-300 py-6 text-base font-semibold ${
+                    subscribedCategories.length === 0 ? 'border-b-0' : ''
+                  }`}
+                >
                   추천
                 </Text>
               </TouchableOpacity>
