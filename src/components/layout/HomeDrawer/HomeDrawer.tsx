@@ -15,18 +15,13 @@ import { DrawerActions } from '@react-navigation/native'
 import { useRouter } from 'expo-router'
 import { View, Text, TouchableOpacity } from 'react-native'
 
+import { useCategoryStore } from '@/store/categoryStore'
+
 // 구독 아이템 타입 정의
 interface Subscription {
   id: string
   name: string
 }
-
-// 초기 구독 목록 데이터
-const MOCK_DATA: Subscription[] = [
-  { id: '1', name: '컴퓨터공학과' },
-  { id: '2', name: '경영정보학과' },
-  { id: '3', name: '건축학과' },
-]
 
 export default function HomeDrawer({
   navigation,
@@ -63,12 +58,14 @@ export default function HomeDrawer({
     []
   )
 
+  const { subscribedCategories } = useCategoryStore()
+
   // 구독 아이템 렌더링 함수
   const renderSubscriptionItem = (item: Subscription, index: number) => (
     <TouchableOpacity
       key={item.id}
       className={`ml-5 w-full flex-row border-b border-gray-300 py-6 ${
-        index === MOCK_DATA.length - 1 ? 'border-b-0' : ''
+        index === subscribedCategories.length - 1 ? 'border-b-0' : ''
       }`}
     >
       <Text className="text-base font-semibold">{item.name}</Text>
@@ -106,7 +103,7 @@ export default function HomeDrawer({
               </TouchableOpacity>
             </View>
             <View className="w-full flex-col">
-              {MOCK_DATA.map((item, index) =>
+              {subscribedCategories.map((item, index) =>
                 renderSubscriptionItem(item, index)
               )}
             </View>
@@ -123,7 +120,7 @@ export default function HomeDrawer({
         backdropComponent={renderBackdrop}
       >
         <BottomSheetView className="flex-1 p-6">
-          <Text className="text-lg font-semibold mb-4">공지 수정</Text>
+          <Text className="mb-4 text-lg font-semibold">공지 수정</Text>
         </BottomSheetView>
       </BottomSheetModal>
     </View>

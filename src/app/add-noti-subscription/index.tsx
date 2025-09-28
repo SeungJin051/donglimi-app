@@ -5,24 +5,22 @@ import { useRouter } from 'expo-router'
 import { View, Text, TouchableOpacity } from 'react-native'
 
 import { SUBSCRIPTION_LIST } from '@/constants/departments'
+import { useCategoryStore } from '@/store/categoryStore'
+import {
+  SUBSCRIPTION_TAB,
+  SUBSCRIPTION_TAB_DEPARTMENT,
+} from '@/types/category.type'
 
 export default function CreateNotice() {
   const router = useRouter()
 
-  const TAB = ['정보광장', '단과대학/학과']
-  const TAB_DEPARTMENT = [
-    '인문사회과학대학',
-    '상경대학',
-    '미래융합대학',
-    '의료·보건·생활대학',
-    '한의과대학',
-    '공과대학',
-    '소프트웨어융합대학',
-  ]
-
-  const [activeTab, setActiveTab] = useState(TAB[0])
-  const [departmentTab, setDepartmentTab] = useState(TAB_DEPARTMENT[0])
+  const [activeTab, setActiveTab] = useState(SUBSCRIPTION_TAB[0])
+  const [departmentTab, setDepartmentTab] = useState(
+    SUBSCRIPTION_TAB_DEPARTMENT[0]
+  )
   const [selectedItems, setSelectedItems] = useState<string[]>([])
+
+  const { setSubscribedCategories } = useCategoryStore()
 
   return (
     <View>
@@ -34,7 +32,7 @@ export default function CreateNotice() {
       </View>
 
       <View className="mt-4 flex-row px-4">
-        {TAB.map((tab) => (
+        {SUBSCRIPTION_TAB.map((tab) => (
           <TouchableOpacity key={tab} onPress={() => setActiveTab(tab)}>
             <Text
               className={`px-5 py-4 ${
@@ -95,7 +93,7 @@ export default function CreateNotice() {
                 🏫 단과대학/학과
               </Text>
               <View className="flex-row flex-wrap">
-                {TAB_DEPARTMENT.map((tab) => (
+                {SUBSCRIPTION_TAB_DEPARTMENT.map((tab) => (
                   <TouchableOpacity
                     key={tab}
                     onPress={() => setDepartmentTab(tab)}
@@ -159,7 +157,9 @@ export default function CreateNotice() {
         <TouchableOpacity
           className="rounded-lg border border-[#60a5fa] py-4"
           onPress={() => {
-            console.log(selectedItems)
+            setSubscribedCategories(
+              selectedItems.map((item) => ({ id: item, name: item }))
+            )
           }}
         >
           <Text className="text-center font-semibold text-[#60a5fa]">
