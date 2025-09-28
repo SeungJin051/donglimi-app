@@ -39,10 +39,10 @@ export default function HomeDrawer({
     bottomSheetRef.current?.present()
   }, [])
 
-  // 공지 추가 버튼 클릭 시 공지 추가 페이지로 이동
-  const handleAddNoticePress = () => {
+  // 공지 추가 버튼 클릭 시 공지 구독 관리 페이지로 이동
+  const handleManageNoticePress = () => {
     navigation.dispatch(DrawerActions.closeDrawer())
-    router.push('/add-noti-subscription')
+    router.push('/managing-notification-subscriptions')
   }
 
   // 백드랍 렌더
@@ -77,9 +77,9 @@ export default function HomeDrawer({
       <DrawerContentScrollView>
         {/* === 상단 컨트롤 === */}
         <View className="mb-3 w-full flex-row items-center justify-between px-4 py-4">
-          <Text className="text-2xl font-bold">공지</Text>
+          <Text className="text-2xl font-bold">공지 피드</Text>
           <View className="flex-row items-center gap-7">
-            <TouchableOpacity onPress={handleAddNoticePress}>
+            <TouchableOpacity onPress={handleManageNoticePress}>
               <AntDesign name="plus-circle" size={24} color="black" />
             </TouchableOpacity>
             <TouchableOpacity onPress={handleOpenPress}>
