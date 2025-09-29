@@ -1,21 +1,8 @@
 import { Text, View, FlatList, ActivityIndicator } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
+import { NoticeItem } from '@/components/notice/NoticeItem/NoticeItem'
 import { useFetchNotices } from '@/hooks/useFetchNotices'
-import { Notice } from '@/types/notice.type'
-
-// FlatList에 들어갈 각 아이템을 렌더링하는 컴포넌트
-const NoticeItem = ({ item }: { item: Notice }) => (
-  <View className="mx-4 mb-3 rounded-lg bg-white p-4 shadow-sm">
-    <Text className="text-base font-semibold text-gray-800" numberOfLines={2}>
-      {item.title}
-    </Text>
-    <View className="mt-2 flex-row justify-between">
-      <Text className="text-xs text-gray-500">{item.department}</Text>
-      <Text className="text-xs text-gray-500">{item.posted_at}</Text>
-    </View>
-  </View>
-)
 
 export default function HomeScreen() {
   // 훅을 호출하여 데이터, 로딩 상태, 에러 상태를 가져옵니다.
@@ -43,7 +30,7 @@ export default function HomeScreen() {
 
   // 데이터 로딩이 완료되었을 때 공지사항 목록을 보여줍니다.
   return (
-    <SafeAreaView className="flex-1 bg-white pt-[-50]">
+    <SafeAreaView className="mt-[-50px] flex-1 bg-white">
       <FlatList
         data={notices}
         renderItem={({ item }) => <NoticeItem item={item} />}
