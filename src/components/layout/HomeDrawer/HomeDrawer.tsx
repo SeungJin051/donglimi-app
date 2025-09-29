@@ -15,13 +15,9 @@ import { DrawerActions } from '@react-navigation/native'
 import { useRouter } from 'expo-router'
 import { View, Text, TouchableOpacity } from 'react-native'
 
+import EditingNotificationSubscriptions from '@/app/editing-notification-subscriptions'
 import { useCategoryStore } from '@/store/categoryStore'
-
-// 구독 아이템 타입 정의
-interface Subscription {
-  id: string
-  name: string
-}
+import { Subscription } from '@/types/category.type'
 
 export default function HomeDrawer({
   navigation,
@@ -37,6 +33,11 @@ export default function HomeDrawer({
   // 바텀 시트를 펼치는 함수
   const handleOpenPress = useCallback(() => {
     bottomSheetRef.current?.present()
+  }, [])
+
+  // 바텀 시트를 닫는 함수
+  const handleClosePress = useCallback(() => {
+    bottomSheetRef.current?.close()
   }, [])
 
   // 공지 추가 버튼 클릭 시 공지 구독 관리 페이지로 이동
@@ -121,10 +122,13 @@ export default function HomeDrawer({
         snapPoints={snapPoints}
         index={1}
         enablePanDownToClose={true}
+        enableContentPanningGesture={false}
         backdropComponent={renderBackdrop}
       >
-        <BottomSheetView className="flex-1 p-6">
-          <Text className="mb-4 text-lg font-semibold">공지 수정</Text>
+        <BottomSheetView className="flex-1">
+          <EditingNotificationSubscriptions
+            handleClosePress={handleClosePress}
+          />
         </BottomSheetView>
       </BottomSheetModal>
     </View>
