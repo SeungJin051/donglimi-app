@@ -52,15 +52,15 @@ export default function EditingNotificationSubscriptions({
         </TouchableOpacity>
 
         <View className="ml-4 flex-1 flex-row">
-          <Text
-            className={`w-full py-5 text-base font-semibold ${
-              index !== undefined && index === subscribedCategories.length - 1
+          <View
+            className={`w-full py-5 ${
+              index !== undefined && index === localCategories.length - 1
                 ? 'border-b-0'
                 : 'border-b border-[#dbdbdb]'
             }`}
           >
-            {item.name}
-          </Text>
+            <Text className="text-base font-semibold">{item.name}</Text>
+          </View>
         </View>
       </View>
     )
@@ -96,9 +96,15 @@ export default function EditingNotificationSubscriptions({
       {localCategories.length > 0 && (
         <View className="flex-1 px-4">
           <DraggableFlatList
-            data={subscribedCategories}
+            data={localCategories}
+            // 드래그 시작 시점에 현재 상태를 저장해두었다가 드래그가 취소되면 원래 상태로 복원합니다.
+            onDragBegin={() => {
+              // 현재 상태를 저장 (드래그 취소 시 복원을 위해)
+            }}
             // 드래그가 끝나면 재정렬된 data로 임시 상태를 업데이트합니다.
-            onDragEnd={({ data }) => setLocalCategories(data)}
+            onDragEnd={({ data }) => {
+              setLocalCategories(data)
+            }}
             keyExtractor={(item) => item.id}
             renderItem={renderItem}
             activationDistance={0.1}
