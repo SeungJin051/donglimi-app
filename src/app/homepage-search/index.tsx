@@ -43,6 +43,7 @@ export default function HomepageSearch() {
     setSearchTerm('')
     router.back()
   }
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <SafeAreaView className="flex-1 bg-white px-4">
@@ -60,6 +61,7 @@ export default function HomepageSearch() {
             className="rounded-xl bg-gray-100 py-3 pl-11 text-base"
             placeholder="검색"
             returnKeyType="search"
+            value={searchTerm}
             onChangeText={setSearchTerm}
             onSubmitEditing={handleSearch}
             ref={inputRef}
