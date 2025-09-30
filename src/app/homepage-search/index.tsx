@@ -39,12 +39,16 @@ export default function HomepageSearch() {
     addHistory(searchTerm) // 검색 기록 추가
   }
 
+  const handleBack = () => {
+    setSearchTerm('')
+    router.back()
+  }
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <SafeAreaView className="flex-1 bg-white px-4">
         {/* 헤더 부분  */}
         <View className="flex-row items-center gap-4">
-          <TouchableOpacity onPress={() => router.back()}>
+          <TouchableOpacity onPress={handleBack}>
             <Ionicons name="arrow-back" size={24} color="black" />
           </TouchableOpacity>
           <Text className="text-2xl font-bold">공지 검색</Text>

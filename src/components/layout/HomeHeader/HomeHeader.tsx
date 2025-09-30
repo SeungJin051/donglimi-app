@@ -27,7 +27,7 @@ export function HomeHeader() {
       }}
     >
       <TouchableOpacity onPress={openMenu} style={{ padding: 8 }}>
-        <Ionicons name="menu" size={28} color="black" />
+        <Ionicons name="menu" size={28} color="#999999" />
       </TouchableOpacity>
       <TouchableOpacity
         onPress={() => {
@@ -42,7 +42,7 @@ export function HomeHeader() {
         />
       </TouchableOpacity>
       <TouchableOpacity onPress={goToSearch} style={{ padding: 8 }}>
-        <Ionicons name="search" size={24} color="black" />
+        <Ionicons name="search" size={24} color="#999999" />
       </TouchableOpacity>
     </View>
   )

@@ -30,7 +30,7 @@ export default function HomeScreen() {
 
   // 데이터 로딩이 완료되었을 때 공지사항 목록을 보여줍니다.
   return (
-    <SafeAreaView className="mt-[-50px] flex-1 bg-white">
+    <View className="flex-1 bg-white">
       <FlatList
         data={notices}
         renderItem={({ item }) => <NoticeItem item={item} />}
@@ -42,6 +42,6 @@ export default function HomeScreen() {
           </View>
         }
       />
-    </SafeAreaView>
+    </View>
   )
 }

@@ -15,7 +15,7 @@ export default function TabLayout() {
       <Tabs
         screenOptions={{
           tabBarActiveTintColor: '#000000',
-          tabBarInactiveTintColor: '#8E8E93',
+          tabBarInactiveTintColor: '#999999',
           tabBarStyle: {
             backgroundColor: '#FFFFFF',
             borderTopWidth: 0, // 탭 바 상단 보더 제거
