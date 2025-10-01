@@ -1,10 +1,7 @@
-import React from 'react'
-
 import { Ionicons } from '@expo/vector-icons'
-import AntDesign from '@expo/vector-icons/AntDesign'
 import { DrawerActions } from '@react-navigation/native'
 import { useNavigation, useRouter } from 'expo-router'
-import { Platform, TouchableOpacity, View } from 'react-native'
+import { Platform, TouchableOpacity, View, Image } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export function HomeHeader() {
@@ -12,36 +9,40 @@ export function HomeHeader() {
   const navigation = useNavigation()
   const { top } = useSafeAreaInsets()
 
+  // 사이드바 메뉴 열기
   const openMenu = () => {
-    // TODO: 모달이나 다른 UI로 메뉴 구현 예정
     navigation.dispatch(DrawerActions.openDrawer())
   }
 
+  // 검색 페이지로 이동
   const goToSearch = () => {
-    // router.push('/search');
-    console.log('검색 버튼 클릭')
+    router.push('/homepage-search')
   }
 
   return (
     <View
+      className="mt-[-10px] flex-row items-center justify-between bg-white px-2"
       style={{
         paddingTop: (Platform.OS === 'android' ? top + 10 : top) || top,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        backgroundColor: 'white',
-        paddingHorizontal: 16,
-        paddingBottom: 4,
       }}
     >
       <TouchableOpacity onPress={openMenu} style={{ padding: 8 }}>
-        <Ionicons name="menu" size={28} color="black" />
+        <Ionicons name="menu" size={28} color="#999999" />
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => {
+          console.log('게시글 상단으로 이동하기')
+        }}
+        style={{ padding: 8 }}
+      >
+        <Image
+          // eslint-disable-next-line @typescript-eslint/no-require-imports
+          source={require('@/assets/images/donglimi-logo.png')}
+          style={{ width: 45, height: 45, resizeMode: 'contain' }}
+        />
       </TouchableOpacity>
       <TouchableOpacity onPress={goToSearch} style={{ padding: 8 }}>
-        <AntDesign name="ant-design" size={24} color="black" />
-      </TouchableOpacity>
-      <TouchableOpacity onPress={goToSearch} style={{ padding: 8 }}>
-        <Ionicons name="search" size={24} color="black" />
+        <Ionicons name="search" size={24} color="#999999" />
       </TouchableOpacity>
     </View>
   )

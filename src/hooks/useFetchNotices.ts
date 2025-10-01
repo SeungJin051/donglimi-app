@@ -6,32 +6,12 @@ import {
   query,
   orderBy,
   limit,
-  Timestamp,
+  where,
 } from 'firebase/firestore'
 
 import { db } from '@/config/firebaseConfig'
-
-// Notice 데이터의 타입을 정의합니다.
-export interface Notice {
-  id: string // Firestore 문서 ID는 string 타입입니다.
-  bookmark_count: number
-  category: string
-  comment_count: number
-  content_hash: string
-  created_at: Timestamp
-  department: string
-  like_count: number
-  link: string
-  posted_at: string
-  posted_at_text: string
-  posted_at_ts: Timestamp
-  source_host: string
-  source_type: string
-  tags: string[] // 문자열 배열 타입
-  target_id: string
-  title: string
-  updated_at: Timestamp
-}
+import { useCategoryFilterStore } from '@/store/categoryFilterStore'
+import { Notice } from '@/types/notice.type'
 
 /**
  * Firestore의 'notice' 컬렉션에서 공지사항 목록을 가져오는 커스텀 훅
@@ -42,15 +22,30 @@ export const useFetchNotices = (initialLimit = 20) => {
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<Error | null>(null)
 
+  // 선택된 카테고리 상태 가져오기
+  const { selectedCategory } = useCategoryFilterStore()
+
   useEffect(() => {
     const fetchNoticesData = async () => {
       try {
         const noticesCollectionRef = collection(db, 'notices')
-        const q = query(
-          noticesCollectionRef,
-          orderBy('created_at', 'desc'),
-          limit(initialLimit)
-        )
+
+        // 선택된 카테고리가 있으면 필터링 조건과 함께 쿼리 구성
+        let q
+        if (selectedCategory) {
+          q = query(
+            noticesCollectionRef,
+            where('department', '==', selectedCategory),
+            orderBy('created_at', 'desc'),
+            limit(initialLimit)
+          )
+        } else {
+          q = query(
+            noticesCollectionRef,
+            orderBy('created_at', 'desc'),
+            limit(initialLimit)
+          )
+        }
         const querySnapshot = await getDocs(q)
 
         // Firestore에서 가져온 데이터를 Notice[] 타입으로 변환합니다.
@@ -73,7 +68,7 @@ export const useFetchNotices = (initialLimit = 20) => {
     }
 
     fetchNoticesData()
-  }, [initialLimit])
+  }, [initialLimit, selectedCategory])
 
   return { notices, loading, error }
 }
