@@ -1,8 +1,16 @@
 import { useState, useEffect } from 'react'
 
-import { collection, getDocs, query, orderBy, limit } from 'firebase/firestore'
+import {
+  collection,
+  getDocs,
+  query,
+  orderBy,
+  limit,
+  where,
+} from 'firebase/firestore'
 
 import { db } from '@/config/firebaseConfig'
+import { useCategoryFilterStore } from '@/store/categoryFilterStore'
 import { Notice } from '@/types/notice.type'
 
 /**
@@ -14,15 +22,30 @@ export const useFetchNotices = (initialLimit = 20) => {
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<Error | null>(null)
 
+  // 선택된 카테고리 상태 가져오기
+  const { selectedCategory } = useCategoryFilterStore()
+
   useEffect(() => {
     const fetchNoticesData = async () => {
       try {
         const noticesCollectionRef = collection(db, 'notices')
-        const q = query(
-          noticesCollectionRef,
-          orderBy('created_at', 'desc'),
-          limit(initialLimit)
-        )
+
+        // 선택된 카테고리가 있으면 필터링 조건과 함께 쿼리 구성
+        let q
+        if (selectedCategory) {
+          q = query(
+            noticesCollectionRef,
+            where('department', '==', selectedCategory),
+            orderBy('created_at', 'desc'),
+            limit(initialLimit)
+          )
+        } else {
+          q = query(
+            noticesCollectionRef,
+            orderBy('created_at', 'desc'),
+            limit(initialLimit)
+          )
+        }
         const querySnapshot = await getDocs(q)
 
         // Firestore에서 가져온 데이터를 Notice[] 타입으로 변환합니다.
@@ -45,7 +68,7 @@ export const useFetchNotices = (initialLimit = 20) => {
     }
 
     fetchNoticesData()
-  }, [initialLimit])
+  }, [initialLimit, selectedCategory])
 
   return { notices, loading, error }
 }

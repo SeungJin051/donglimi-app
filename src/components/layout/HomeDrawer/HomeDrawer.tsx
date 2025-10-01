@@ -16,6 +16,7 @@ import { useRouter } from 'expo-router'
 import { View, Text, TouchableOpacity } from 'react-native'
 
 import EditingNotificationSubscriptions from '@/app/editing-notification-subscriptions'
+import { useCategoryFilterStore } from '@/store/categoryFilterStore'
 import { useCategoryStore } from '@/store/categoryStore'
 import { Subscription } from '@/types/category.type'
 
@@ -60,17 +61,44 @@ export default function HomeDrawer({
   )
 
   const { subscribedCategories } = useCategoryStore()
+  const { selectedCategory, setSelectedCategory, clearCategory } =
+    useCategoryFilterStore()
+
+  // 카테고리 클릭 핸들러
+  const handleCategoryPress = useCallback(
+    (categoryName: string) => {
+      if (selectedCategory === categoryName) {
+        // 이미 선택된 카테고리를 다시 클릭하면 그냥 해당 카테고리 유지
+      } else {
+        // 새로운 카테고리를 선택
+        setSelectedCategory(categoryName)
+      }
+      // 드로어 닫기
+      navigation.dispatch(DrawerActions.closeDrawer())
+    },
+    [selectedCategory, setSelectedCategory, navigation]
+  )
 
   // 구독 아이템 렌더링 함수
-  const renderSubscriptionItem = (item: Subscription, index: number) => (
-    <TouchableOpacity
-      key={item.id}
-      className={`ml-5 w-full flex-row border-b border-gray-300 py-6 ${
-        index === subscribedCategories.length - 1 ? 'border-b-0' : ''
-      }`}
-    >
-      <Text className="text-base font-semibold">{item.name}</Text>
-    </TouchableOpacity>
+  const renderSubscriptionItem = useCallback(
+    (item: Subscription, index: number) => (
+      <TouchableOpacity
+        key={item.id}
+        className={`ml-5 w-full flex-row border-b border-gray-300 py-6 ${
+          index === subscribedCategories.length - 1 ? 'border-b-0' : ''
+        }`}
+        onPress={() => handleCategoryPress(item.name)}
+      >
+        <Text
+          className={`text-base font-semibold ${
+            selectedCategory === item.name ? 'text-blue-600' : 'text-gray-800'
+          }`}
+        >
+          {item.name}
+        </Text>
+      </TouchableOpacity>
+    ),
+    [subscribedCategories.length, selectedCategory, handleCategoryPress]
   )
 
   return (
@@ -93,11 +121,16 @@ export default function HomeDrawer({
           </View>
         </View>
 
-        {/* === 추천 섹션 === */}
+        {/* === 추천 및 구독 섹션 === */}
         <View className="w-full">
           <View className="flex-col items-center overflow-hidden rounded-3xl border border-gray-300 bg-white">
             <View className="w-full">
-              <TouchableOpacity onPress={() => {}}>
+              <TouchableOpacity
+                onPress={() => {
+                  clearCategory()
+                  navigation.dispatch(DrawerActions.closeDrawer())
+                }}
+              >
                 <Text
                   className={`ml-5 w-full flex-row border-b border-gray-300 py-6 text-base font-semibold ${
                     subscribedCategories.length === 0 ? 'border-b-0' : ''
