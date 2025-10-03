@@ -6,6 +6,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context'
 
 import { HomeHeader } from '@/components/layout/HomeHeader'
 import { NotiHeader } from '@/components/layout/NotiHeader'
+import { MypageHeader } from '@/components/mypage/MypageHeader'
 
 export default function TabLayout() {
   return (
@@ -78,6 +79,7 @@ export default function TabLayout() {
             tabBarIcon: ({ color }: { color: string }) => (
               <MaterialIcons name="person" color={color} size={32} />
             ),
+            header: () => <MypageHeader />,
             tabBarShowLabel: false,
           }}
         />
