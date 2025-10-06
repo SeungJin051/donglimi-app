@@ -1,11 +1,11 @@
 import 'react-native-gesture-handler'
+import '../../global.css'
 
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { Drawer } from 'expo-router/drawer'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 
-import '../../global.css'
 import HomeDrawer from '@/components/layout/HomeDrawer/HomeDrawer'
 import { queryClient } from '@/utils/queryClient'
 

@@ -5,7 +5,7 @@ import { Text } from 'react-native'
 import { Platform, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-export function MypageHeader() {
+export function SettingHeader() {
   const router = useRouter()
   const navigation = useNavigation()
   const { top } = useSafeAreaInsets()
