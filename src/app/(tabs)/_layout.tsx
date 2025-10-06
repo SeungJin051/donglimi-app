@@ -6,7 +6,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context'
 
 import { HomeHeader } from '@/components/layout/HomeHeader'
 import { NotiHeader } from '@/components/layout/NotiHeader'
-import { MypageHeader } from '@/components/mypage/MypageHeader'
+import { SettingHeader } from '@/components/setting/SettingHeader'
 
 export default function TabLayout() {
   return (
@@ -57,7 +57,7 @@ export default function TabLayout() {
           options={{
             title: '유틸',
             tabBarIcon: ({ color }: { color: string }) => (
-              <MaterialIcons name="settings" color={color} size={28} />
+              <MaterialIcons name="apps" color={color} size={28} />
             ),
             tabBarShowLabel: false,
           }}
@@ -73,13 +73,13 @@ export default function TabLayout() {
           }}
         />
         <Tabs.Screen
-          name="profile"
+          name="setting"
           options={{
-            title: '프로필',
+            title: '셋팅',
             tabBarIcon: ({ color }: { color: string }) => (
-              <MaterialIcons name="person" color={color} size={32} />
+              <MaterialIcons name="settings" color={color} size={28} />
             ),
-            header: () => <MypageHeader />,
+            header: () => <SettingHeader />,
             tabBarShowLabel: false,
           }}
         />
