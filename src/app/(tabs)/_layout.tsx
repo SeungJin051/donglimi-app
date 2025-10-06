@@ -5,7 +5,7 @@ import { Platform } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 
 import { HomeHeader } from '@/components/layout/HomeHeader'
-import { NotiHeader } from '@/components/layout/NotiHeader'
+import { NotificationHeader } from '@/components/layout/NotificationHeader'
 import { SettingHeader } from '@/components/setting/SettingHeader'
 
 export default function TabLayout() {
@@ -48,7 +48,7 @@ export default function TabLayout() {
             tabBarIcon: ({ color }: { color: string }) => (
               <MaterialIcons name="notifications" color={color} size={28} />
             ),
-            header: () => <NotiHeader />,
+            header: () => <NotificationHeader />,
             tabBarShowLabel: false,
           }}
         />
