@@ -191,9 +191,7 @@ export default function NotificationSetting() {
               <Ionicons name="add" size={20} color="black" />
 
               <Text>
-                {selectedDepartments.length > 0
-                  ? `학과 수정 (${selectedDepartments.length}/2개 선택)`
-                  : '학과 추가'}
+                {selectedDepartments.length > 0 ? `학과 수정 ` : '학과 추가'}
               </Text>
             </TouchableOpacity>
           </View>
