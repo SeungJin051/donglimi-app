@@ -6,10 +6,10 @@ import { useFetchNotices } from '@/hooks/useFetchNotices'
 
 export default function HomeScreen() {
   // 훅을 호출하여 데이터, 로딩 상태, 에러 상태를 가져옵니다.
-  const { notices, loading, error } = useFetchNotices()
+  const { data: notices, isLoading, error } = useFetchNotices()
 
   // 로딩 중일 때 보여줄 화면
-  if (loading) {
+  if (isLoading) {
     return (
       <SafeAreaView className="flex-1 items-center justify-center bg-white">
         <ActivityIndicator size="large" color="#3B82F6" />
