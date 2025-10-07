@@ -6,6 +6,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context'
 
 import { HomeHeader } from '@/components/layout/HomeHeader'
 import { NotificationHeader } from '@/components/layout/NotificationHeader'
+import { ScrapHeader } from '@/components/layout/ScrapHeader/ScrapHeader'
 import { UtilHeader } from '@/components/layout/UtilHeader/UtilHeader'
 import { SettingHeader } from '@/components/setting/SettingHeader'
 
@@ -71,6 +72,7 @@ export default function TabLayout() {
             tabBarIcon: ({ color }: { color: string }) => (
               <MaterialIcons name="bookmark" color={color} size={28} />
             ),
+            header: () => <ScrapHeader />,
             tabBarShowLabel: false,
           }}
         />
