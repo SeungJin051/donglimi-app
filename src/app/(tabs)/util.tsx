@@ -1,12 +1,11 @@
-import { Text } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import { View } from 'react-native'
+
+import { UtilItem } from '@/components/util/UtilItem/UtilItem'
 
 export default function UtilScreen() {
   return (
-    <SafeAreaView
-      style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
-    >
-      <Text className="text-red-500">UtilScreen</Text>
-    </SafeAreaView>
+    <View className="flex-1 bg-gray-50">
+      <UtilItem />
+    </View>
   )
 }
