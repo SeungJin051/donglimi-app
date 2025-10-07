@@ -7,7 +7,7 @@ export const UtilItem = () => {
   const quickItem = [
     {
       id: 1,
-      title: '빠른 바로가기',
+      title: '동의대학교',
       icon: '🏫',
       link: '/util/quick',
     },
