@@ -39,7 +39,7 @@ export default function HomepageSearch() {
     useSearchStore()
 
   // 임시 공지사항 데이터
-  const { notices } = useFetchNotices(100)
+  const { data: notices = [] } = useFetchNotices(100)
 
   // 검색어 변경 핸들러
   const handleSearchTermChange = (term: string) => {
@@ -63,10 +63,10 @@ export default function HomepageSearch() {
     setHasSearched(true) // 검색 시도 상태로 변경
 
     const results = notices.filter(
-      (notice) =>
+      (notice: Notice) =>
         notice.title.toLowerCase().includes(trimmedTerm.toLowerCase()) ||
         notice.department.toLowerCase().includes(trimmedTerm.toLowerCase()) ||
-        notice.tags.some((tag) =>
+        notice.tags.some((tag: string) =>
           tag.toLowerCase().includes(trimmedTerm.toLowerCase())
         )
     )
