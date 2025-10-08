@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons'
 import { useRouter } from 'expo-router'
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native'
 
-import { SUBSCRIPTION_LIST } from '@/constants/departments'
+import { DEPARTMENT_LIST } from '@/constants/departments'
 import { useCategoryStore } from '@/store/categoryStore'
 import {
   SUBSCRIPTION_TAB,
@@ -73,7 +73,7 @@ export default function ManagingNotificationSubscriptions() {
               <Text className="mb-4 text-lg font-semibold">📢 정보광장</Text>
 
               <View className="flex-row flex-wrap">
-                {SUBSCRIPTION_LIST.map(
+                {DEPARTMENT_LIST.map(
                   (item) =>
                     item.category === '정보광장' && (
                       <TouchableOpacity
@@ -138,7 +138,7 @@ export default function ManagingNotificationSubscriptions() {
                     {departmentTab}
                   </Text>
                   <View className="flex-row flex-wrap">
-                    {SUBSCRIPTION_LIST.filter(
+                    {DEPARTMENT_LIST.filter(
                       (item) => item.category === departmentTab
                     ).map((item) => (
                       <TouchableOpacity
