@@ -34,7 +34,9 @@ export const NoticeItem = ({ item }: NoticeItemProps) => {
                 </View>
               </View>
               <View>
-                <Text className="text-xs text-gray-500">{item.posted_at}</Text>
+                <Text className="text-xs text-gray-500">
+                  {item.posted_at.replace('작성일자:', '').trim()}
+                </Text>
               </View>
             </View>
           </View>

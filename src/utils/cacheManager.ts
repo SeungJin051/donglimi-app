@@ -74,7 +74,7 @@ export const useCacheManager = () => {
 
         const querySnapshot = await getDocs(q)
         return querySnapshot.docs.map((doc) => ({
-          id: doc.id,
+          content_hash: doc.id,
           ...doc.data(),
         })) as Notice[]
       },

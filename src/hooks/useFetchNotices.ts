@@ -25,13 +25,13 @@ const fetchNoticesFromFirestore = async (
     q = query(
       noticesCollectionRef,
       where('department', '==', category),
-      orderBy('created_at', 'desc'),
+      orderBy('saved_at', 'desc'),
       limit(limitCount)
     )
   } else {
     q = query(
       noticesCollectionRef,
-      orderBy('created_at', 'desc'),
+      orderBy('saved_at', 'desc'),
       limit(limitCount)
     )
   }
@@ -40,8 +40,8 @@ const fetchNoticesFromFirestore = async (
 
   // Firestore에서 가져온 데이터를 Notice[] 타입으로 변환합니다.
   return querySnapshot.docs.map((doc) => ({
-    id: doc.id,
     ...doc.data(),
+    content_hash: doc.id, // 문서 ID를 content_hash로 사용 (고유성 보장)
   })) as Notice[]
 }
 

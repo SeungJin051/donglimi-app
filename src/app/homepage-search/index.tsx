@@ -122,7 +122,7 @@ export default function HomepageSearch() {
               <FlatList
                 data={searchResults}
                 renderItem={({ item }) => <NoticeItem item={item} />}
-                keyExtractor={(item) => item.id}
+                keyExtractor={(item) => item.content_hash}
                 showsVerticalScrollIndicator={false}
                 onScrollBeginDrag={Keyboard.dismiss}
               />
