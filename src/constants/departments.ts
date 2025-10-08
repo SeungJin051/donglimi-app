@@ -5,7 +5,7 @@ export interface DepartmentTarget {
   category: string // 대학/카테고리 분류
 }
 
-export const SUBSCRIPTION_LIST: DepartmentTarget[] = [
+export const DEPARTMENT_LIST: DepartmentTarget[] = [
   // 대학원
   {
     category: '대학원',
@@ -80,9 +80,9 @@ export const SUBSCRIPTION_LIST: DepartmentTarget[] = [
   // 추가 항목
   {
     category: '정보광장',
-    name: '동의TODAY',
+    name: '동의 TODAY',
     url: 'https://www.deu.ac.kr/www/deu-today.do',
-    type: '동의TODAY',
+    type: '동의 TODAY',
   },
   {
     category: '정보광장',
@@ -107,14 +107,6 @@ export const SUBSCRIPTION_LIST: DepartmentTarget[] = [
     name: '대학원',
     url: 'https://www.deu.ac.kr/grd/sub06_01.do',
     type: '공지사항',
-  },
-
-  // 동의소식
-  {
-    category: '동의소식',
-    name: '동의TODAY',
-    url: 'https://www.deu.ac.kr/www/deu-today.do',
-    type: '동의TODAY',
   },
 
   // 인문사회과학대학

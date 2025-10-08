@@ -34,7 +34,7 @@ export default function HomeScreen() {
       <FlatList
         data={notices}
         renderItem={({ item }) => <NoticeItem item={item} />}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.content_hash}
         // 데이터가 없을 때 표시될 컴포넌트
         ListEmptyComponent={
           <View className="mt-20 flex-1 items-center justify-center">

@@ -1,4 +1,6 @@
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import { create } from 'zustand'
+import { createJSONStorage, persist } from 'zustand/middleware'
 
 import { Subscription } from '@/types/category.type'
 
@@ -9,11 +11,22 @@ interface CategoryStore {
 }
 
 // creat 함수를 사용해 스토어를 생성합니다.
-export const useCategoryStore = create<CategoryStore>((set) => ({
-  // 초기 상태
-  subscribedCategories: [],
-  // setSubscribedCategories 함수를 정의하여 상태를 업데이트합니다.
-  setSubscribedCategories: (categories) =>
-    // 스토어의 subscribedCategories 상태를 입력으로 받은 categories 배열로 완전히 덮어써라
-    set({ subscribedCategories: categories }),
-}))
+export const useCategoryStore = create<CategoryStore>()(
+  persist(
+    (set) => ({
+      // 초기 상태
+      subscribedCategories: [],
+      // setSubscribedCategories 함수를 정의하여 상태를 업데이트합니다.
+      setSubscribedCategories: (categories) =>
+        // 스토어의 subscribedCategories 상태를 입력으로 받은 categories 배열로 완전히 덮어써라
+        set({ subscribedCategories: categories }),
+    }),
+    {
+      name: 'category-storage', // AsyncStorage 키
+      storage: createJSONStorage(() => AsyncStorage),
+      partialize: (state) => ({
+        subscribedCategories: state.subscribedCategories,
+      }),
+    }
+  )
+)

@@ -1,4 +1,6 @@
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import { create } from 'zustand'
+import { createJSONStorage, persist } from 'zustand/middleware'
 
 import { Subscription } from '@/types/category.type'
 
@@ -9,29 +11,40 @@ interface SearchState {
   clearHistory: () => void
 }
 
-export const useSearchStore = create<SearchState>((set) => ({
-  searchHistory: [],
-  addHistory: (searchTerm) => {
-    // 빈 문자열은 추가하지 않음
-    if (!searchTerm.trim()) return
+export const useSearchStore = create<SearchState>()(
+  persist(
+    (set) => ({
+      searchHistory: [],
+      addHistory: (searchTerm) => {
+        // 빈 문자열은 추가하지 않음
+        if (!searchTerm.trim()) return
 
-    set((state) => {
-      // 이미 검색 기록에 있다면 추가하지 않음
-      if (state.searchHistory.includes(searchTerm)) {
-        return state // 상태 변경 없음
-      }
+        set((state) => {
+          // 이미 검색 기록에 있다면 추가하지 않음
+          if (state.searchHistory.includes(searchTerm)) {
+            return state // 상태 변경 없음
+          }
 
-      // 최신 검색어가 맨 앞에 오도록
-      return { searchHistory: [searchTerm, ...state.searchHistory] }
-    })
-  },
-  removeHistory: (searchTerm) => {
-    set((state) => ({
-      // 해당 검색어를 제외한 나머지 검색어를 반환
-      searchHistory: state.searchHistory.filter((item) => item !== searchTerm),
-    }))
-  },
-  clearHistory: () => {
-    set({ searchHistory: [] })
-  },
-}))
+          // 최신 검색어가 맨 앞에 오도록
+          return { searchHistory: [searchTerm, ...state.searchHistory] }
+        })
+      },
+      removeHistory: (searchTerm) => {
+        set((state) => ({
+          // 해당 검색어를 제외한 나머지 검색어를 반환
+          searchHistory: state.searchHistory.filter(
+            (item) => item !== searchTerm
+          ),
+        }))
+      },
+      clearHistory: () => {
+        set({ searchHistory: [] })
+      },
+    }),
+    {
+      name: 'search-storage', // AsyncStorage 키
+      storage: createJSONStorage(() => AsyncStorage),
+      partialize: (state) => ({ searchHistory: state.searchHistory }), // 저장할 필드만 선택
+    }
+  )
+)

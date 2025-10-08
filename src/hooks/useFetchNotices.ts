@@ -22,16 +22,16 @@ const fetchNoticesFromFirestore = async (
   // 선택된 카테고리가 있으면 필터링 조건과 함께 쿼리 구성
   let q
   if (category) {
+    // 카테고리 필터 사용 시 orderBy 제거 (복합 인덱스 필요 문제 해결)
     q = query(
       noticesCollectionRef,
       where('department', '==', category),
-      orderBy('created_at', 'desc'),
       limit(limitCount)
     )
   } else {
     q = query(
       noticesCollectionRef,
-      orderBy('created_at', 'desc'),
+      orderBy('saved_at', 'desc'),
       limit(limitCount)
     )
   }
@@ -39,10 +39,21 @@ const fetchNoticesFromFirestore = async (
   const querySnapshot = await getDocs(q)
 
   // Firestore에서 가져온 데이터를 Notice[] 타입으로 변환합니다.
-  return querySnapshot.docs.map((doc) => ({
-    id: doc.id,
+  const notices = querySnapshot.docs.map((doc) => ({
     ...doc.data(),
+    content_hash: doc.id, // 문서 ID를 content_hash로 사용 (고유성 보장)
   })) as Notice[]
+
+  // 카테고리 필터 사용 시 클라이언트 사이드에서 정렬
+  if (category && notices.length > 0) {
+    return notices.sort((a, b) => {
+      const aTime = a.saved_at?.seconds || 0
+      const bTime = b.saved_at?.seconds || 0
+      return bTime - aTime // 내림차순 (최신순)
+    })
+  }
+
+  return notices
 }
 
 /**
