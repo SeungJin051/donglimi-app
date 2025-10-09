@@ -11,7 +11,7 @@ import {
 
 import { useScrapStore } from '@/store/scrapStore'
 
-import { ScrapItem } from '../ScrapItem/ScrapList'
+import { ScrapList } from '../ScrapList/ScrapList'
 
 export const ScrapContent = () => {
   const { scraps } = useScrapStore()
@@ -45,7 +45,7 @@ export const ScrapContent = () => {
         </View>
 
         {/* 스크랩 목록 */}
-        <ScrapItem />
+        <ScrapList />
       </View>
     </TouchableWithoutFeedback>
   )
