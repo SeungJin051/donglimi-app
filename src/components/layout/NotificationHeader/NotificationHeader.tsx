@@ -17,19 +17,14 @@ export function NotificationHeader() {
 
   return (
     <View
+      className="flex-row items-center justify-between bg-white px-4 pb-2"
       style={{
-        paddingTop: (Platform.OS === 'android' ? top + 10 : top) || top,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        backgroundColor: 'white',
-        paddingHorizontal: 16,
-        paddingBottom: 5,
+        paddingTop: Platform.OS === 'android' ? top + 10 : top,
       }}
     >
       <View className="flex-1 flex-row items-center justify-between">
         <View>
-          <Text className="text-3xl font-semibold">알림</Text>
+          <Text className="text-2xl font-semibold">알림</Text>
         </View>
         <View className="flex-row items-center gap-9">
           <TouchableOpacity onPress={handleNotificationSettingPress}>

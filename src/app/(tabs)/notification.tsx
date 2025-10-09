@@ -1,11 +1,11 @@
 import { View } from 'react-native'
 
-import { NotificaitonItem } from '@/components/notification/NotificaitonItem/NotificaitonItem'
+import { NotificationContent } from '@/components/notification/NotificationContent/NotificationContent'
 
 export default function NotificationScreen() {
   return (
     <View className="flex-1 bg-gray-50">
-      <NotificaitonItem />
+      <NotificationContent />
     </View>
   )
 }

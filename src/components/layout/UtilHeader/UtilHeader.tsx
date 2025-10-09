@@ -8,19 +8,14 @@ export function UtilHeader() {
 
   return (
     <View
+      className="flex-row items-center justify-between bg-white px-4 pb-2"
       style={{
-        paddingTop: (Platform.OS === 'android' ? top + 10 : top) || top,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        backgroundColor: 'white',
-        paddingHorizontal: 16,
-        paddingBottom: 5,
+        paddingTop: Platform.OS === 'android' ? top + 10 : top,
       }}
     >
       <View className="flex-1 flex-row items-center justify-between">
         <View>
-          <Text className="text-3xl font-semibold">편의 기능</Text>
+          <Text className="text-2xl font-semibold">편의 기능</Text>
         </View>
       </View>
     </View>

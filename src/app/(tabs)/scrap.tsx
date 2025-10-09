@@ -1,11 +1,11 @@
 import { View } from 'react-native'
 
-import { ScrapItem } from '@/components/scrap/ScrapItem/ScrapItem'
+import { ScrapContent } from '@/components/scrap/ScrapContent/ScrapContent'
 
 export default function ScrapScreen() {
   return (
     <View className="flex-1 bg-gray-50">
-      <ScrapItem />
+      <ScrapContent />
     </View>
   )
 }
