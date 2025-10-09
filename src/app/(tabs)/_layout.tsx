@@ -7,8 +7,8 @@ import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { HomeHeader } from '@/components/layout/HomeHeader'
 import { NotificationHeader } from '@/components/layout/NotificationHeader'
 import { ScrapHeader } from '@/components/layout/ScrapHeader/ScrapHeader'
+import { SettingHeader } from '@/components/layout/SettingHeader/SettingHeader'
 import { UtilHeader } from '@/components/layout/UtilHeader/UtilHeader'
-import { SettingHeader } from '@/components/setting/SettingHeader'
 
 export default function TabLayout() {
   return (

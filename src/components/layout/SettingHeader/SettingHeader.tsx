@@ -22,9 +22,9 @@ export function SettingHeader() {
 
   return (
     <View
-      className="mt-[-10px] flex-row items-center justify-between bg-white px-2"
+      className="flex-row items-center justify-between bg-white px-4 pb-2"
       style={{
-        paddingTop: (Platform.OS === 'android' ? top + 10 : top) || top,
+        paddingTop: Platform.OS === 'android' ? top + 10 : top,
       }}
     >
       <TouchableOpacity onPress={openMenu} style={{ padding: 8 }}>
