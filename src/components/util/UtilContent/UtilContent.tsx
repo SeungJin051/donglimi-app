@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, ScrollView } from 'react-native'
 
 import { calculateDDay } from '@/utils/dDay'
 
-export const UtilItem = () => {
+export const UtilContent = () => {
   const quickItem = [
     {
       id: 1,

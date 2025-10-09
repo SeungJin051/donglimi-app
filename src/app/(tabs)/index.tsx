@@ -1,7 +1,7 @@
 import { Text, View, FlatList, ActivityIndicator } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
-import { NoticeItem } from '@/components/notice/NoticeItem/NoticeItem'
+import { NoticeContent } from '@/components/notice/NoticeContent/NoticeContent'
 import { useFetchNotices } from '@/hooks/useFetchNotices'
 
 export default function HomeScreen() {
@@ -33,7 +33,7 @@ export default function HomeScreen() {
     <View className="flex-1 bg-white">
       <FlatList
         data={notices}
-        renderItem={({ item }) => <NoticeItem item={item} />}
+        renderItem={({ item }) => <NoticeContent item={item} />}
         keyExtractor={(item) => item.content_hash}
         // 데이터가 없을 때 표시될 컴포넌트
         ListEmptyComponent={

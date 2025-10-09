@@ -12,11 +12,11 @@ import { useScrapStore } from '@/store/scrapStore'
 import { Notice } from '@/types/notice.type'
 import { getDepartmentStyles } from '@/utils/departmentStyles'
 
-interface NoticeItemProps {
+interface NoticeContentProps {
   item: Notice
 }
 
-export const NoticeItem = ({ item }: NoticeItemProps) => {
+export const NoticeContent = ({ item }: NoticeContentProps) => {
   // 함수를 호출하여 현재 아이템의 부서에 맞는 스타일을 가져옵니다.
   const departmentStyle = getDepartmentStyles(item.department)
 

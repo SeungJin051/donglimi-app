@@ -7,7 +7,7 @@ const appInfoMenus = [
   { id: 'service', title: '서비스 정보' },
 ] as const
 
-export default function SettingItem() {
+export default function SettingContent() {
   return (
     <View className="gap-6 p-4">
       {/* 앱 정보 및 지원 */}
