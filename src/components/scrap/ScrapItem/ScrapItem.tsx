@@ -45,14 +45,14 @@ export const ScrapItem = ({ scrap }: { scrap: Scrap }) => {
         <View className="flex-1 justify-between">
           <View className="flex-row items-start justify-between">
             <Text
-              className="flex-1 pr-2 text-[15px] font-semibold leading-snug text-gray-900"
+              className="text-base font-medium text-gray-900"
               numberOfLines={2}
             >
               {scrap.notice.title}
             </Text>
           </View>
 
-          <View className="flex-row items-center justify-between gap-3">
+          <View className="mt-3 flex-row items-center justify-between gap-3">
             <View className="flex-1 flex-row items-center gap-2">
               <View className={`rounded-md px-2.5 py-1 ${departmentStyle.bg}`}>
                 <Text className={`text-xs font-medium ${departmentStyle.text}`}>
