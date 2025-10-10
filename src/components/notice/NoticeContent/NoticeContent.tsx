@@ -80,7 +80,7 @@ export const NoticeContent = ({ item }: NoticeContentProps) => {
               {item.title}
             </Text>
             {isScraped && (
-              <Ionicons name="bookmark" size={20} color="#3B82F6" />
+              <Ionicons name="bookmark" size={20} color="#0158a6" />
             )}
           </View>
 

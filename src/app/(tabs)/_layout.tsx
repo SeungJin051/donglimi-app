@@ -17,7 +17,7 @@ export default function TabLayout() {
       {/* 공통 레이아웃 안에서 페이지 내용이 표시될 위치 */}
       <Tabs
         screenOptions={{
-          tabBarActiveTintColor: '#000000',
+          tabBarActiveTintColor: '#093a87',
           tabBarInactiveTintColor: '#999999',
           tabBarStyle: {
             backgroundColor: '#FFFFFF',
