@@ -41,7 +41,7 @@ export const ScrapItem = ({ scrap }: { scrap: Scrap }) => {
       overshootLeft={false}
       overshootRight={false}
     >
-      <View className="min-h-[105px] rounded-lg border-l-4 border-[#0158a6] bg-white p-6">
+      <View className="min-h-[105px] rounded-lg border-l-4 border-deu-light-blue bg-white p-6">
         <View className="flex-1 justify-between">
           <View className="flex-row items-start justify-between">
             <Text
