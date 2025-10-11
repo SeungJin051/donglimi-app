@@ -204,7 +204,7 @@ export default function OnboardingScreen() {
           <View className="flex-1 px-6">
             <View className="mb-6 mt-4">
               <Text className="mb-2 text-center text-3xl font-bold text-gray-900">
-                어떤 주제의 공지를{'\n'}자주 보고 싶으신가요?
+                어떤 주제의 알림을{'\n'}받아 보고 싶으신가요?
               </Text>
               <Text className="text-center text-base text-gray-600">
                 선택한 주제의 새 공지를 먼저 알려드릴게요
