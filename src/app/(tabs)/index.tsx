@@ -30,7 +30,7 @@ export default function HomeScreen() {
 
   // 데이터 로딩이 완료되었을 때 공지사항 목록을 보여줍니다.
   return (
-    <View className="flex-1 bg-white">
+    <View className="flex-1 bg-gray-50">
       <FlatList
         data={notices}
         renderItem={({ item }) => <NoticeContent item={item} />}
