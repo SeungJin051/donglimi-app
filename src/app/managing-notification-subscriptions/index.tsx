@@ -57,7 +57,7 @@ export default function ManagingNotificationSubscriptions() {
               <Text
                 className={`px-5 py-4 ${
                   activeTab === tab
-                    ? 'border-b-2 border-blue-700 font-medium text-[#1E3A5F]'
+                    ? 'border-b-2 border-deu-strong-blue font-medium text-[#1E3A5F]'
                     : 'font-medium text-gray-700'
                 }`}
               >
@@ -178,7 +178,7 @@ export default function ManagingNotificationSubscriptions() {
           <TouchableOpacity
             className={`rounded-lg border py-4 ${
               hasChanges
-                ? 'border-[#60a5fa] bg-[#60a5fa]'
+                ? 'border-deu-light-blue bg-deu-light-blue'
                 : 'border-gray-300 bg-gray-300'
             }`}
             onPress={() => {

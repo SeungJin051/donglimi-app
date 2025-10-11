@@ -11,9 +11,10 @@ export const NOTIFICATION_KEYWORDS = {
   },
   // 메인 카테고리: '취업 및 창업'
   job: {
-    title: '취/창업',
+    title: '취창업',
     description: '취업 정보, 인턴십, 창업 지원 및 관련 프로그램',
     keywords: [
+      '취창업',
       '취업',
       '채용',
       '인턴',
@@ -47,6 +48,12 @@ export const NOTIFICATION_KEYWORDS = {
       '교직',
       '시험',
     ],
+  },
+  // 메인 카테고리: '기타'
+  etc: {
+    title: '기타',
+    description: '위 카테고리에 속하지 않는 모든 공지사항',
+    keywords: [],
   },
 }
 

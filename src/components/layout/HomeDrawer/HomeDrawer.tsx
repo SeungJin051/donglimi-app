@@ -16,6 +16,7 @@ import { useRouter } from 'expo-router'
 import { View, Text, TouchableOpacity } from 'react-native'
 
 import EditingNotificationSubscriptions from '@/app/editing-notification-subscriptions'
+import { useBottomSheetBackdrop } from '@/components/ui/BottomSheetBackdropComponent/BottomSheetBackdropComponent'
 import { useCategoryFilterStore } from '@/store/categoryFilterStore'
 import { useCategoryStore } from '@/store/categoryStore'
 import { Subscription } from '@/types/category.type'
@@ -48,17 +49,7 @@ export default function HomeDrawer({
   }
 
   // 백드랍 렌더
-  const renderBackdrop = useCallback(
-    (props: BottomSheetBackdropProps) => (
-      <BottomSheetBackdrop
-        {...props}
-        disappearsOnIndex={-1}
-        appearsOnIndex={0}
-        pressBehavior="close"
-      />
-    ),
-    []
-  )
+  const renderBackdrop = useBottomSheetBackdrop()
 
   const { subscribedCategories } = useCategoryStore()
   const { selectedCategory, setSelectedCategory, clearCategory } =

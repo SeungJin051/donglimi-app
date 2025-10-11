@@ -74,13 +74,13 @@ export const NoticeContent = ({ item }: NoticeContentProps) => {
         <View className="flex-1 justify-between">
           <View className="flex-row items-start justify-between">
             <Text
-              className="flex-1 pr-2 text-[15px] font-semibold leading-snug text-gray-900"
+              className="flex-1 pr-2 text-base font-medium leading-snug text-gray-900"
               numberOfLines={2}
             >
               {item.title}
             </Text>
             {isScraped && (
-              <Ionicons name="bookmark" size={20} color="#3B82F6" />
+              <Ionicons name="bookmark" size={20} color="#0158a6" />
             )}
           </View>
 

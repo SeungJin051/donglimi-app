@@ -1,20 +1,31 @@
 import React from 'react'
 
-import { View } from 'react-native'
+import { View, Text, FlatList } from 'react-native'
 
-import { useScrapStore } from '@/store/scrapStore'
+import { ScrapListProps } from '@/types/scrapList.types'
 
 import { ScrapItem } from '../ScrapItem/ScrapItem'
 
 // 스크랩 리스트 컴포넌트
-export const ScrapList = () => {
-  const { scraps } = useScrapStore()
+export const ScrapList: React.FC<ScrapListProps> = ({ scraps }) => {
+  if (scraps.length === 0) {
+    return (
+      <View className="items-center justify-center py-20">
+        <Text className="text-base text-gray-500">
+          스크랩한 공지가 없습니다
+        </Text>
+      </View>
+    )
+  }
 
   return (
-    <View className="px-4">
-      {scraps.map((scrap) => (
-        <ScrapItem key={scrap.notice.content_hash} scrap={scrap} />
-      ))}
-    </View>
+    <FlatList
+      data={scraps}
+      keyExtractor={(item) => item.notice.content_hash}
+      renderItem={({ item }) => <ScrapItem scrap={item} />}
+      contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 20 }}
+      showsVerticalScrollIndicator={true}
+      style={{ flex: 1 }}
+    />
   )
 }
