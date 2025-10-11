@@ -23,7 +23,7 @@ export default function NotificationSettingHeader() {
           <TouchableOpacity onPress={() => router.back()}>
             <Ionicons name="arrow-back" size={24} color="black" />
           </TouchableOpacity>
-          <Text className="text-2xl font-bold">알림 설정</Text>
+          <Text className="text-2xl font-semibold">알림 설정</Text>
         </View>
       </View>
     </View>

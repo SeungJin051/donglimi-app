@@ -58,7 +58,7 @@ export const UtilContent = () => {
 
   return (
     <ScrollView>
-      <View className="gap-6 px-4 py-4">
+      <View className="gap-6 bg-gray-50 px-4 py-4">
         {/* 빠른 바로가기 */}
         <View className="rounded-xl border border-gray-100 bg-white px-4 py-4">
           <Text className="mb-5 text-lg font-semibold">빠른 바로가기</Text>

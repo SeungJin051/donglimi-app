@@ -1,12 +1,7 @@
 import React, { useCallback, useMemo, useRef } from 'react'
 
 import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons'
-import {
-  BottomSheetBackdrop,
-  BottomSheetBackdropProps,
-  BottomSheetModal,
-  BottomSheetView,
-} from '@gorhom/bottom-sheet'
+import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet'
 import {
   DrawerContentComponentProps,
   DrawerContentScrollView,

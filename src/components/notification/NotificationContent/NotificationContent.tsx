@@ -8,7 +8,7 @@ export const NotificationContent = () => {
   const [selectedTab, setSelectedTab] = useState<'all' | 'unread'>('all')
 
   return (
-    <View className="flex-1">
+    <View className="flex-1 bg-gray-50">
       <View className="mb-4 flex-row items-center justify-center bg-gray-100 py-1">
         <TouchableOpacity
           className={`px-20 py-2 ${
