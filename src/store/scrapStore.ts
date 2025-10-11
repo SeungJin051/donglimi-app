@@ -12,8 +12,10 @@ export interface Scrap {
 // 스크랩 스토어의 상태와 함수의 타입을 정의합니다.
 export interface ScrapState {
   scraps: Scrap[] // 스크랩한 공지사항 목록
+  sortPreference: 'latest' | 'oldest' // 정렬 기본값
   addScrap: (scrap: Scrap) => void // 스크랩 추가 함수
   removeScrap: (scrap: Scrap) => void // 스크랩 삭제 함수
+  setSortPreference: (sort: 'latest' | 'oldest') => void // 정렬 변경 함수
 }
 
 // create 함수를 사용해 스크랩 스토어를 생성합니다.
@@ -22,6 +24,7 @@ export const useScrapStore = create<ScrapState>()(
     (set) => ({
       // 초기 상태
       scraps: [],
+      sortPreference: 'latest',
       // addScrap 함수를 정의하여 새로운 스크랩을 추가합니다.
       addScrap: (scrap: Scrap) =>
         set((state) => ({ scraps: [...state.scraps, scrap] })),
@@ -33,6 +36,8 @@ export const useScrapStore = create<ScrapState>()(
             (s) => s.notice.content_hash !== scrap.notice.content_hash
           ),
         })),
+      // 정렬 기본값 변경 함수
+      setSortPreference: (sort) => set({ sortPreference: sort }),
     }),
     {
       name: 'scraps', // AsyncStorage 키
