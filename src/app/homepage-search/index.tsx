@@ -13,7 +13,7 @@ import {
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
-import { NoticeItem } from '@/components/notice/NoticeItem/NoticeItem'
+import { NoticeContent } from '@/components/notice/NoticeContent/NoticeContent'
 import { useFetchNotices } from '@/hooks/useFetchNotices'
 import { useSearchStore } from '@/store/searchStore'
 import { Notice } from '@/types/notice.type'
@@ -121,7 +121,7 @@ export default function HomepageSearch() {
             searchResults.length > 0 ? (
               <FlatList
                 data={searchResults}
-                renderItem={({ item }) => <NoticeItem item={item} />}
+                renderItem={({ item }) => <NoticeContent item={item} />}
                 keyExtractor={(item) => item.content_hash}
                 showsVerticalScrollIndicator={false}
                 onScrollBeginDrag={Keyboard.dismiss}
