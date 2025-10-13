@@ -1,15 +1,21 @@
-import { useMemo, useCallback } from 'react'
+import { useMemo, useCallback, useEffect, useState } from 'react'
 
+import { doc, setDoc, deleteDoc, serverTimestamp } from 'firebase/firestore'
+
+import { db } from '@/config/firebaseConfig'
 import {
   NOTIFICATION_KEYWORDS,
   type SelectedKeywords,
 } from '@/constants/keyword'
+import { usePushNotifications } from '@/hooks/usePushNotifications'
 import { useNotificationStore } from '@/store/notificationStore'
 
 /**
  * 알림 설정 관련 비즈니스 로직을 관리하는 커스텀 훅
  */
 export function useNotificationSettings() {
+  const { getPushToken } = usePushNotifications()
+
   const {
     selectedKeywords: selectedKeywordsArray,
     selectedDepartment,
@@ -19,6 +25,18 @@ export function useNotificationSettings() {
     setSelectedDepartment,
     setNotificationEnabled,
   } = useNotificationStore()
+
+  // 현재 기기의 Expo Push Token (Firestore 문서 ID로 사용)
+  const [pushToken, setPushToken] = useState<string | null>(null)
+
+  // 마운트 시 한 번 토큰 조회 (시뮬레이터 등에서는 null 가능)
+  useEffect(() => {
+    const fetchToken = async () => {
+      const token = await getPushToken()
+      setPushToken(token)
+    }
+    fetchToken()
+  }, [getPushToken])
 
   // string[] 형태를 SelectedKeywords 객체로 변환
   const selectedKeywords: SelectedKeywords = useMemo(() => {
@@ -32,6 +50,62 @@ export function useNotificationSettings() {
   const selectedDepartments = useMemo(() => {
     return selectedDepartment ? [selectedDepartment] : []
   }, [selectedDepartment])
+
+  // Firestore 저장 함수 (알림 OFF 시 삭제, ON 시 upsert)
+  const saveSettingsToFirestore = useCallback(async () => {
+    if (!pushToken) return // 토큰 없으면 무시 (웹/시뮬레이터/권한 미허용 등)
+
+    const docRef = doc(db, 'device_tokens', pushToken)
+
+    if (!notificationEnabled) {
+      try {
+        await deleteDoc(docRef)
+      } catch {
+        // ignore: 개발용
+      }
+      return
+    }
+
+    const keywordTopics = selectedKeywordsArray
+    const departmentTopics = selectedDepartments
+    const merged = Array.from(new Set([...departmentTopics, ...keywordTopics]))
+
+    try {
+      await setDoc(
+        docRef,
+        {
+          token: pushToken,
+          subscribed_topics: merged,
+          notification_enabled: true,
+          updated_at: serverTimestamp(),
+          created_at: serverTimestamp(),
+        },
+        { merge: true }
+      )
+    } catch {
+      // ignore: 개발용
+    }
+  }, [
+    pushToken,
+    notificationEnabled,
+    selectedKeywordsArray,
+    selectedDepartments,
+  ])
+
+  // 변경 자동 저장 (debounce)
+  useEffect(() => {
+    if (pushToken === null) return
+    const timer = setTimeout(() => {
+      void saveSettingsToFirestore()
+    }, 800)
+    return () => clearTimeout(timer)
+  }, [
+    pushToken,
+    notificationEnabled,
+    selectedKeywordsArray,
+    selectedDepartments,
+    saveSettingsToFirestore,
+  ])
 
   // 키워드 업데이트 핸들러 (KeywordBottomSheet에서 호출)
   const handleKeywordUpdate = useCallback(
@@ -82,5 +156,8 @@ export function useNotificationSettings() {
     handleDepartmentUpdate,
     handleKeywordRemove,
     handleDepartmentRemove,
+    // 내부에서 토큰을 관리하지만, 필요 시 외부 사용을 위해 노출
+    pushToken,
+    saveSettingsToFirestore,
   }
 }
