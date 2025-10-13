@@ -102,9 +102,10 @@ export const NoticeContent = ({ item }: NoticeContentProps) => {
                 ))}
               </View>
             </View>
-
             <Text className="text-xs font-normal text-gray-500">
-              {item.posted_at.replace('작성일자:', '').trim()}
+              {typeof item.saved_at === 'string'
+                ? item.saved_at
+                : item.saved_at.toDate().toLocaleDateString()}
             </Text>
           </View>
         </View>
