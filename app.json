@@ -36,6 +36,13 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "e0b0a38e-f8a6-44b6-a6be-270eaaff6f7a"
+      }
+    },
+    "owner": "seungjin051"
   }
 }
