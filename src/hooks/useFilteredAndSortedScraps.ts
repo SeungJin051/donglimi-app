@@ -48,15 +48,11 @@ export const useFilteredAndSortedScraps = ({
     // 정렬
     if (sortBy === 'latest') {
       result.sort(
-        (a, b) =>
-          new Date(b.notice.posted_at).getTime() -
-          new Date(a.notice.posted_at).getTime()
+        (a, b) => b.notice.saved_at.toMillis() - a.notice.saved_at.toMillis()
       )
     } else if (sortBy === 'oldest') {
       result.sort(
-        (a, b) =>
-          new Date(a.notice.posted_at).getTime() -
-          new Date(b.notice.posted_at).getTime()
+        (a, b) => a.notice.saved_at.toMillis() - b.notice.saved_at.toMillis()
       )
     }
 

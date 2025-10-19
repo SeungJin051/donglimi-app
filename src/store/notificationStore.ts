@@ -27,7 +27,7 @@ const initialState: NotificationSettings = {
   selectedCollege: null,
   selectedDepartment: null,
   selectedKeywords: [],
-  notificationEnabled: true,
+  notificationEnabled: false,
 }
 
 // Zustand 스토어 생성 (persist 미들웨어로 AsyncStorage에 자동 저장)

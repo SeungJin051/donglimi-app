@@ -7,6 +7,7 @@ import { DEPARTMENTS_BY_COLLEGE } from '@/constants/collge'
 interface DepatmentBottomSheetProps {
   selectedDepartments?: string[]
   onDepartmentsUpdate?: (departments: string[]) => void
+  onComplete?: () => void
 }
 
 // 학과 ID를 학과 이름으로 변환하는 헬퍼 함수
@@ -27,6 +28,7 @@ const getDepartmentNameById = (
 export const DepatmentBottomSheet = ({
   selectedDepartments: initialSelectedDepartments = [],
   onDepartmentsUpdate,
+  onComplete,
 }: DepatmentBottomSheetProps) => {
   const [step, setStep] = useState<'college' | 'department'>('college')
   const [selectedCollege, setSelectedCollege] = useState<string>('')
@@ -102,7 +104,7 @@ export const DepatmentBottomSheet = ({
     // 선택 완료 처리 로직 - 선택된 학과는 이미 실시간으로 업데이트됨
     console.log('선택된 학과들:', selectedDepartments)
     // 바텀시트만 닫기 (선택 상태는 이미 상위 컴포넌트에 전달됨)
-    // 예: closeModal();
+    onComplete?.()
   }
 
   const renderCollegeStep = () => {

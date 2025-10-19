@@ -1,13 +1,23 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 
 import { Ionicons } from '@expo/vector-icons'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useRouter } from 'expo-router'
-import { View, Text, TouchableOpacity, ScrollView, Switch } from 'react-native'
+import { doc, serverTimestamp, setDoc } from 'firebase/firestore'
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  Switch,
+  Alert,
+} from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
+import { db } from '@/config/firebaseConfig'
 import { DEPARTMENTS_BY_COLLEGE } from '@/constants/collge'
 import { NOTIFICATION_KEYWORDS } from '@/constants/keyword'
+import { usePushNotifications } from '@/hooks/usePushNotifications'
 import { useNotificationStore } from '@/store/notificationStore'
 
 const ONBOARDING_KEY = 'hasSeenOnboarding'
@@ -29,19 +39,66 @@ export default function OnboardingScreen() {
     setNotificationEnabled,
   } = useNotificationStore()
 
+  const { getPushToken, handleToggleNotification } = usePushNotifications()
+
+  // 스위치 ON 시에만 권한 요청 (훅 사용)
+  const onToggleNotification = useCallback(
+    (value: boolean) => {
+      // 훅의 시그니처에 맞춰 setNotificationEnabled 전달
+      void handleToggleNotification(value, setNotificationEnabled)
+    },
+    [handleToggleNotification, setNotificationEnabled]
+  )
+
+  // 토큰 발급은 훅의 getPushToken 사용
+
   const handleComplete = async () => {
     try {
-      // 온보딩 완료 표시 저장 (설정은 이미 Zustand persist로 자동 저장됨)
+      // 알림이 꺼져있다면 Firestore 저장 없이 온보딩만 완료
+      if (!notificationEnabled) {
+        await AsyncStorage.setItem(ONBOARDING_KEY, 'true')
+        router.replace('/(tabs)')
+        return
+      }
+
+      // 알림이 켜져있다면 토큰 발급 시도
+      const token = await getPushToken()
+      if (!token) {
+        Alert.alert(
+          '알림 권한 필요',
+          '푸시 토큰을 발급받을 수 없어요. 설정에서 권한을 허용해주세요.'
+        )
+        return
+      }
+
+      // 구독 토픽 조합: 학과 + 키워드
+      const subscribedTopics = [
+        ...(selectedDepartment ? [selectedDepartment] : []),
+        ...selectedKeywords,
+      ]
+
+      // Firestore 저장 (문서 ID를 토큰으로 고정)
+      await setDoc(
+        doc(db, 'device_tokens', token),
+        {
+          token,
+          subscribed_topics: subscribedTopics,
+          notification_enabled: true,
+          updated_at: serverTimestamp(),
+          created_at: serverTimestamp(),
+        },
+        { merge: true }
+      )
+
+      // 온보딩 완료 표시 후 이동
       await AsyncStorage.setItem(ONBOARDING_KEY, 'true')
-      console.log('온보딩 완료! 저장된 알림 설정:', {
-        college: selectedCollege,
-        department: selectedDepartment,
-        keywords: selectedKeywords,
-        notification: notificationEnabled,
-      })
       router.replace('/(tabs)')
     } catch (error) {
-      console.error('온보딩 완료 저장 실패:', error)
+      console.error('온보딩 완료 처리 실패:', error)
+      Alert.alert(
+        '오류',
+        '온보딩 완료 처리 중 문제가 발생했어요. 잠시 후 다시 시도해주세요.'
+      )
     }
   }
 
@@ -285,7 +342,7 @@ export default function OnboardingScreen() {
                   </View>
                   <Switch
                     value={notificationEnabled}
-                    onValueChange={setNotificationEnabled}
+                    onValueChange={onToggleNotification}
                     trackColor={{ false: '#D1D5DB', true: '#93C5FD' }}
                     thumbColor={notificationEnabled ? '#093a87' : '#F3F4F6'}
                   />

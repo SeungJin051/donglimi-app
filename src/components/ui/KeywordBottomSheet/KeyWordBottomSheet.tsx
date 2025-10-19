@@ -11,11 +11,13 @@ import {
 interface KeywordBottomSheetProps {
   selectedKeywords?: SelectedKeywords
   onKeywordsUpdate?: (keywords: SelectedKeywords) => void
+  onComplete?: () => void
 }
 
 export const KeywordBottomSheet = ({
   selectedKeywords: initialSelectedKeywords = {},
   onKeywordsUpdate,
+  onComplete,
 }: KeywordBottomSheetProps) => {
   const [selectedKeywords, setSelectedKeywords] = useState<SelectedKeywords>(
     initialSelectedKeywords
@@ -49,7 +51,7 @@ export const KeywordBottomSheet = ({
     console.log('선택된 키워드들:', selectedKeywords)
     // 상위 컴포넌트에 선택된 키워드 전달
     onKeywordsUpdate?.(selectedKeywords)
-    // 예: closeModal();
+    onComplete?.()
   }
 
   const renderKeywordSelection = () => (

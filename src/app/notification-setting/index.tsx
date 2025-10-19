@@ -67,6 +67,14 @@ export default function NotificationSetting() {
     }))
   }, [selectedDepartments])
 
+  const handleCloseKeywords = useCallback(() => {
+    keywordBottomSheetRef.current?.dismiss()
+  }, [])
+
+  const handleCloseDepartments = useCallback(() => {
+    departmentBottomSheetRef.current?.dismiss()
+  }, [])
+
   return (
     <View className="flex-1 gap-5 bg-gray-50">
       {/* 헤더 섹션 */}
@@ -129,6 +137,7 @@ export default function NotificationSetting() {
           <KeywordBottomSheet
             selectedKeywords={selectedKeywords}
             onKeywordsUpdate={handleKeywordUpdate}
+            onComplete={handleCloseKeywords}
           />
         </BottomSheetView>
       </BottomSheetModal>
@@ -145,6 +154,7 @@ export default function NotificationSetting() {
           <DepatmentBottomSheet
             selectedDepartments={selectedDepartments}
             onDepartmentsUpdate={handleDepartmentUpdate}
+            onComplete={handleCloseDepartments}
           />
         </BottomSheetView>
       </BottomSheetModal>
