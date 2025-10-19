@@ -8,6 +8,7 @@ import Swipeable, {
 
 import RightSwipeActions from '@/components/ui/RightSwipeActions/RightSwipeActions'
 import { Scrap, useScrapStore } from '@/store/scrapStore'
+import { getFormattedDate } from '@/utils/dateUtils'
 import { getDepartmentStyles } from '@/utils/departmentStyles'
 
 // 개별 스크랩 아이템 컴포넌트
@@ -72,7 +73,7 @@ export const ScrapItem = ({ scrap }: { scrap: Scrap }) => {
             </View>
 
             <Text className="text-xs font-normal text-gray-500">
-              {scrap.notice.posted_at.replace('작성일자:', '').trim()}
+              {getFormattedDate(scrap.notice.saved_at)}
             </Text>
           </View>
         </View>

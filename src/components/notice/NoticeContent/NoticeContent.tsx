@@ -10,6 +10,7 @@ import Swipeable, {
 import RightSwipeActions from '@/components/ui/RightSwipeActions/RightSwipeActions'
 import { useScrapStore } from '@/store/scrapStore'
 import { Notice } from '@/types/notice.type'
+import { getFormattedDate } from '@/utils/dateUtils'
 import { getDepartmentStyles } from '@/utils/departmentStyles'
 
 interface NoticeContentProps {
@@ -103,9 +104,7 @@ export const NoticeContent = ({ item }: NoticeContentProps) => {
               </View>
             </View>
             <Text className="text-xs font-normal text-gray-500">
-              {typeof item.saved_at === 'string'
-                ? item.saved_at
-                : item.saved_at.toDate().toLocaleDateString()}
+              {getFormattedDate(item.saved_at)}
             </Text>
           </View>
         </View>
