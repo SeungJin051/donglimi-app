@@ -2,7 +2,8 @@ import { useRef, useMemo } from 'react'
 
 import { Ionicons } from '@expo/vector-icons'
 import * as Haptics from 'expo-haptics'
-import { View, Text } from 'react-native'
+import * as WebBrowser from 'expo-web-browser'
+import { View, Text, TouchableOpacity } from 'react-native'
 import Swipeable, {
   SwipeableMethods,
 } from 'react-native-gesture-handler/ReanimatedSwipeable'
@@ -55,6 +56,13 @@ export const NoticeContent = ({ item }: NoticeContentProps) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
   }
 
+  // 공지 링크 열기
+  const handleOpenLink = () => {
+    if (item.link) {
+      WebBrowser.openBrowserAsync(item.link)
+    }
+  }
+
   return (
     <Swipeable
       ref={swipeableRef}
@@ -71,7 +79,11 @@ export const NoticeContent = ({ item }: NoticeContentProps) => {
       overshootLeft={false}
       overshootRight={false}
     >
-      <View className="ml-4 mr-0 min-h-[105px] rounded-l-lg border-b border-l border-t border-gray-200 bg-white p-5 pr-4">
+      <TouchableOpacity
+        className="ml-4 mr-0 min-h-[105px] rounded-l-lg border-b border-l border-t border-gray-200 bg-white p-5 pr-4"
+        onPress={handleOpenLink}
+        activeOpacity={0.7}
+      >
         <View className="flex-1 justify-between">
           <View className="flex-row items-start justify-between">
             <Text
@@ -108,7 +120,7 @@ export const NoticeContent = ({ item }: NoticeContentProps) => {
             </Text>
           </View>
         </View>
-      </View>
+      </TouchableOpacity>
     </Swipeable>
   )
 }

@@ -1,88 +1,190 @@
-import React from 'react'
+import { useRef } from 'react'
 
+import * as Haptics from 'expo-haptics'
+import * as WebBrowser from 'expo-web-browser'
 import { View, Text, TouchableOpacity } from 'react-native'
+import Swipeable, {
+  SwipeableMethods,
+} from 'react-native-gesture-handler/ReanimatedSwipeable'
 
-interface NotificationItem {
-  id: string
-  title: string
-  department: string
-  tags: string[]
-  date: string
-  timeAgo: string
-  isRead: boolean
-}
+import RightSwipeActions from '@/components/ui/RightSwipeActions/RightSwipeActions'
+import { PushNotificationItem } from '@/types/notification.type'
+import { getFormattedDate } from '@/utils/dateUtils'
+import { getDepartmentStyles } from '@/utils/departmentStyles'
 
 interface NotificaitonItemProps {
-  filter: 'all' | 'unread'
+  items: Array<
+    Pick<
+      PushNotificationItem,
+      'id' | 'title' | 'department' | 'category' | 'read' | 'createdAtMs'
+    > & { tags?: string[] }
+  >
+  onPress?: (item: {
+    id: string
+    noticeLink?: string
+    noticeId?: string
+  }) => void
+  onDelete?: (item: { id: string; title: string }) => void
 }
 
-export function NotificaitonItem({ filter }: NotificaitonItemProps) {
-  // 임시 데이터
-  const notifications: NotificationItem[] = [
-    {
-      id: '1',
-      title: '2025학년도 2학기 자격 시험 결과 발표 예정일 안내',
-      department: '컴퓨터공학과',
-      tags: ['#학사'],
-      date: '2025.10.06',
-      timeAgo: '5분전',
-      isRead: false,
-    },
-    {
-      id: '2',
-      title: '다른 공지사항입니다',
-      department: '컴퓨터공학과',
-      tags: ['#공지'],
-      date: '2025.10.06',
-      timeAgo: '10분전',
-      isRead: true,
-    },
-  ]
-
-  // 필터링 로직
-  const filteredNotifications =
-    filter === 'unread'
-      ? notifications.filter((item) => !item.isRead)
-      : notifications
-
+export function NotificaitonItem({
+  items,
+  onPress,
+  onDelete,
+}: NotificaitonItemProps) {
   return (
     <>
-      {filteredNotifications.map((item) => (
-        <TouchableOpacity
+      {items.map((item) => (
+        <NotificationItemContent
           key={item.id}
-          className={`mx-4 mb-3 min-h-[100px] rounded-lg border ${
-            item.isRead
-              ? 'border-gray-100 bg-white'
-              : 'border-blue-100 bg-blue-50'
-          } p-4`}
-        >
-          <View className="flex-row justify-between">
-            <View className="flex-1">
-              <Text
-                className="text-base font-semibold text-gray-800"
-                numberOfLines={2}
-              >
-                {item.title}
-              </Text>
-            </View>
-            {!item.isRead && (
+          item={item}
+          onPress={onPress}
+          onDelete={onDelete}
+        />
+      ))}
+    </>
+  )
+}
+
+interface NotificationItemContentProps {
+  item: Pick<
+    PushNotificationItem,
+    | 'id'
+    | 'title'
+    | 'department'
+    | 'category'
+    | 'read'
+    | 'createdAtMs'
+    | 'noticeLink'
+    | 'noticeId'
+  > & { tags?: string[] }
+  onPress?: (item: {
+    id: string
+    noticeLink?: string
+    noticeId?: string
+  }) => void
+  onDelete?: (item: { id: string; title: string }) => void
+}
+
+function NotificationItemContent({
+  item,
+  onPress,
+  onDelete,
+}: NotificationItemContentProps) {
+  // 스와이프 참조
+  const swipeableRef = useRef<SwipeableMethods>(null)
+
+  // 부서 스타일 가져오기
+  const departmentStyle = item.department
+    ? getDepartmentStyles(item.department)
+    : null
+
+  // 삭제 핸들러
+  const handleDelete = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
+    onDelete?.({ id: item.id, title: item.title })
+    swipeableRef.current?.close()
+  }
+
+  // 스와이프 활성화 시 햅틱 피드백
+  const handleSwipeableWillOpen = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+  }
+
+  // 알림 탭: 브라우저 열고(있으면) 상위 onPress 호출
+  const handlePress = () => {
+    if (item.noticeLink) {
+      WebBrowser.openBrowserAsync(item.noticeLink)
+    }
+    onPress?.({
+      id: item.id,
+      noticeLink: item.noticeLink,
+      noticeId: item.noticeId,
+    })
+  }
+
+  return (
+    <Swipeable
+      ref={swipeableRef}
+      renderRightActions={() => (
+        <RightSwipeActions
+          onPress={handleDelete}
+          isScraped={false}
+          isDeleteOnly={true} // 알림은 삭제만 가능
+        />
+      )}
+      onSwipeableWillOpen={handleSwipeableWillOpen}
+      containerStyle={{
+        marginBottom: 10,
+      }}
+      overshootLeft={false}
+      overshootRight={false}
+    >
+      <TouchableOpacity
+        className={`ml-4 mr-0 min-h-[105px] rounded-l-lg border-b border-l border-t ${
+          item.read ? 'border-gray-200 bg-white' : 'border-blue-200 bg-blue-50'
+        } p-5 pr-4`}
+        onPress={handlePress}
+        activeOpacity={0.7}
+      >
+        <View className="flex-1 justify-between">
+          <View className="flex-row items-start justify-between">
+            <Text
+              className={`flex-1 pr-2 text-base font-medium leading-snug ${
+                item.read ? 'text-gray-900' : 'text-gray-800'
+              }`}
+              numberOfLines={2}
+            >
+              {item.title}
+            </Text>
+            {!item.read && (
               <View className="h-2 w-2 rounded-full bg-blue-500" />
             )}
           </View>
-          <View className="mt-2">
-            <View className="flex-row items-center justify-between">
-              <View className="flex-row items-center gap-2">
-                <Text className="ml-[-4px] rounded-full bg-slate-100 px-2 py-1 text-xs font-bold text-gray-700">
-                  {item.department}
-                </Text>
-                <Text className="text-xs text-gray-700">{item.tags}</Text>
-              </View>
-              <Text className="text-xs text-gray-500">{item.date}</Text>
+
+          <View className="flex-row items-center justify-between gap-3">
+            <View className="flex-1 flex-row items-center gap-2">
+              {item.department && departmentStyle && (
+                <View
+                  className={`rounded-md px-2.5 py-1 ${departmentStyle.bg}`}
+                >
+                  <Text
+                    className={`text-xs font-medium ${departmentStyle.text}`}
+                  >
+                    {item.department}
+                  </Text>
+                </View>
+              )}
+
+              {item.category && (
+                <View className="rounded-md bg-gray-100 px-2 py-1">
+                  <Text className="text-xs font-medium text-gray-600">
+                    #{item.category}
+                  </Text>
+                </View>
+              )}
+
+              {item.tags && item.tags.length > 0 && (
+                <View className="flex-1 flex-row flex-wrap gap-1.5">
+                  {item.tags.slice(0, 2).map((tag) => (
+                    <View
+                      key={tag}
+                      className="rounded-md bg-gray-100 px-2 py-1"
+                    >
+                      <Text className="text-xs font-medium text-gray-600">
+                        #{tag}
+                      </Text>
+                    </View>
+                  ))}
+                </View>
+              )}
             </View>
-            <Text className="mt-2 text-xs text-gray-500">{item.timeAgo}</Text>
+            <Text className="text-xs font-normal text-gray-500">
+              {getFormattedDate(item.createdAtMs)}
+            </Text>
           </View>
-        </TouchableOpacity>
-      ))}
-    </>
+        </View>
+      </TouchableOpacity>
+    </Swipeable>
   )
 }

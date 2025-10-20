@@ -1,7 +1,8 @@
 import { useRef } from 'react'
 
 import * as Haptics from 'expo-haptics'
-import { Text, View } from 'react-native'
+import * as WebBrowser from 'expo-web-browser'
+import { Text, View, TouchableOpacity } from 'react-native'
 import Swipeable, {
   SwipeableMethods,
 } from 'react-native-gesture-handler/ReanimatedSwipeable'
@@ -29,6 +30,13 @@ export const ScrapItem = ({ scrap }: { scrap: Scrap }) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
   }
 
+  // 링크 열기
+  const handleOpenLink = () => {
+    if (scrap.notice.link) {
+      WebBrowser.openBrowserAsync(scrap.notice.link)
+    }
+  }
+
   return (
     <Swipeable
       ref={swipeableRef}
@@ -42,7 +50,11 @@ export const ScrapItem = ({ scrap }: { scrap: Scrap }) => {
       overshootLeft={false}
       overshootRight={false}
     >
-      <View className="min-h-[105px] rounded-lg border-l-4 border-deu-light-blue bg-white p-6">
+      <TouchableOpacity
+        className="ml-4 mr-0 min-h-[105px] rounded-l-lg border-l-4 border-deu-light-blue bg-white p-5 pr-4"
+        onPress={handleOpenLink}
+        activeOpacity={0.7}
+      >
         <View className="flex-1 justify-between">
           <View className="flex-row items-start justify-between">
             <Text
@@ -77,7 +89,7 @@ export const ScrapItem = ({ scrap }: { scrap: Scrap }) => {
             </Text>
           </View>
         </View>
-      </View>
+      </TouchableOpacity>
     </Swipeable>
   )
 }
