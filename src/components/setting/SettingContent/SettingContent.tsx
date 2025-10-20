@@ -1,5 +1,12 @@
 import { Feather } from '@expo/vector-icons'
-import { View, Text, TouchableOpacity } from 'react-native'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { View, Text, TouchableOpacity, Alert } from 'react-native'
+
+import { useCategoryFilterStore } from '@/store/categoryFilterStore'
+import { useNotificationStore } from '@/store/notificationStore'
+import { useScrapStore } from '@/store/scrapStore'
+import { useSearchStore } from '@/store/searchStore'
+import { queryClient } from '@/utils/queryClient'
 
 const appInfoMenus = [
   { id: 'notice', title: '공지사항' },
@@ -8,6 +15,42 @@ const appInfoMenus = [
 ] as const
 
 export default function SettingContent() {
+  const { resetSettings } = useNotificationStore()
+  const { clearCategory } = useCategoryFilterStore()
+  const { scraps, setSortPreference } = useScrapStore()
+  const { clearHistory } = useSearchStore()
+
+  const handleDevReset = () => {
+    Alert.alert(
+      '개발자 도구',
+      '앱의 모든 영속성 데이터를 초기화하시겠습니까?\n\n- AsyncStorage\n- Zustand 스토어\n- React Query 캐시',
+      [
+        { text: '취소', style: 'cancel' },
+        {
+          text: '초기화',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              // AsyncStorage 전체 초기화
+              await AsyncStorage.clear()
+              // Zustand 스토어 초기화
+              resetSettings()
+              clearCategory()
+              // 스크랩 초기화 (직접 상태 리셋)
+              scraps.length = 0
+              setSortPreference('latest')
+              clearHistory()
+              // React Query 캐시 초기화
+              queryClient.clear()
+              Alert.alert('완료', '모든 데이터가 초기화되었습니다.')
+            } catch {
+              Alert.alert('오류', '초기화 중 문제가 발생했습니다.')
+            }
+          },
+        },
+      ]
+    )
+  }
   return (
     <View className="gap-6 p-4">
       {/* 앱 정보 및 지원 */}
@@ -30,6 +73,24 @@ export default function SettingContent() {
           </TouchableOpacity>
         ))}
       </View>
+
+      {/* 개발자 도구 (개발 환경에서만 표시) */}
+      {__DEV__ && (
+        <View className="overflow-hidden rounded-xl border border-red-200 bg-red-50 shadow-sm">
+          <View className="border-b border-red-200 px-4 py-3">
+            <Text className="text-base font-semibold text-red-900">
+              개발자 도구
+            </Text>
+          </View>
+          <TouchableOpacity
+            className="flex-row items-center justify-between px-4 py-3.5"
+            onPress={handleDevReset}
+          >
+            <Text className="text-base text-red-800">앱 영속성 초기화</Text>
+            <Feather name="trash-2" size={22} color="#DC2626" />
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   )
 }

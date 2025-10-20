@@ -1,6 +1,7 @@
 import { useRef } from 'react'
 
 import * as Haptics from 'expo-haptics'
+import * as WebBrowser from 'expo-web-browser'
 import { View, Text, TouchableOpacity } from 'react-native'
 import Swipeable, {
   SwipeableMethods,
@@ -48,7 +49,14 @@ export function NotificaitonItem({
 interface NotificationItemContentProps {
   item: Pick<
     PushNotificationItem,
-    'id' | 'title' | 'department' | 'category' | 'read' | 'createdAtMs'
+    | 'id'
+    | 'title'
+    | 'department'
+    | 'category'
+    | 'read'
+    | 'createdAtMs'
+    | 'noticeLink'
+    | 'noticeId'
   > & { tags?: string[] }
   onPress?: (item: {
     id: string
@@ -83,6 +91,18 @@ function NotificationItemContent({
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
   }
 
+  // 알림 탭: 브라우저 열고(있으면) 상위 onPress 호출
+  const handlePress = () => {
+    if (item.noticeLink) {
+      WebBrowser.openBrowserAsync(item.noticeLink)
+    }
+    onPress?.({
+      id: item.id,
+      noticeLink: item.noticeLink,
+      noticeId: item.noticeId,
+    })
+  }
+
   return (
     <Swipeable
       ref={swipeableRef}
@@ -104,7 +124,7 @@ function NotificationItemContent({
         className={`ml-4 mr-0 min-h-[105px] rounded-l-lg border-b border-l border-t ${
           item.read ? 'border-gray-200 bg-white' : 'border-blue-200 bg-blue-50'
         } p-5 pr-4`}
-        onPress={() => onPress?.(item)}
+        onPress={handlePress}
         activeOpacity={0.7}
       >
         <View className="flex-1 justify-between">
