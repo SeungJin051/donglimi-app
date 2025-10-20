@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 
 import { NOTIFICATION_KEYWORDS } from '@/constants/keyword'
 import { Scrap } from '@/store/scrapStore'
+import { getTimeMs } from '@/utils/dateUtils'
 
 type SortOption = 'latest' | 'oldest'
 
@@ -48,11 +49,11 @@ export const useFilteredAndSortedScraps = ({
     // 정렬
     if (sortBy === 'latest') {
       result.sort(
-        (a, b) => b.notice.saved_at.toMillis() - a.notice.saved_at.toMillis()
+        (a, b) => getTimeMs(b.notice.saved_at) - getTimeMs(a.notice.saved_at)
       )
     } else if (sortBy === 'oldest') {
       result.sort(
-        (a, b) => a.notice.saved_at.toMillis() - b.notice.saved_at.toMillis()
+        (a, b) => getTimeMs(a.notice.saved_at) - getTimeMs(b.notice.saved_at)
       )
     }
 
