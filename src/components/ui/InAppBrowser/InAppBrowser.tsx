@@ -12,6 +12,7 @@ import {
   ActivityIndicator,
   Alert,
   Animated,
+  Share,
 } from 'react-native'
 import { WebView } from 'react-native-webview'
 
@@ -73,8 +74,8 @@ export default function InAppBrowser({
     try {
       await Clipboard.setStringAsync(url)
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
-      setShowActionSheet(false)
       Alert.alert('링크 복사 완료', '클립보드에 복사되었습니다.')
+      setShowActionSheet(false)
     } catch {
       Alert.alert('오류', '링크 복사에 실패했습니다.')
     }
@@ -84,12 +85,20 @@ export default function InAppBrowser({
   const handleOpenInBrowser = useCallback(async () => {
     if (!url) return
     try {
-      setShowActionSheet(false)
       await WebBrowser.openBrowserAsync(url)
+      setShowActionSheet(false)
     } catch {
       Alert.alert('오류', '브라우저를 열 수 없습니다.')
     }
   }, [url])
+
+  // 공유
+  const handleShare = useCallback(async () => {
+    await Share.share({
+      message: pageTitle,
+      url: url as string,
+    })
+  }, [url, pageTitle])
 
   // 파일 다운로드 처리
   const handleFileDownload = useCallback(
@@ -161,7 +170,6 @@ export default function InAppBrowser({
             <TouchableOpacity
               className="flex-1 pr-3"
               onPress={handleOpenActionSheet}
-              activeOpacity={0.7}
             >
               <Text
                 className="text-lg font-bold leading-tight text-gray-900"
@@ -177,7 +185,6 @@ export default function InAppBrowser({
             <TouchableOpacity
               onPress={onClose}
               className="ml-2 items-center justify-center"
-              activeOpacity={0.7}
             >
               <Ionicons name="close" size={30} color="#666" />
             </TouchableOpacity>
@@ -228,7 +235,6 @@ export default function InAppBrowser({
                   onPress={handleGoBack}
                   disabled={!canGoBack}
                   className="h-12 w-12 items-center justify-center rounded-lg"
-                  activeOpacity={0.7}
                 >
                   <Ionicons
                     name="chevron-back"
@@ -240,7 +246,6 @@ export default function InAppBrowser({
                   onPress={handleGoForward}
                   disabled={!canGoForward}
                   className="h-12 w-12 items-center justify-center rounded-lg"
-                  activeOpacity={0.7}
                 >
                   <Ionicons
                     name="chevron-forward"
@@ -249,13 +254,20 @@ export default function InAppBrowser({
                   />
                 </TouchableOpacity>
               </View>
-              <TouchableOpacity
-                onPress={handleReload}
-                className="h-12 w-12 items-center justify-center rounded-lg"
-                activeOpacity={0.7}
-              >
-                <Ionicons name="reload" size={24} color="#333" />
-              </TouchableOpacity>
+              <View className="flex-row items-center gap-4">
+                <TouchableOpacity
+                  onPress={handleShare}
+                  className="h-12 w-12 items-center justify-center rounded-lg"
+                >
+                  <Ionicons name="share-outline" size={24} color="#333" />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={handleReload}
+                  className="h-12 w-12 items-center justify-center rounded-lg"
+                >
+                  <Ionicons name="reload" size={24} color="#333" />
+                </TouchableOpacity>
+              </View>
             </View>
           </Animated.View>
         </View>
@@ -265,14 +277,10 @@ export default function InAppBrowser({
           <View className="absolute inset-0 z-50">
             <TouchableOpacity
               className="flex-1 bg-black/50"
-              activeOpacity={1}
               onPress={() => setShowActionSheet(false)}
             >
               <View className="flex-1 justify-end">
-                <TouchableOpacity
-                  activeOpacity={1}
-                  onPress={(e) => e.stopPropagation()}
-                >
+                <TouchableOpacity onPress={(e) => e.stopPropagation()}>
                   <View className="rounded-t-3xl bg-white pb-8 pt-4">
                     <View className="mb-4 items-center">
                       <View className="h-1 w-10 rounded-full bg-gray-300" />
@@ -280,8 +288,23 @@ export default function InAppBrowser({
 
                     <TouchableOpacity
                       className="flex-row items-center px-6 py-4"
+                      onPress={handleShare}
+                    >
+                      <View className="mr-4 h-10 w-10 items-center justify-center rounded-full bg-blue-50">
+                        <Ionicons
+                          name="share-outline"
+                          size={20}
+                          color="#0158a6"
+                        />
+                      </View>
+                      <Text className="text-base font-medium text-gray-900">
+                        공유
+                      </Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      className="flex-row items-center px-6 py-4"
                       onPress={handleCopyLink}
-                      activeOpacity={0.7}
                     >
                       <View className="mr-4 h-10 w-10 items-center justify-center rounded-full bg-blue-50">
                         <Ionicons
@@ -298,7 +321,6 @@ export default function InAppBrowser({
                     <TouchableOpacity
                       className="flex-row items-center px-6 py-4"
                       onPress={handleOpenInBrowser}
-                      activeOpacity={0.7}
                     >
                       <View className="mr-4 h-10 w-10 items-center justify-center rounded-full bg-blue-50">
                         <Ionicons
