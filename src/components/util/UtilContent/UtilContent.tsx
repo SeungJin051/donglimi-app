@@ -38,7 +38,7 @@ export const UtilContent = () => {
     }
   }
 
-  //
+  // useFocusEffect를 사용하여 화면이 포커스될 때마다 인기 공지사항을 로드합니다.
   useFocusEffect(
     useCallback(() => {
       const fetchPopularPosts = async () => {
@@ -66,8 +66,6 @@ export const UtilContent = () => {
         } catch (err) {
           console.error('인기 게시글 로드 실패:', err)
           setError('게시글을 불러오는 데 실패했습니다.')
-
-          // [!!] 여기서 콘솔에 뜨는 "색인" 관련 에러를 꼭 확인하세요!
         } finally {
           setIsLoading(false)
         }
@@ -100,7 +98,7 @@ export const UtilContent = () => {
                   <View className="mt-2.5 flex-row items-center justify-between">
                     <View className="flex-1 flex-row items-center gap-1.5">
                       {/* 학과 */}
-                      <Text className="text-xs font-medium text-blue-600">
+                      <Text className="text-xs font-medium text-deu-light-blue">
                         {item.department}
                       </Text>
                       <Text className="text-xs text-gray-400">|</Text>
