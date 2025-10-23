@@ -26,7 +26,10 @@ export default function RootLayout() {
         <BottomSheetModalProvider>
           <Drawer
             drawerContent={(props) => <HomeDrawer {...props} />}
-            screenOptions={{ headerShown: false }}
+            screenOptions={{
+              headerShown: false,
+              swipeEnabled: false,
+            }}
           >
             <Drawer.Screen
               name="(tabs)"
