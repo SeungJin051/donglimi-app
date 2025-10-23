@@ -61,13 +61,13 @@ export const useCacheManager = () => {
           q = query(
             noticesCollectionRef,
             where('department', '==', category),
-            orderBy('created_at', 'desc'),
+            orderBy('saved_at', 'desc'),
             limit(limitCount)
           )
         } else {
           q = query(
             noticesCollectionRef,
-            orderBy('created_at', 'desc'),
+            orderBy('saved_at', 'desc'),
             limit(limitCount)
           )
         }
@@ -78,7 +78,7 @@ export const useCacheManager = () => {
           ...doc.data(),
         })) as Notice[]
       },
-      staleTime: 5 * 60 * 1000,
+      staleTime: 10 * 60 * 1000,
     })
   }
 

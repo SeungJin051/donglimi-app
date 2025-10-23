@@ -68,8 +68,8 @@ export const useFetchNotices = (limitCount = 20) => {
   const { selectedCategory } = useCategoryFilterStore()
 
   return useQuery({
-    // 쿼리 키: 카테고리가 변경될 때마다 다른 쿼리로 인식
-    queryKey: ['notices', selectedCategory || undefined, limitCount],
+    // 쿼리 키: 카테고리가 변경될 때마다 다른 쿼리로 인식 (limitCount 제거로 cacheManager와 통일)
+    queryKey: ['notices', selectedCategory || undefined],
 
     // 실제 데이터를 가져오는 함수
     queryFn: async () => {
@@ -81,13 +81,13 @@ export const useFetchNotices = (limitCount = 20) => {
       return result
     },
 
-    // 캐시 설정: 5분간 fresh 상태 유지 (이 시간 동안은 Firestore 호출 안 함)
-    staleTime: 5 * 60 * 1000, // 5분
+    // 캐시 설정
+    staleTime: 10 * 60 * 1000, // 10분
 
-    // 가비지 컬렉션 시간: 10분간 메모리에 캐시 유지
-    gcTime: 10 * 60 * 1000, // 10분
+    // 가비지 컬렉션 시간
+    gcTime: 30 * 60 * 1000, // 30분
 
-    // 선택된 카테고리가 변경될 때만 리페치
+    // 캐시가 있으면 사용 (queryClient 설정과 통일)
     refetchOnMount: false,
 
     // 앱 포커스 시 리페치 방지 (배터리 절약)
