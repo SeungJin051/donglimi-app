@@ -1,5 +1,6 @@
 import { useState } from 'react'
 
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore'
 import {
   ScrollView,
   View,
@@ -12,6 +13,7 @@ import {
 } from 'react-native'
 
 import SettingDetailHeader from '@/components/layout/SettingDetailHeader/SettingDetailHeader'
+import { db } from '@/config/firebaseConfig'
 
 const suggestionTypes = [
   {
@@ -34,6 +36,7 @@ export default function SuggestionScreen() {
   const [content, setContent] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
+  // 건의사항 전송
   const handleSubmit = async () => {
     if (!selectedType || !title.trim() || !content.trim()) {
       Alert.alert('입력 오류', '모든 필드를 입력해주세요.')
@@ -43,15 +46,13 @@ export default function SuggestionScreen() {
     setIsSubmitting(true)
 
     try {
-      // TODO: Firebase나 API로 데이터 전송
-      console.log('건의사항 전송:', {
+      await addDoc(collection(db, 'suggestions'), {
         type: selectedType,
-        title,
-        content,
-        timestamp: new Date().toISOString(),
+        title: title.trim(),
+        content: content.trim(),
+        timestamp: serverTimestamp(), // 서버 기준 시간
       })
 
-      // 임시로 성공 처리
       Alert.alert(
         '전송 완료',
         '소중한 의견 감사합니다! 빠른 시일 내에 검토하겠습니다.',
@@ -159,7 +160,7 @@ export default function SuggestionScreen() {
             className={`mb-8 rounded-xl p-4 ${
               isSubmitting || !selectedType || !title.trim() || !content.trim()
                 ? 'bg-gray-300'
-                : 'bg-blue-500'
+                : 'bg-deu-light-blue'
             }`}
             onPress={handleSubmit}
             disabled={
