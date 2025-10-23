@@ -27,7 +27,7 @@ export function usePushNotifications() {
       if (finalStatus !== 'granted') {
         Alert.alert(
           '알림 권한 필요',
-          '설정에서 알림 권한을 허용해야 푸시를 받을 수 있어요.',
+          '설정에서 알림 권한을 허용해야 알림을 받을 수 있어요.',
           [
             { text: '취소', style: 'cancel' },
             {
@@ -51,6 +51,7 @@ export function usePushNotifications() {
       }
 
       return true
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
       Alert.alert('오류', '푸시 권한 요청 중 문제가 발생했어요.')
       return false
