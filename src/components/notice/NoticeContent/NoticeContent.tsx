@@ -2,6 +2,7 @@ import { useRef, useMemo, useState } from 'react'
 
 import { Ionicons } from '@expo/vector-icons'
 import * as Haptics from 'expo-haptics'
+import { doc, increment, updateDoc } from 'firebase/firestore'
 import { View, Text, TouchableOpacity } from 'react-native'
 import Swipeable, {
   SwipeableMethods,
@@ -9,6 +10,7 @@ import Swipeable, {
 
 import InAppBrowser from '@/components/ui/InAppBrowser/InAppBrowser'
 import RightSwipeActions from '@/components/ui/RightSwipeActions/RightSwipeActions'
+import { db } from '@/config/firebaseConfig'
 import { useScrapStore } from '@/store/scrapStore'
 import { Notice } from '@/types/notice.type'
 import { getFormattedDate } from '@/utils/dateUtils'
@@ -19,6 +21,9 @@ interface NoticeContentProps {
 }
 
 export const NoticeContent = ({ item }: NoticeContentProps) => {
+  // Firestore 문서 참조
+  const docRef = doc(db, 'notices', item.content_hash)
+
   // 함수를 호출하여 현재 아이템의 부서에 맞는 스타일을 가져옵니다.
   const departmentStyle = getDepartmentStyles(item.department)
 
@@ -38,21 +43,51 @@ export const NoticeContent = ({ item }: NoticeContentProps) => {
   }, [scraps, item.content_hash])
 
   // 스크랩 추가 핸들러
-  const handleAddScrap = () => {
+  const handleAddScrap = async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
+
+    // 로컬 상태를 먼저 업데이트 (낙관적 UI)
     addScrap({ notice: item })
     swipeableRef.current?.close()
 
-    // Todo: 토스트 메시지 추가
+    try {
+      // 서버에 업데이트 시도
+      await updateDoc(docRef, {
+        scrap_count: increment(1),
+      })
+      // Todo: "스크랩했습니다" 토스트 메시지
+    } catch (error) {
+      // 서버 업데이트 실패!
+      console.error('스크랩 추가 실패:', error)
+
+      // 롤백 로컬에서 다시 스크랩을 제거합니다.
+      removeScrap({ notice: item })
+      // Todo: "스크랩에 실패했습니다. 다시 시도해주세요" 에러 토스트
+    }
   }
 
   // 스크랩 삭제 핸들러
-  const handleRemoveScrap = () => {
+  const handleRemoveScrap = async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
+
+    // 로컬 상태 먼저 업데이트
     removeScrap({ notice: item })
     swipeableRef.current?.close()
 
-    // Todo: 토스트 메시지 추가
+    try {
+      // 서버에 업데이트 시도
+      await updateDoc(docRef, {
+        scrap_count: increment(-1),
+      })
+      // Todo: "스크랩을 취소했습니다" 토스트
+    } catch (error) {
+      // 서버 업데이트 실패 시 롤백
+      console.error('스크랩 삭제 실패:', error)
+
+      // 롤백 로컬에 다시 스크랩을 추가합니다.
+      addScrap({ notice: item })
+      // Todo: "취소에 실패했습니다." 에러 토스트
+    }
   }
 
   // 스와이프 활성화 시 햅틱 피드백
