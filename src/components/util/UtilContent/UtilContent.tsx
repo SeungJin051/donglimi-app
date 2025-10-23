@@ -1,23 +1,30 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 
 import { MaterialIcons } from '@expo/vector-icons'
+import { useFocusEffect } from 'expo-router'
+import {
+  collection,
+  query,
+  where,
+  orderBy,
+  limit,
+  getDocs,
+} from 'firebase/firestore'
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native'
 
 import InAppBrowser from '@/components/ui/InAppBrowser/InAppBrowser'
+import { db } from '@/config/firebaseConfig'
 import { quickItem, uniPlan, uniPlanUrl } from '@/constants/utilContent'
+import { Notice } from '@/types/notice.type'
+import { getFormattedDate } from '@/utils/dateUtils'
 import { calculateDDay } from '@/utils/dDay'
 
 export const UtilContent = () => {
-  const popularPost = [
-    {
-      id: 1,
-      title: '동의대학교 홈',
-      department: '컴퓨터공학과',
-      tags: ['#기타'],
-      savedAt: '2025-01-01',
-      ScrapCount: 10,
-    },
-  ]
+  const [popularPosts, setPopularPosts] = useState<Notice[]>([])
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [isLoading, setIsLoading] = useState(true)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [error, setError] = useState<string | null>(null)
 
   // 인앱 브라우저 상태
   const [browserVisible, setBrowserVisible] = useState(false)
@@ -30,30 +37,90 @@ export const UtilContent = () => {
       setBrowserVisible(true)
     }
   }
+
+  //
+  useFocusEffect(
+    useCallback(() => {
+      const fetchPopularPosts = async () => {
+        setIsLoading(true)
+        setError(null)
+        try {
+          const noticesRef = collection(db, 'notices')
+
+          // 파이어스토어 쿼리
+          const q = query(
+            noticesRef,
+            where('scrap_count', '>=', 10), // 스크랩 10개 이상
+            orderBy('scrap_count', 'desc'), // 스크랩 많은 순
+            orderBy('published_at', 'desc'), // (동점 시) 최신순
+            limit(3) // 최대 3개
+          )
+
+          const querySnapshot = await getDocs(q)
+          const posts = querySnapshot.docs.map((doc) => ({
+            ...(doc.data() as Notice),
+            id: doc.id,
+          }))
+
+          setPopularPosts(posts)
+        } catch (err) {
+          console.error('인기 게시글 로드 실패:', err)
+          setError('게시글을 불러오는 데 실패했습니다.')
+
+          // [!!] 여기서 콘솔에 뜨는 "색인" 관련 에러를 꼭 확인하세요!
+        } finally {
+          setIsLoading(false)
+        }
+      }
+
+      fetchPopularPosts()
+    }, [])
+  )
   return (
     <>
       <ScrollView>
         <View className="gap-6 bg-gray-50 px-4 py-4">
           {/* 인기 공지사항 */}
           <View className="rounded-xl border border-gray-100 bg-white px-4 py-4">
-            <Text className="mb-5 text-lg font-semibold">인기 게시글</Text>
+            <View className="mb-5 flex-row items-center gap-2">
+              <MaterialIcons name="moving" size={24} color="black" />
+              <Text className="text-lg font-semibold">인기 공지사항 Top 3</Text>
+            </View>
             <View className="flex-col gap-4">
-              {popularPost.map((item) => (
+              {popularPosts.map((item) => (
                 <TouchableOpacity
-                  key={item.id}
-                  className="w-full flex-row items-center gap-4 rounded-xl border border-gray-100 px-4 py-3"
+                  key={item.content_hash}
+                  className="w-full rounded-xl border border-gray-100 bg-gray-50 p-4"
+                  onPress={() => handleOpenLink(item.link)}
+                  activeOpacity={0.7}
                 >
-                  <Text className="text-base font-medium">{item.title}</Text>
-                  <Text className="text-sm text-gray-500">
-                    {item.department}
+                  <Text className="text-base font-medium" numberOfLines={2}>
+                    {item.title}
                   </Text>
-                  <Text className="text-sm text-gray-500">
-                    {item.tags.join(', ')}
-                  </Text>
-                  <Text className="text-sm text-gray-500">{item.savedAt}</Text>
-                  <Text className="text-sm text-gray-500">
-                    {item.ScrapCount}
-                  </Text>
+                  <View className="mt-2.5 flex-row items-center justify-between">
+                    <View className="flex-1 flex-row items-center gap-1.5">
+                      {/* 학과 */}
+                      <Text className="text-xs font-medium text-blue-600">
+                        {item.department}
+                      </Text>
+                      <Text className="text-xs text-gray-400">|</Text>
+                      {/* 날짜 */}
+                      <Text className="text-xs text-gray-500">
+                        {getFormattedDate(item.saved_at)}
+                      </Text>
+                    </View>
+                    {/* 스크랩 수 */}
+                    <View className="flex-row items-center gap-0.5">
+                      <MaterialIcons
+                        name="bookmark"
+                        size={14}
+                        color="#093a87"
+                      />
+                      <Text className="text-xs font-medium text-gray-600">
+                        {item.scrap_count}
+                      </Text>
+                    </View>
+                  </View>
                 </TouchableOpacity>
               ))}
             </View>
@@ -84,7 +151,7 @@ export const UtilContent = () => {
                 .map((plan) => (
                   <View
                     key={plan.id}
-                    className="w-full rounded-xl bg-gray-50 px-2.5 py-2"
+                    className="w-full rounded-xl bg-gray-50 px-4 py-2"
                   >
                     <View className="flex-row justify-between">
                       <View>
