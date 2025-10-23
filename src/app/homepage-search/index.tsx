@@ -38,8 +38,7 @@ export default function HomepageSearch() {
   const { searchHistory, addHistory, removeHistory, clearHistory } =
     useSearchStore()
 
-  // 임시 공지사항 데이터
-  const { data: notices = [] } = useFetchNotices(100)
+  const { data: notices = [] } = useFetchNotices(20)
 
   // 검색어 변경 핸들러
   const handleSearchTermChange = (term: string) => {
@@ -88,9 +87,9 @@ export default function HomepageSearch() {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-      <SafeAreaView className="flex-1 bg-white px-4">
+      <SafeAreaView className="flex-1 bg-white">
         {/* 헤더 부분 */}
-        <View className="flex-row items-center gap-4">
+        <View className="flex-row items-center gap-4 px-4">
           <TouchableOpacity onPress={handleBack}>
             <Ionicons name="arrow-back" size={24} color="black" />
           </TouchableOpacity>
@@ -98,7 +97,7 @@ export default function HomepageSearch() {
         </View>
 
         {/* 검색 입력 부분 */}
-        <View className="relative justify-center py-6">
+        <View className="relative justify-center px-4 py-6">
           <TextInput
             ref={inputRef}
             className="h-12 rounded-xl bg-gray-100 py-0 pl-11 text-base"
@@ -110,7 +109,7 @@ export default function HomepageSearch() {
             onSubmitEditing={() => executeSearch(searchTerm)}
             style={{ textAlignVertical: 'center' }}
           />
-          <View className="absolute bottom-0 left-3 top-0 justify-center">
+          <View className="absolute bottom-0 left-7 top-0 justify-center">
             <Ionicons name="search" size={20} color="#999999" />
           </View>
         </View>
@@ -127,14 +126,14 @@ export default function HomepageSearch() {
                 onScrollBeginDrag={Keyboard.dismiss}
               />
             ) : (
-              <View className="flex-1 items-center">
+              <View className="flex-1 items-center px-4">
                 <Text className="text-lg text-gray-400">
                   검색 결과가 없습니다.
                 </Text>
               </View>
             )
           ) : searchHistory.length > 0 ? (
-            <View>
+            <View className="px-4">
               <View className="mb-4 flex-row items-center justify-between">
                 <Text className="text-base font-semibold">최근 검색</Text>
                 <View className="flex flex-row items-center justify-center gap-4">
