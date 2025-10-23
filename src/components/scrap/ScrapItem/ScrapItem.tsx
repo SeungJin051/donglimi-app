@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 
 import * as Haptics from 'expo-haptics'
+import { doc, updateDoc, increment } from 'firebase/firestore'
 import { Text, View, TouchableOpacity } from 'react-native'
 import Swipeable, {
   SwipeableMethods,
@@ -8,13 +9,14 @@ import Swipeable, {
 
 import InAppBrowser from '@/components/ui/InAppBrowser/InAppBrowser'
 import RightSwipeActions from '@/components/ui/RightSwipeActions/RightSwipeActions'
+import { db } from '@/config/firebaseConfig'
 import { Scrap, useScrapStore } from '@/store/scrapStore'
 import { getFormattedDate } from '@/utils/dateUtils'
 import { getDepartmentStyles } from '@/utils/departmentStyles'
 
 // 개별 스크랩 아이템 컴포넌트
 export const ScrapItem = ({ scrap }: { scrap: Scrap }) => {
-  const { removeScrap } = useScrapStore()
+  const { removeScrap, addScrap } = useScrapStore()
   const departmentStyle = getDepartmentStyles(scrap.notice.department)
   const swipeableRef = useRef<SwipeableMethods>(null)
 
@@ -22,13 +24,30 @@ export const ScrapItem = ({ scrap }: { scrap: Scrap }) => {
   const [browserVisible, setBrowserVisible] = useState(false)
   const [browserUrl, setBrowserUrl] = useState<string | null>(null)
 
+  // Firestore 문서 참조
+  const docRef = doc(db, 'notices', scrap.notice.content_hash)
+
   // 스크랩 삭제 핸들러
-  const handleRemoveScrap = () => {
+  const handleRemoveScrap = async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
+
+    // 낙관적 UI: 로컬(Zustand)에서 먼저 삭제
     removeScrap(scrap)
     swipeableRef.current?.close()
-  }
 
+    try {
+      // 서버: Firestore의 scrap_count -1 업데이트 시도
+      await updateDoc(docRef, {
+        scrap_count: increment(-1),
+      })
+      // Todo: "스크랩을 취소했습니다" 토스트 메시지
+    } catch (error) {
+      // 롤백: 서버 업데이트 실패 시 로컬 상태 되돌리기
+      console.error('스크랩 삭제 실패 (서버):', error)
+      addScrap(scrap) // 삭제했던 스크랩을 다시 추가
+      // Todo: "오류가 발생했습니다. 다시 시도해주세요" 토스트 메시지
+    }
+  }
   // 스와이프 활성화 시 햅틱 피드백
   const handleSwipeableWillOpen = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
