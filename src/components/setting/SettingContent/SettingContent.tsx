@@ -1,5 +1,6 @@
 import { Feather } from '@expo/vector-icons'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { useRouter } from 'expo-router'
 import { View, Text, TouchableOpacity, Alert } from 'react-native'
 
 import { useCategoryFilterStore } from '@/store/categoryFilterStore'
@@ -8,17 +9,44 @@ import { useScrapStore } from '@/store/scrapStore'
 import { useSearchStore } from '@/store/searchStore'
 import { queryClient } from '@/utils/queryClient'
 
+const appSupportMenus = [
+  { id: 'notifications', title: '알림 설정' },
+  { id: 'help', title: '건의하기' },
+] as const
+
 const appInfoMenus = [
-  { id: 'notice', title: '공지사항' },
-  { id: 'help', title: '도움말 및 문의하기' },
-  { id: 'service', title: '서비스 정보' },
+  { id: 'terms', title: '이용 약관' },
+  { id: 'privacy', title: '개인정보 처리방침' },
+  { id: 'license', title: '오픈소스 라이선스' },
 ] as const
 
 export default function SettingContent() {
+  const router = useRouter()
   const { resetSettings } = useNotificationStore()
   const { clearCategory } = useCategoryFilterStore()
   const { scraps, setSortPreference } = useScrapStore()
   const { clearHistory } = useSearchStore()
+
+  const handleMenuPress = (menuId: string) => {
+    switch (menuId) {
+      case 'notifications':
+        router.push('/notification-setting')
+        break
+      case 'help':
+        router.push('/suggestion')
+        break
+      case 'terms':
+        router.push('/terms-of-service')
+        break
+      case 'privacy':
+        router.push('/privacy-policy')
+        break
+      case 'license':
+        router.push('/open-source-licenses')
+        break
+      default:
+    }
+  }
 
   const handleDevReset = () => {
     Alert.alert(
@@ -53,12 +81,29 @@ export default function SettingContent() {
   }
   return (
     <View className="gap-6 p-4">
-      {/* 앱 정보 및 지원 */}
+      {/* 앱 지원 */}
       <View className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
         <View className="border-b border-gray-200 px-4 py-3">
-          <Text className="text-base font-semibold text-gray-900">
-            앱 정보 및 지원
-          </Text>
+          <Text className="text-base font-semibold text-gray-900">앱 지원</Text>
+        </View>
+        {appSupportMenus.map((menu, index) => (
+          <TouchableOpacity
+            key={menu.id}
+            className={`flex-row items-center justify-between border-b border-gray-200 px-4 py-3.5 ${
+              index === appSupportMenus.length - 1 ? 'border-b-0' : ''
+            }`}
+            onPress={() => handleMenuPress(menu.id)}
+          >
+            <Text className="text-base text-gray-800">{menu.title}</Text>
+            <Feather name="chevron-right" size={22} color="#A0A0A0" />
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      {/* 앱 정보 */}
+      <View className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+        <View className="border-b border-gray-200 px-4 py-3">
+          <Text className="text-base font-semibold text-gray-900">앱 정보</Text>
         </View>
         {appInfoMenus.map((menu, index) => (
           <TouchableOpacity
@@ -66,7 +111,7 @@ export default function SettingContent() {
             className={`flex-row items-center justify-between border-b border-gray-200 px-4 py-3.5 ${
               index === appInfoMenus.length - 1 ? 'border-b-0' : ''
             }`}
-            onPress={() => console.log(`${menu.title} 클릭`)}
+            onPress={() => handleMenuPress(menu.id)}
           >
             <Text className="text-base text-gray-800">{menu.title}</Text>
             <Feather name="chevron-right" size={22} color="#A0A0A0" />

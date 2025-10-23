@@ -17,7 +17,7 @@ export default function NotificationSetting() {
     selectedKeywords,
     selectedDepartments,
     notificationEnabled,
-    setNotificationEnabled,
+    handleNotificationToggle,
     handleKeywordUpdate,
     handleDepartmentUpdate,
     handleKeywordRemove,
@@ -81,18 +81,24 @@ export default function NotificationSetting() {
       <NotificationSettingHeader />
 
       <View className="gap-5 px-4">
-        {/* 전체 푸시 알림 설정 섹션 */}
+        {/* 푸시 알림 설정 섹션 */}
         <View className="rounded-xl border border-gray-200 bg-white px-4 py-4">
           <View className="flex-row items-center justify-between">
-            <Text className="font-semibold">🔔 전체 푸시 알림 받기</Text>
+            <Text className="font-semibold">🔔 푸시 알림 받기</Text>
 
             <Switch
               value={notificationEnabled}
-              onValueChange={setNotificationEnabled}
+              onValueChange={handleNotificationToggle}
               trackColor={{ false: '#D1D5DB', true: '#93C5FD' }}
               thumbColor={notificationEnabled ? '#093a87' : '#F3F4F6'}
             />
           </View>
+          {/* 푸시 알림 설정 설명 - OFF 상태일 때만 표시 */}
+          {!notificationEnabled && (
+            <Text className="text-sm text-gray-500">
+              푸시 알림이 꺼져 있습니다. 알림을 받고 싶다면 켜주세요.
+            </Text>
+          )}
         </View>
 
         {/* 키워드 알림 설정 섹션 */}

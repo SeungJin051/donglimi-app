@@ -42,6 +42,19 @@ export default function TabLayout() {
             header: () => <HomeHeader />,
             tabBarShowLabel: false,
           }}
+          // 홈 탭에서만 스와이프 활성화/비활성화
+          listeners={({ navigation }) => ({
+            focus: () => {
+              navigation.getParent()?.setOptions({
+                swipeEnabled: true,
+              })
+            },
+            blur: () => {
+              navigation.getParent()?.setOptions({
+                swipeEnabled: false,
+              })
+            },
+          })}
         />
         <Tabs.Screen
           name="notification"

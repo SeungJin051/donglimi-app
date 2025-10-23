@@ -14,7 +14,7 @@ import { useNotificationStore } from '@/store/notificationStore'
  * 알림 설정 관련 비즈니스 로직을 관리하는 커스텀 훅
  */
 export function useNotificationSettings() {
-  const { getPushToken } = usePushNotifications()
+  const { getPushToken, handleToggleNotification } = usePushNotifications()
 
   const {
     selectedKeywords: selectedKeywordsArray,
@@ -142,6 +142,14 @@ export function useNotificationSettings() {
     setSelectedDepartment(null)
   }, [setSelectedDepartment])
 
+  // 알림 토글 핸들러 (푸시 권한 요청 포함)
+  const handleNotificationToggle = useCallback(
+    (value: boolean) => {
+      handleToggleNotification(value, setNotificationEnabled)
+    },
+    [handleToggleNotification, setNotificationEnabled]
+  )
+
   return {
     // 상태
     selectedKeywords,
@@ -151,7 +159,7 @@ export function useNotificationSettings() {
     notificationEnabled,
 
     // 액션
-    setNotificationEnabled,
+    handleNotificationToggle,
     handleKeywordUpdate,
     handleDepartmentUpdate,
     handleKeywordRemove,
