@@ -5,8 +5,10 @@ import { BottomSheetModalProvider } from '@gorhom/bottom-sheet'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { Drawer } from 'expo-router/drawer'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
+import Toast from 'react-native-toast-message'
 
 import HomeDrawer from '@/components/layout/HomeDrawer/HomeDrawer'
+import { toastConfig } from '@/components/ui/CustomToast/CustomToast'
 import { useOnboarding } from '@/hooks/useOnboarding'
 import { queryClient } from '@/utils/queryClient'
 
@@ -36,6 +38,7 @@ export default function RootLayout() {
               options={{ drawerLabel: '홈', title: '홈' }}
             />
           </Drawer>
+          <Toast config={toastConfig} />
         </BottomSheetModalProvider>
       </QueryClientProvider>
     </GestureHandlerRootView>
