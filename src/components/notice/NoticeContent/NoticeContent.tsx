@@ -15,6 +15,7 @@ import { useScrapStore } from '@/store/scrapStore'
 import { Notice } from '@/types/notice.type'
 import { getFormattedDate } from '@/utils/dateUtils'
 import { getDepartmentStyles } from '@/utils/departmentStyles'
+import { showInfoToast, showSuccessToast } from '@/utils/toastUtils'
 
 interface NoticeContentProps {
   item: Notice
@@ -55,14 +56,17 @@ export const NoticeContent = ({ item }: NoticeContentProps) => {
       await updateDoc(docRef, {
         scrap_count: increment(1),
       })
-      // Todo: "스크랩했습니다" 토스트 메시지
+      showSuccessToast('내 스크랩에 추가했어요')
     } catch (error) {
       // 서버 업데이트 실패!
       console.error('스크랩 추가 실패:', error)
 
       // 롤백 로컬에서 다시 스크랩을 제거합니다.
       removeScrap({ notice: item })
-      // Todo: "스크랩에 실패했습니다. 다시 시도해주세요" 에러 토스트
+      showInfoToast(
+        '스크랩을 추가하지 못했어요',
+        '일시적인 오류예요. 잠시 후 다시 시도해주세요.'
+      )
     }
   }
 
@@ -79,14 +83,17 @@ export const NoticeContent = ({ item }: NoticeContentProps) => {
       await updateDoc(docRef, {
         scrap_count: increment(-1),
       })
-      // Todo: "스크랩을 취소했습니다" 토스트
+      showSuccessToast('내 스크랩에서 삭제했어요')
     } catch (error) {
       // 서버 업데이트 실패 시 롤백
       console.error('스크랩 삭제 실패:', error)
 
       // 롤백 로컬에 다시 스크랩을 추가합니다.
       addScrap({ notice: item })
-      // Todo: "취소에 실패했습니다." 에러 토스트
+      showInfoToast(
+        '내 스크랩에서 삭제하지 못했어요',
+        '일시적인 오류예요. 잠시 후 다시 시도해주세요.'
+      )
     }
   }
 
@@ -178,4 +185,7 @@ export const NoticeContent = ({ item }: NoticeContentProps) => {
       />
     </>
   )
+}
+function showErrorToast(arg0: string) {
+  throw new Error('Function not implemented.')
 }
