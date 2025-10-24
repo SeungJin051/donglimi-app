@@ -1,5 +1,6 @@
 import { useState } from 'react'
 
+import { router } from 'expo-router'
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore'
 import {
   ScrollView,
@@ -14,6 +15,7 @@ import {
 
 import SettingDetailHeader from '@/components/layout/SettingDetailHeader/SettingDetailHeader'
 import { db } from '@/config/firebaseConfig'
+import { showSuccessToast } from '@/utils/toastUtils'
 
 const suggestionTypes = [
   {
@@ -38,11 +40,6 @@ export default function SuggestionScreen() {
 
   // 건의사항 전송
   const handleSubmit = async () => {
-    if (!selectedType || !title.trim() || !content.trim()) {
-      Alert.alert('입력 오류', '모든 필드를 입력해주세요.')
-      return
-    }
-
     setIsSubmitting(true)
 
     try {
@@ -53,20 +50,8 @@ export default function SuggestionScreen() {
         timestamp: serverTimestamp(), // 서버 기준 시간
       })
 
-      Alert.alert(
-        '전송 완료',
-        '소중한 의견 감사합니다! 빠른 시일 내에 검토하겠습니다.',
-        [
-          {
-            text: '확인',
-            onPress: () => {
-              setSelectedType('')
-              setTitle('')
-              setContent('')
-            },
-          },
-        ]
-      )
+      showSuccessToast('소중한 의견 감사합니다!')
+      router.back()
     } catch (error) {
       console.error('건의사항 전송 실패:', error)
       Alert.alert('전송 실패', '잠시 후 다시 시도해주세요.')
@@ -128,7 +113,7 @@ export default function SuggestionScreen() {
             </Text>
             <TextInput
               className="rounded-xl border border-gray-200 bg-white p-4 text-base"
-              placeholder="제목을 입력해주세요"
+              placeholder="제목을 입력해주세요 (최소 5자)"
               value={title}
               onChangeText={setTitle}
               maxLength={100}
@@ -142,7 +127,7 @@ export default function SuggestionScreen() {
             </Text>
             <TextInput
               className="rounded-xl border border-gray-200 bg-white p-4 text-base"
-              placeholder="자세한 내용을 입력해주세요"
+              placeholder="자세한 내용을 입력해주세요 (최소 5자)"
               value={content}
               onChangeText={setContent}
               multiline
@@ -158,13 +143,19 @@ export default function SuggestionScreen() {
           {/* 전송 버튼 */}
           <TouchableOpacity
             className={`mb-8 rounded-xl p-4 ${
-              isSubmitting || !selectedType || !title.trim() || !content.trim()
+              isSubmitting ||
+              !selectedType ||
+              title.trim().length < 5 ||
+              content.trim().length < 5
                 ? 'bg-gray-300'
                 : 'bg-deu-light-blue'
             }`}
             onPress={handleSubmit}
             disabled={
-              isSubmitting || !selectedType || !title.trim() || !content.trim()
+              isSubmitting ||
+              !selectedType ||
+              title.trim().length < 5 ||
+              content.trim().length < 5
             }
           >
             <Text className="text-center text-lg font-semibold text-white">
