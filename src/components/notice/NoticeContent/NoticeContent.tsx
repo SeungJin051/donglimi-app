@@ -186,6 +186,3 @@ export const NoticeContent = ({ item }: NoticeContentProps) => {
     </>
   )
 }
-function showErrorToast(arg0: string) {
-  throw new Error('Function not implemented.')
-}
