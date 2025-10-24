@@ -120,7 +120,9 @@ export default function EditingNotificationSubscriptions({
       )}
       {localCategories.length === 0 && (
         <View className="flex-1 items-center justify-center">
-          <Text className="text-lg font-extralight">구독 항목이 없습니다.</Text>
+          <Text className="text-lg font-extralight">
+            현재 구독중인 항목이 없어요
+          </Text>
         </View>
       )}
     </View>
