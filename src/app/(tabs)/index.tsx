@@ -1,3 +1,6 @@
+import { useEffect, useState } from 'react'
+
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import {
   Text,
   View,
@@ -8,9 +11,13 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { NoticeContent } from '@/components/notice/NoticeContent/NoticeContent'
+import SwipeGuideHeader from '@/components/ui/SwipeGuideHeader/SwipeGuideHeader'
 import { useFetchNotices } from '@/hooks/useFetchNotices'
 
 export default function HomeScreen() {
+  // 스와이프 가이드 표시 상태
+  const [showSwipeGuide, setShowSwipeGuide] = useState(false)
+
   // 무한스크롤 훅을 호출하여 데이터, 로딩 상태, 에러 상태를 가져옵니다.
   const {
     data,
@@ -25,6 +32,30 @@ export default function HomeScreen() {
 
   // 모든 페이지의 데이터를 평탄화하여 하나의 배열로 만듦
   const notices = data?.pages.flatMap((page) => page.notices) || []
+
+  // AsyncStorage에서 스와이프 가이드 확인 여부 체크
+  useEffect(() => {
+    const checkSwipeGuideStatus = async () => {
+      try {
+        const hasSeenSwipeGuide =
+          await AsyncStorage.getItem('hasSeenSwipeGuide')
+
+        // hasSeenSwipeGuide가 null이면 (처음 본 사용자) 가이드 표시
+        if (hasSeenSwipeGuide === null) {
+          setShowSwipeGuide(true)
+
+          // 가이드를 본 것으로 표시
+          await AsyncStorage.setItem('hasSeenSwipeGuide', 'true')
+        } else {
+          setShowSwipeGuide(false)
+        }
+      } catch (error) {
+        console.error('스와이프 가이드 상태 확인 중 오류:', error)
+      }
+    }
+
+    checkSwipeGuideStatus()
+  }, [])
 
   // 다음 페이지 로드 함수
   const handleLoadMore = () => {
@@ -91,6 +122,8 @@ export default function HomeScreen() {
             </View>
           ) : null
         }
+        // showSwipeGuide가 true일 때만 스와이프 가이드 헤더 표시
+        ListHeaderComponent={showSwipeGuide ? <SwipeGuideHeader /> : null}
       />
     </View>
   )
