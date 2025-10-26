@@ -51,9 +51,6 @@ export function calculateDDay(dateString: string): {
     textColor = 'text-white'
     bgColor = 'bg-red-500'
   } else if (diffDays <= 7) {
-    textColor = 'text-red-600'
-    bgColor = 'bg-red-100'
-  } else if (diffDays <= 30) {
     textColor = 'text-blue-600'
     bgColor = 'bg-blue-100'
   } else {
