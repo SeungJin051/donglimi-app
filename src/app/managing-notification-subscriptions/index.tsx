@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, useCallback } from 'react'
 
 import { Ionicons } from '@expo/vector-icons'
 import { useRouter } from 'expo-router'
@@ -10,6 +10,7 @@ import {
   SUBSCRIPTION_TAB,
   SUBSCRIPTION_TAB_DEPARTMENT,
 } from '@/types/category.type'
+import { showSuccessToast } from '@/utils/toastUtils'
 
 export default function ManagingNotificationSubscriptions() {
   const router = useRouter()
@@ -40,6 +41,28 @@ export default function ManagingNotificationSubscriptions() {
   useEffect(() => {
     setSelectedItems(initialSubscribedItems)
   }, [initialSubscribedItems])
+
+  // 아이템 선택 토글 핸들러
+  const handleItemToggle = useCallback((itemName: string) => {
+    setSelectedItems((prevItems) => {
+      if (prevItems.includes(itemName)) {
+        return prevItems.filter((selected) => selected !== itemName)
+      } else {
+        return [...prevItems, itemName]
+      }
+    })
+  }, [])
+
+  // 변경사항 저장 핸들러
+  const handleSaveChanges = useCallback(() => {
+    if (hasChanges) {
+      setSubscribedCategories(
+        selectedItems.map((item) => ({ id: item, name: item }))
+      )
+      showSuccessToast('변경사항을 저장했어요')
+      router.back()
+    }
+  }, [hasChanges, selectedItems, setSubscribedCategories, router])
 
   return (
     <ScrollView className="bg-white">
@@ -79,17 +102,7 @@ export default function ManagingNotificationSubscriptions() {
                       <TouchableOpacity
                         key={item.name}
                         className="mb-2 mr-2"
-                        onPress={() => {
-                          if (selectedItems.includes(item.name)) {
-                            setSelectedItems(
-                              selectedItems.filter(
-                                (selected) => selected !== item.name
-                              )
-                            )
-                          } else {
-                            setSelectedItems([...selectedItems, item.name])
-                          }
-                        }}
+                        onPress={() => handleItemToggle(item.name)}
                       >
                         <Text
                           className={`rounded-lg px-3 py-3 ${
@@ -144,17 +157,7 @@ export default function ManagingNotificationSubscriptions() {
                       <TouchableOpacity
                         key={item.name}
                         className="mb-2 mr-2"
-                        onPress={() => {
-                          if (selectedItems.includes(item.name)) {
-                            setSelectedItems(
-                              selectedItems.filter(
-                                (selected) => selected !== item.name
-                              )
-                            )
-                          } else {
-                            setSelectedItems([...selectedItems, item.name])
-                          }
-                        }}
+                        onPress={() => handleItemToggle(item.name)}
                       >
                         <Text
                           className={`rounded-lg px-2 py-3 ${
@@ -181,13 +184,7 @@ export default function ManagingNotificationSubscriptions() {
                 ? 'border-deu-light-blue bg-deu-light-blue'
                 : 'border-gray-300 bg-gray-300'
             }`}
-            onPress={() => {
-              if (hasChanges) {
-                setSubscribedCategories(
-                  selectedItems.map((item) => ({ id: item, name: item }))
-                )
-              }
-            }}
+            onPress={handleSaveChanges}
             disabled={!hasChanges}
           >
             <Text
@@ -195,7 +192,9 @@ export default function ManagingNotificationSubscriptions() {
                 hasChanges ? 'text-white' : 'text-gray-500'
               }`}
             >
-              {hasChanges ? '변경사항 저장' : '변경사항 없음'}
+              {hasChanges
+                ? `변경사항 저장하기  (${selectedItems.length})`
+                : '변경사항이 없어요'}
             </Text>
           </TouchableOpacity>
         </View>

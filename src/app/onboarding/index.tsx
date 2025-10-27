@@ -72,9 +72,16 @@ export default function OnboardingScreen() {
       }
 
       // 구독 토픽 조합: 학과 + 키워드
+
+      // selectedKeywords 배열의 key를 실제 title로 변환
+      const keywordTitles = selectedKeywords.map(
+        (key) =>
+          NOTIFICATION_KEYWORDS[key as keyof typeof NOTIFICATION_KEYWORDS].title
+      )
+
       const subscribedTopics = [
         ...(selectedDepartment ? [selectedDepartment] : []),
-        ...selectedKeywords,
+        ...keywordTitles,
       ]
 
       // Firestore 저장 (문서 ID를 토큰으로 고정)

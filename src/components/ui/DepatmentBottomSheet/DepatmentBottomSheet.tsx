@@ -79,25 +79,26 @@ export const DepatmentBottomSheet = ({
   const handleDepartmentSelect = (departmentId: string) => {
     const departmentName = getDepartmentNameById(departmentId, selectedCollege)
 
-    setSelectedDepartments((prev) => {
-      let newSelectedDepartments: string[]
-      if (prev.includes(departmentName)) {
-        // 이미 선택된 학과는 해제
-        newSelectedDepartments = prev.filter((name) => name !== departmentName)
-      } else {
-        // 새로 선택하려는 경우, 이미 2개가 선택되어 있으면 선택 불가
-        if (prev.length >= 2) {
-          // 선택 제한 알림 (필요시 Toast나 Alert 추가)
-          console.log('최대 2개까지 선택 가능합니다')
-          return prev // 선택 제한 초과로 변경 없음
-        }
-        newSelectedDepartments = [...prev, departmentName]
+    let newSelectedDepartments: string[]
+    if (selectedDepartments.includes(departmentName)) {
+      // 이미 선택된 학과는 해제
+      newSelectedDepartments = selectedDepartments.filter(
+        (name) => name !== departmentName
+      )
+    } else {
+      // 새로 선택하려는 경우, 이미 2개가 선택되어 있으면 선택 불가
+      if (selectedDepartments.length >= 2) {
+        // 선택 제한 알림 (필요시 Toast나 Alert 추가)
+        console.log('최대 2개까지 선택 가능합니다')
+        return // 선택 제한 초과로 변경 없음
       }
+      newSelectedDepartments = [...selectedDepartments, departmentName]
+    }
 
-      // 실시간으로 상위 컴포넌트에 업데이트 전달
-      onDepartmentsUpdate?.(newSelectedDepartments)
-      return newSelectedDepartments
-    })
+    // 상태 업데이트
+    setSelectedDepartments(newSelectedDepartments)
+    // 실시간으로 상위 컴포넌트에 업데이트 전달
+    onDepartmentsUpdate?.(newSelectedDepartments)
   }
 
   const handleComplete = () => {

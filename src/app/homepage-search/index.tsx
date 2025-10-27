@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { Ionicons } from '@expo/vector-icons'
 import { useRouter } from 'expo-router'
@@ -10,17 +10,19 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   FlatList,
+  ActivityIndicator,
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { NoticeContent } from '@/components/notice/NoticeContent/NoticeContent'
-import { useFetchNotices } from '@/hooks/useFetchNotices'
+import { useAlgoliaSearch } from '@/hooks/useAlgoliaSearch'
 import { useSearchStore } from '@/store/searchStore'
 import { Notice } from '@/types/notice.type'
 
 export default function HomepageSearch() {
   const router = useRouter()
   const inputRef = useRef<TextInput>(null)
+  const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // 화면 진입 시 키보드 자동으로 올리기
   useEffect(() => {
@@ -32,26 +34,64 @@ export default function HomepageSearch() {
 
   const [searchTerm, setSearchTerm] = useState('')
   const [editMode, setEditMode] = useState(false)
-  const [searchResults, setSearchResults] = useState<Notice[]>([])
   const [hasSearched, setHasSearched] = useState(false) // 검색을 시도했는지 여부
 
   const { searchHistory, addHistory, removeHistory, clearHistory } =
     useSearchStore()
 
-  const { data: notices = [] } = useFetchNotices(20)
+  // Algolia 검색 훅 사용
+  const { searchResults, isLoading, error, search, clearResults } =
+    useAlgoliaSearch()
 
-  // 검색어 변경 핸들러
+  // 디바운스된 검색 함수
+  const debouncedSearch = useCallback(
+    (term: string) => {
+      if (debounceTimer.current) {
+        clearTimeout(debounceTimer.current)
+        debounceTimer.current = null
+      }
+
+      debounceTimer.current = setTimeout(() => {
+        search(term)
+      }, 300)
+    },
+    [search]
+  )
+
+  // 검색어 변경 핸들러 (실시간 검색 포함)
   const handleSearchTermChange = (term: string) => {
     setSearchTerm(term)
+
     // 검색어가 비워지면 검색 시도 상태를 초기화하여 '최근 검색' 화면으로 돌아감
     if (term.trim() === '') {
       setHasSearched(false)
-      setSearchResults([])
+      clearResults()
+      return
+    }
+
+    // 실시간 검색 (2글자 이상부터)
+    const trimmedTerm = term.trim()
+    if (trimmedTerm.length >= 2) {
+      setHasSearched(true)
+      debouncedSearch(trimmedTerm)
+    } else {
+      setHasSearched(false)
+      clearResults()
     }
   }
 
-  // 검색 실행 함수
-  const executeSearch = (term: string) => {
+  // 컴포넌트 언마운트 시 타이머 정리
+  useEffect(() => {
+    return () => {
+      if (debounceTimer.current) {
+        clearTimeout(debounceTimer.current)
+        debounceTimer.current = null
+      }
+    }
+  }, [])
+
+  // 검색 실행 함수 (Algolia 사용)
+  const executeSearch = async (term: string) => {
     const trimmedTerm = term.trim()
     if (!trimmedTerm) {
       setHasSearched(false)
@@ -61,27 +101,23 @@ export default function HomepageSearch() {
     addHistory(trimmedTerm) // 검색 기록 추가
     setHasSearched(true) // 검색 시도 상태로 변경
 
-    const results = notices.filter(
-      (notice: Notice) =>
-        notice.title.toLowerCase().includes(trimmedTerm.toLowerCase()) ||
-        notice.department.toLowerCase().includes(trimmedTerm.toLowerCase()) ||
-        notice.tags.some((tag: string) =>
-          tag.toLowerCase().includes(trimmedTerm.toLowerCase())
-        )
-    )
-    setSearchResults(results)
+    // Algolia 검색 실행
+    await search(trimmedTerm)
   }
 
-  // 검색 기록 클릭 핸들러
-  const handleHistoryPress = (historyTerm: string) => {
+  // 검색 기록 클릭 핸들러 (즉시 검색)
+  const handleHistoryPress = async (historyTerm: string) => {
     setSearchTerm(historyTerm)
-    executeSearch(historyTerm)
+    addHistory(historyTerm)
+    setHasSearched(true)
+    await search(historyTerm)
   }
 
   // 뒤로가기 핸들러
   const handleBack = () => {
     setSearchTerm('')
     setHasSearched(false)
+    clearResults()
     router.back()
   }
 
@@ -117,11 +153,24 @@ export default function HomepageSearch() {
         {/* 컨텐츠 영역 */}
         <View className="flex-1">
           {hasSearched ? (
-            searchResults.length > 0 ? (
+            isLoading ? (
+              <View className="flex-1 items-center justify-center">
+                <ActivityIndicator size="large" color="#007AFF" />
+              </View>
+            ) : error ? (
+              <View className="flex-1 items-center justify-center px-4">
+                <Text className="text-lg text-red-500">
+                  데이터를 불러오는 중 오류가 발생했습니다.
+                </Text>
+              </View>
+            ) : searchResults.length > 0 ? (
               <FlatList
                 data={searchResults}
                 renderItem={({ item }) => <NoticeContent item={item} />}
-                keyExtractor={(item) => item.content_hash}
+                keyExtractor={(item) =>
+                  (item as Notice & { objectID?: string }).objectID ||
+                  item.content_hash
+                }
                 showsVerticalScrollIndicator={false}
                 onScrollBeginDrag={Keyboard.dismiss}
               />

@@ -13,6 +13,7 @@ import { db } from '@/config/firebaseConfig'
 import { Scrap, useScrapStore } from '@/store/scrapStore'
 import { getFormattedDate } from '@/utils/dateUtils'
 import { getDepartmentStyles } from '@/utils/departmentStyles'
+import { showInfoToast, showSuccessToast } from '@/utils/toastUtils'
 
 // 개별 스크랩 아이템 컴포넌트
 export const ScrapItem = ({ scrap }: { scrap: Scrap }) => {
@@ -40,12 +41,15 @@ export const ScrapItem = ({ scrap }: { scrap: Scrap }) => {
       await updateDoc(docRef, {
         scrap_count: increment(-1),
       })
-      // Todo: "스크랩을 취소했습니다" 토스트 메시지
+      showSuccessToast('내 스크랩에서 삭제했어요')
     } catch (error) {
       // 롤백: 서버 업데이트 실패 시 로컬 상태 되돌리기
       console.error('스크랩 삭제 실패 (서버):', error)
       addScrap(scrap) // 삭제했던 스크랩을 다시 추가
-      // Todo: "오류가 발생했습니다. 다시 시도해주세요" 토스트 메시지
+      showInfoToast(
+        '내 스크랩에서 삭제하지 못했어요',
+        '일시적인 오류예요. 잠시 후 다시 시도해주세요.'
+      )
     }
   }
   // 스와이프 활성화 시 햅틱 피드백
