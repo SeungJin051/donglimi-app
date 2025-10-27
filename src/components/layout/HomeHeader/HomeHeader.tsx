@@ -4,6 +4,8 @@ import { useNavigation, useRouter } from 'expo-router'
 import { Platform, TouchableOpacity, View, Image } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
+import { scrollToTop } from '@/utils/scrollRefs'
+
 export function HomeHeader() {
   const router = useRouter()
   const navigation = useNavigation()
@@ -29,12 +31,7 @@ export function HomeHeader() {
       <TouchableOpacity onPress={openMenu} style={{ padding: 8 }}>
         <Ionicons name="menu" size={28} color="#999999" />
       </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => {
-          console.log('게시글 상단으로 이동하기')
-        }}
-        style={{ padding: 8 }}
-      >
+      <TouchableOpacity onPress={scrollToTop} style={{ padding: 8 }}>
         <Image
           // eslint-disable-next-line @typescript-eslint/no-require-imports
           source={require('@/assets/images/donglimi-logo.png')}

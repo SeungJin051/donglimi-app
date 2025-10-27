@@ -13,6 +13,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { NoticeContent } from '@/components/notice/NoticeContent/NoticeContent'
 import SwipeGuideHeader from '@/components/ui/SwipeGuideHeader/SwipeGuideHeader'
 import { useFetchNotices } from '@/hooks/useFetchNotices'
+import { homeScrollRef } from '@/utils/scrollRefs'
 
 export default function HomeScreen() {
   // 스와이프 가이드 표시 상태
@@ -93,6 +94,7 @@ export default function HomeScreen() {
   return (
     <View className="flex-1 bg-gray-50">
       <FlatList
+        ref={homeScrollRef}
         data={notices}
         renderItem={({ item }) => <NoticeContent item={item} />}
         keyExtractor={(item) => item.content_hash}
