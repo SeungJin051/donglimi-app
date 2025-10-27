@@ -66,7 +66,11 @@ export function useNotificationSettings() {
       return
     }
 
-    const keywordTopics = selectedKeywordsArray
+    // selectedKeywordsArray의 key를 title로 변환
+    const keywordTopics = selectedKeywordsArray.map(
+      (key) =>
+        NOTIFICATION_KEYWORDS[key as keyof typeof NOTIFICATION_KEYWORDS].title
+    )
     const departmentTopics = selectedDepartments
     const merged = Array.from(new Set([...departmentTopics, ...keywordTopics]))
 
@@ -83,7 +87,7 @@ export function useNotificationSettings() {
         { merge: true }
       )
     } catch {
-      // ignore: 개발용
+      // ignore
     }
   }, [
     pushToken,
@@ -99,12 +103,12 @@ export function useNotificationSettings() {
       void saveSettingsToFirestore()
     }, 800)
     return () => clearTimeout(timer)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     pushToken,
     notificationEnabled,
     selectedKeywordsArray,
     selectedDepartments,
-    saveSettingsToFirestore,
   ])
 
   // 키워드 업데이트 핸들러 (KeywordBottomSheet에서 호출)
@@ -138,9 +142,15 @@ export function useNotificationSettings() {
   )
 
   // 학과 제거 핸들러
-  const handleDepartmentRemove = useCallback(() => {
-    setSelectedDepartment(null)
-  }, [setSelectedDepartment])
+  const handleDepartmentRemove = useCallback(
+    (departmentName: string) => {
+      // 제거할 학과가 현재 선택된 학과와 일치하면 null로 설정
+      if (selectedDepartment === departmentName) {
+        setSelectedDepartment(null)
+      }
+    },
+    [selectedDepartment, setSelectedDepartment]
+  )
 
   // 알림 토글 핸들러 (푸시 권한 요청 포함)
   const handleNotificationToggle = useCallback(
