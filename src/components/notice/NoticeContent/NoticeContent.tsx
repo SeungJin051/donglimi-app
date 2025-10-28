@@ -1,4 +1,4 @@
-import { useRef, useMemo, useState } from 'react'
+import { useRef, useMemo, useState, useEffect } from 'react'
 
 import { Ionicons } from '@expo/vector-icons'
 import * as Haptics from 'expo-haptics'
@@ -11,8 +11,11 @@ import Swipeable, {
 import InAppBrowser from '@/components/ui/InAppBrowser/InAppBrowser'
 import RightSwipeActions from '@/components/ui/RightSwipeActions/RightSwipeActions'
 import { db } from '@/config/firebaseConfig'
+import { useInterstitialAd } from '@/hooks/useInterstitialAd'
+import { useAdStore } from '@/store/adStore'
 import { useScrapStore } from '@/store/scrapStore'
 import { Notice } from '@/types/notice.type'
+import { canShowAd } from '@/utils/adManager'
 import { getFormattedDate } from '@/utils/dateUtils'
 import { getDepartmentStyles } from '@/utils/departmentStyles'
 import { showInfoToast, showSuccessToast } from '@/utils/toastUtils'
@@ -30,6 +33,21 @@ export const NoticeContent = ({ item }: NoticeContentProps) => {
 
   // 스크랩 스토어 호출
   const { scraps, addScrap, removeScrap } = useScrapStore()
+
+  // 광고 관련
+  const {
+    linkOpenCount,
+    todayAdCount,
+    incrementLinkCount,
+    increaseCount,
+    resetIfDateChanged,
+  } = useAdStore()
+  const { showAd } = useInterstitialAd()
+
+  // 날짜 체크 (마운트 시 1회)
+  useEffect(() => {
+    resetIfDateChanged()
+  }, [resetIfDateChanged])
 
   // 스와이프 참조
   const swipeableRef = useRef<SwipeableMethods>(null)
@@ -107,6 +125,27 @@ export const NoticeContent = ({ item }: NoticeContentProps) => {
     if (item.link) {
       setBrowserUrl(item.link)
       setBrowserVisible(true)
+      // 링크 열람 카운트 증가
+      incrementLinkCount()
+    }
+  }
+
+  // 브라우저 닫기 핸들러 (광고 로직 포함)
+  const handleBrowserClose = () => {
+    setBrowserVisible(false)
+
+    // 광고 노출 판단 (현재 링크 카운트 기준)
+    const shouldShow = canShowAd({
+      viewedCount: linkOpenCount,
+      todayCount: todayAdCount,
+    })
+
+    if (shouldShow) {
+      // UX 딜레이 (500ms)
+      setTimeout(() => {
+        showAd()
+        increaseCount() // 영구 저장
+      }, 500)
     }
   }
 
@@ -181,7 +220,7 @@ export const NoticeContent = ({ item }: NoticeContentProps) => {
       <InAppBrowser
         visible={browserVisible}
         url={browserUrl}
-        onClose={() => setBrowserVisible(false)}
+        onClose={handleBrowserClose}
       />
     </>
   )
