@@ -44,8 +44,8 @@ export default function HomeScreen() {
     const adInterval = 7 // 7개마다 광고
 
     notices.forEach((notice, index) => {
-      // 광고 삽입: 0번째 또는 adInterval의 배수일 때
-      if (index === 0 || index % adInterval === 0) {
+      // 7개마다 광고 삽입
+      if (index !== 0 && index % adInterval === 0) {
         result.push({ type: 'ad', id: `ad-${index}` })
       }
 
