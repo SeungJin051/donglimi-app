@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons'
 import { View, Text, TouchableOpacity } from 'react-native'
 
 import { NOTIFICATION_KEYWORDS } from '@/constants/keyword'
+import { showSuccessToast } from '@/utils/toastUtils'
 
 type SortOption = 'latest' | 'oldest'
 
@@ -50,6 +51,7 @@ export default function ScrapFilterBottomSheet({
     // 적용하기 버튼을 눌렀을 때만 실제 상태 업데이트
     setSortBy(localSortBy)
     setSelectedKeywords(localSelectedKeywords)
+    showSuccessToast('정렬/필터가 적용되었어요')
     onApply()
   }
 

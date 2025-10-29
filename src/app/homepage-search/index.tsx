@@ -138,7 +138,7 @@ export default function HomepageSearch() {
             ref={inputRef}
             className="h-12 rounded-xl bg-gray-100 py-0 pl-11 text-base"
             placeholderTextColor="#B0B0B0"
-            placeholder="검색"
+            placeholder="어떤 공지사항을 찾으세요?"
             returnKeyType="search"
             value={searchTerm}
             onChangeText={handleSearchTermChange}
@@ -158,9 +158,12 @@ export default function HomepageSearch() {
                 <ActivityIndicator size="large" color="#007AFF" />
               </View>
             ) : error ? (
-              <View className="flex-1 items-center justify-center px-4">
-                <Text className="text-lg text-red-500">
-                  데이터를 불러오는 중 오류가 발생했습니다.
+              <View className="flex-1 items-center px-8 pt-16">
+                <Text className="text-xl font-bold text-gray-900">
+                  결과를 불러올 수 없어요
+                </Text>
+                <Text className="mt-2 text-center text-base text-gray-500">
+                  네트워크 상태를 확인한 뒤 다시 시도해주세요.
                 </Text>
               </View>
             ) : searchResults.length > 0 ? (
@@ -175,9 +178,12 @@ export default function HomepageSearch() {
                 onScrollBeginDrag={Keyboard.dismiss}
               />
             ) : (
-              <View className="flex-1 items-center px-4">
-                <Text className="text-lg text-gray-400">
-                  검색 결과가 없습니다.
+              <View className="flex-1 items-center px-8 pt-16">
+                <Text className="text-xl font-bold text-gray-900">
+                  검색 결과가 없어요
+                </Text>
+                <Text className="mt-2 text-center text-base text-gray-500">
+                  단어를 줄이거나 다른 키워드로 다시 검색해보세요.
                 </Text>
               </View>
             )
@@ -230,9 +236,12 @@ export default function HomepageSearch() {
               </View>
             </View>
           ) : (
-            <View className="flex-1 items-center">
-              <Text className="text-lg text-gray-400">
-                검색 기록이 없습니다.
+            <View className="flex-1 items-center px-8 pt-16">
+              <Text className="text-xl font-bold text-gray-900">
+                검색 기록이 없어요
+              </Text>
+              <Text className="mt-2 text-center text-base text-gray-500">
+                최근 검색어가 여기에 표시됩니다.
               </Text>
             </View>
           )}

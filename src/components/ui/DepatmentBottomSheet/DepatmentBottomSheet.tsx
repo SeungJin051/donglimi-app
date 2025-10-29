@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { View, Text, TouchableOpacity } from 'react-native'
 
 import { DEPARTMENTS_BY_COLLEGE } from '@/constants/collge'
+import { showSuccessToast } from '@/utils/toastUtils'
 
 interface DepatmentBottomSheetProps {
   selectedDepartments?: string[]
@@ -105,6 +106,7 @@ export const DepatmentBottomSheet = ({
     // 선택 완료 처리 로직 - 선택된 학과는 이미 실시간으로 업데이트됨
     console.log('선택된 학과들:', selectedDepartments)
     // 바텀시트만 닫기 (선택 상태는 이미 상위 컴포넌트에 전달됨)
+    showSuccessToast('학과 선택이 저장되었어요')
     onComplete?.()
   }
 

@@ -340,11 +340,18 @@ export default function OnboardingScreen() {
               <View className="rounded-xl border border-gray-200 bg-white p-5">
                 <View className="flex-row items-center justify-between">
                   <View className="flex-1">
-                    <Text className="mb-1 text-lg font-semibold text-gray-900">
-                      🔔 푸시 알림 받기
-                    </Text>
+                    <View className="mb-1 flex-row items-center gap-2">
+                      <Ionicons
+                        name="notifications-outline"
+                        size={22}
+                        color="#F59E0B"
+                      />
+                      <Text className="text-lg font-semibold text-gray-900">
+                        새 공지, 놓치지 마세요
+                      </Text>
+                    </View>
                     <Text className="text-sm text-gray-600">
-                      새로운 공지사항을 실시간으로 알려드려요
+                      장학금, 학사일정 등 중요 소식을 실시간으로 알려드려요.
                     </Text>
                   </View>
                   <Switch
