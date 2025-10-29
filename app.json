@@ -9,9 +9,9 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
-      "image": "./src/assets/images/splash-icon.png",
+      "image": "./src/assets/images/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#3182F6"
     },
     "ios": {
       "supportsTablet": true,
@@ -37,7 +37,8 @@
       [
         "react-native-google-mobile-ads",
         {
-          "iosAppId": "ca-app-pub-6797307832453076~2539092522"
+          "iosAppId": "ca-app-pub-6797307832453076~2539092522",
+          "androidAppId": "ca-app-pub-3940256099942544~3347511713"
         }
       ],
       [
