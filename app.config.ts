@@ -66,6 +66,10 @@ const config: ExpoConfig = {
       process.env.EXPO_PUBLIC_ANDROID_BANNER_AD_UNIT,
     EXPO_PUBLIC_ANDROID_INTERSTITIAL_AD_UNIT:
       process.env.EXPO_PUBLIC_ANDROID_INTERSTITIAL_AD_UNIT,
+    EXPO_PUBLIC_ALGOLIA_APPLICATION_ID:
+      process.env.EXPO_PUBLIC_ALGOLIA_APPLICATION_ID,
+    EXPO_PUBLIC_ALGOLIA_SEARCH_ONLY_API_KEY:
+      process.env.EXPO_PUBLIC_ALGOLIA_SEARCH_ONLY_API_KEY,
     router: {},
     eas: {
       projectId: 'e0b0a38e-f8a6-44b6-a6be-270eaaff6f7a',
