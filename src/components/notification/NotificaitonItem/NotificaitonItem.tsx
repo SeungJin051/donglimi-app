@@ -97,6 +97,17 @@ function NotificationItemContent({
 
   // 알림 탭: 브라우저 열고(있으면) 상위 onPress 호출
   const handlePress = () => {
+    // 읽음 처리만 위해 상위 onPress 호출, 브라우저는 열지 않음
+    if (!item.read) {
+      onPress?.({
+        id: item.id,
+        noticeLink: item.noticeLink,
+        noticeId: item.noticeId,
+      })
+      return
+    }
+
+    // 읽음이면 링크가 있을 때만 인앱 브라우저 오픈 후 상위 onPress
     if (item.noticeLink) {
       setBrowserUrl(item.noticeLink)
       setBrowserVisible(true)
