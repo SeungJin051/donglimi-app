@@ -112,7 +112,7 @@ export default function OpenSourceLicensesScreen() {
       >
         <View className="rounded-xl border border-gray-200 bg-white p-6">
           <Text className="mb-6 text-base leading-6 text-gray-700">
-            동림이 앱은 다음과 같은 오픈소스 라이브러리를 사용합니다.
+            동리미 앱은 다음과 같은 오픈소스 라이브러리를 사용합니다.
           </Text>
 
           {licenses.map((license, index) => (
