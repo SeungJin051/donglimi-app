@@ -59,7 +59,7 @@ export default function ManagingNotificationSubscriptions() {
       setSubscribedCategories(
         selectedItems.map((item) => ({ id: item, name: item }))
       )
-      showSuccessToast('변경사항을 저장했어요')
+      showSuccessToast('공지 구독을 저장했어요')
       router.back()
     }
   }, [hasChanges, selectedItems, setSubscribedCategories, router])
@@ -93,7 +93,14 @@ export default function ManagingNotificationSubscriptions() {
         <View className="mt-4 px-4">
           {activeTab === '정보광장' && (
             <View>
-              <Text className="mb-4 text-lg font-semibold">📢 정보광장</Text>
+              <View className="mb-4 flex-row items-center gap-2">
+                <Ionicons
+                  name="information-circle-outline"
+                  size={24}
+                  color="#1E3A5F"
+                />
+                <Text className="text-lg font-semibold">정보광장</Text>
+              </View>
 
               <View className="flex-row flex-wrap">
                 {DEPARTMENT_LIST.map(
@@ -122,9 +129,10 @@ export default function ManagingNotificationSubscriptions() {
           {activeTab === '단과대학/학과' && (
             <View>
               <View>
-                <Text className="mb-4 text-lg font-semibold">
-                  🏫 단과대학/학과
-                </Text>
+                <View className="mb-4 flex-row items-center gap-2">
+                  <Ionicons name="school-outline" size={24} color="#1E3A5F" />
+                  <Text className="text-lg font-semibold">단과대학/학과</Text>
+                </View>
                 <View className="flex-row flex-wrap">
                   {SUBSCRIPTION_TAB_DEPARTMENT.map((tab) => (
                     <TouchableOpacity
@@ -193,7 +201,7 @@ export default function ManagingNotificationSubscriptions() {
               }`}
             >
               {hasChanges
-                ? `변경사항 저장하기  (${selectedItems.length})`
+                ? `공지 구독 저장하기  (${selectedItems.length})`
                 : '변경사항이 없어요'}
             </Text>
           </TouchableOpacity>

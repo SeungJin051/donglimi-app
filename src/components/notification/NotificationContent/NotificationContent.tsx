@@ -1,5 +1,6 @@
 import { useMemo, useState, useCallback } from 'react'
 
+import { Ionicons } from '@expo/vector-icons'
 import * as Linking from 'expo-linking'
 import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native'
 
@@ -74,20 +75,27 @@ export const NotificationContent = () => {
         <>
           {isEmptyUnread ? (
             <View className="mx-4 items-center justify-center rounded-lg border border-gray-100 bg-white p-6">
-              <Text className="text-base font-semibold text-gray-800">
-                아직 안 읽은 알림이 없어요
+              <Text className="text-xl font-semibold text-gray-900">
+                지금은 새 알림이 없어요
               </Text>
-              <Text className="mt-1 text-sm text-gray-500">
-                새로운 알림이 오면 여기에서 확인할 수 있어요.
+              <Text className="mt-2 text-center text-base text-gray-500">
+                요한 학과 소식이 오면 잊지 않고 챙겨드릴게요.
               </Text>
             </View>
           ) : isEmptyAll ? (
             <View className="mx-4 items-center justify-center rounded-lg border border-gray-100 bg-white p-6">
-              <Text className="text-base font-semibold text-gray-800">
-                아직 알림이 없어요
+              <Text className="text-xl font-semibold text-gray-900">
+                어떤 소식을 알려드릴까요?
               </Text>
-              <Text className="mt-1 text-sm text-gray-500">
-                관심 주제 알림을 설정하고 새로운 소식을 받아보세요.
+              <Text className="mt-2 text-center text-base text-gray-500">
+                우측 상단{' '}
+                <Ionicons
+                  name="notifications-outline"
+                  size={14}
+                  color="#6B7280"
+                />
+                에서 관심 주제를 설정하면,
+                {'\n'}새 소식을 바로 알려드려요.
               </Text>
             </View>
           ) : (

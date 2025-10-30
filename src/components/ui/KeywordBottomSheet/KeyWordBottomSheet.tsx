@@ -7,6 +7,7 @@ import {
   KEYWORD_CATEGORIES,
   type SelectedKeywords,
 } from '@/constants/keyword'
+import { showSuccessToast } from '@/utils/toastUtils'
 
 interface KeywordBottomSheetProps {
   selectedKeywords?: SelectedKeywords
@@ -51,6 +52,7 @@ export const KeywordBottomSheet = ({
     console.log('선택된 키워드들:', selectedKeywords)
     // 상위 컴포넌트에 선택된 키워드 전달
     onKeywordsUpdate?.(selectedKeywords)
+    showSuccessToast('키워드가 업데이트되었어요')
     onComplete?.()
   }
 

@@ -1,5 +1,6 @@
 import { useRef, useMemo, useCallback } from 'react'
 
+import { Ionicons } from '@expo/vector-icons'
 import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet'
 import { View, Text, Switch } from 'react-native'
 
@@ -84,7 +85,14 @@ export default function NotificationSetting() {
         {/* 푸시 알림 설정 섹션 */}
         <View className="rounded-xl border border-gray-200 bg-white px-4 py-4">
           <View className="flex-row items-center justify-between">
-            <Text className="font-semibold">🔔 푸시 알림 받기</Text>
+            <View className="flex-row items-center gap-2">
+              <Ionicons
+                name="notifications-outline"
+                size={22}
+                color="#F59E0B"
+              />
+              <Text className="font-semibold">새 공지, 놓치지 마세요</Text>
+            </View>
 
             <Switch
               value={notificationEnabled}
@@ -96,15 +104,18 @@ export default function NotificationSetting() {
           {/* 푸시 알림 설정 설명 - OFF 상태일 때만 표시 */}
           {!notificationEnabled && (
             <Text className="text-sm text-gray-500">
-              푸시 알림이 꺼져 있습니다. 알림을 받고 싶다면 켜주세요.
+              장학금, 학사일정 등 중요 소식을 실시간으로 알려드려요.
             </Text>
           )}
         </View>
 
         {/* 키워드 알림 설정 섹션 */}
-        <View className="gap-7 rounded-xl border border-gray-200 bg-white px-4 py-4">
-          <View>
-            <Text className="font-semibold">키워드 알림</Text>
+        <View className="gap-5 rounded-xl border border-gray-200 bg-white px-4 py-4">
+          <View className="gap-2">
+            <Text className="font-semibold">맞춤 키워드 알림</Text>
+            <Text className="text-sm text-gray-500">
+              '장학금'처럼 원하는 키워드의 새 공지만 쏙쏙 알려드려요.
+            </Text>
           </View>
 
           <TagList
@@ -117,9 +128,12 @@ export default function NotificationSetting() {
         </View>
 
         {/* 학과 공지 알림 설정 섹션 */}
-        <View className="gap-7 rounded-xl border border-gray-200 bg-white px-4 py-4">
-          <View>
-            <Text className="font-semibold">학과 공지 알림</Text>
+        <View className="gap-5 rounded-xl border border-gray-200 bg-white px-4 py-4">
+          <View className="gap-2">
+            <Text className="font-semibold">내 학과 공지 알림</Text>
+            <Text className="text-sm text-gray-500">
+              소속 학과의 모든 새 소식을 놓치지 않게 알려드려요.
+            </Text>
           </View>
 
           <TagList

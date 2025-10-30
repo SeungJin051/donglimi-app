@@ -20,12 +20,12 @@ export default function PrivacyPolicyScreen() {
       >
         <View className="rounded-xl border border-gray-200 bg-white p-6">
           <Text className="mb-6 text-center text-lg font-semibold text-gray-900">
-            동림이 개인정보 처리방침
+            동리미 개인정보 처리방침
           </Text>
 
           <View className="mb-6">
             <Text className="text-base leading-6 text-gray-700">
-              동림이(이하 "개발자")는 이용자의 개인정보 보호를 중요하게
+              동리미(이하 "개발자")는 이용자의 개인정보 보호를 중요하게
               생각하며, 관련 법령을 준수합니다. 이 방침은 앱 사용 시 수집되는
               개인정보의 종류와 이용 목적, 보관 방법 및 이용자의 권리를
               안내합니다.
@@ -76,8 +76,8 @@ export default function PrivacyPolicyScreen() {
 
           <View className="border-t border-gray-200 pt-4">
             <Text className="text-center text-sm text-gray-500">
-              본 방침은 2025년 10월 23일부터 시행됩니다.{'\n'}
-              최종 수정일: 2025년 10월 23일
+              본 방침은 2025년 11월 1일부터 시행됩니다.{'\n'}
+              최종 수정일: 2025년 11월 1일
             </Text>
           </View>
         </View>

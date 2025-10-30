@@ -20,7 +20,7 @@ export default function TermsOfServiceScreen() {
       >
         <View className="rounded-xl border border-gray-200 bg-white p-6">
           <Text className="mb-6 text-center text-lg font-semibold text-gray-900">
-            동림이 서비스 이용 약관
+            동리미 서비스 이용 약관
           </Text>
 
           <View className="mb-6">
@@ -28,7 +28,7 @@ export default function TermsOfServiceScreen() {
               제1조 (목적)
             </Text>
             <Text className="text-base leading-6 text-gray-700">
-              이 약관은 동림이(이하 "개발자")가 제공하는 서비스의 이용 조건과
+              이 약관은 동리미(이하 "개발자")가 제공하는 서비스의 이용 조건과
               절차, 개발자와 이용자의 권리·의무를 규정하는 것을 목적으로 합니다.
             </Text>
           </View>
@@ -39,7 +39,7 @@ export default function TermsOfServiceScreen() {
             </Text>
             <Text className="text-base leading-6 text-gray-700">
               • "서비스"란 개발자가 제공하는 모든 기능과 콘텐츠를 의미합니다.
-              {'\n'}• "이용자"란 서비스 이용을 위해 동림이에 접속하거나 사용하는
+              {'\n'}• "이용자"란 서비스 이용을 위해 동리미에 접속하거나 사용하는
               사람을 의미합니다.{'\n'}• "콘텐츠"란 서비스에서 제공되는 텍스트,
               이미지, 영상, 기타 자료를 의미합니다.
             </Text>
@@ -125,8 +125,8 @@ export default function TermsOfServiceScreen() {
 
           <View className="border-t border-gray-200 pt-4">
             <Text className="text-center text-sm text-gray-500">
-              본 약관은 2025년 10월 23일부터 시행됩니다.{'\n'}
-              최종 수정일: 2025년 10월 23일
+              본 약관은 2025년 11월 1일부터 시행됩니다.{'\n'}
+              최종 수정일: 2025년 11월 1일
             </Text>
           </View>
         </View>
