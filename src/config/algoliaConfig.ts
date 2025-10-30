@@ -1,10 +1,12 @@
 import { algoliasearch } from 'algoliasearch'
 
-// Algolia API 키들
-const ALGOLIA_APPLICATION_ID = process.env
-  .EXPO_PUBLIC_ALGOLIA_APPLICATION_KEY as string
-const ALGOLIA_SEARCH_ONLY_API_KEY = process.env
-  .EXPO_PUBLIC_ALGOLIA_SEARCH_ONLY_API_KEY as string
+const ALGOLIA_APPLICATION_ID = process.env.EXPO_PUBLIC_ALGOLIA_APPLICATION_ID
+const ALGOLIA_SEARCH_ONLY_API_KEY =
+  process.env.EXPO_PUBLIC_ALGOLIA_SEARCH_ONLY_API_KEY
+
+if (!ALGOLIA_APPLICATION_ID || !ALGOLIA_SEARCH_ONLY_API_KEY) {
+  throw new Error('Algolia 환경변수가 존재하지 않습니다.')
+}
 
 // Algolia 클라이언트 초기화
 export const searchClient = algoliasearch(
