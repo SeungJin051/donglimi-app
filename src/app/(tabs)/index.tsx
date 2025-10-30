@@ -40,16 +40,24 @@ export default function HomeScreen() {
   const listData = useMemo<ListItem[]>(() => {
     const notices = data?.pages.flatMap((page) => page.notices) || []
 
+    // content_hash 기준 중복 제거
+    const seen = new Set<string>()
+    const deduped = notices.filter((n) => {
+      const id = n.content_hash
+      if (seen.has(id)) return false
+      seen.add(id)
+      return true
+    })
+
     const result: ListItem[] = []
     const adInterval = 7 // 7개마다 광고
+    let adCount = 0
 
-    notices.forEach((notice, index) => {
-      // 7개마다 광고 삽입
+    deduped.forEach((notice, index) => {
       if (index !== 0 && index % adInterval === 0) {
-        result.push({ type: 'ad', id: `ad-${index}` })
+        adCount += 1
+        result.push({ type: 'ad', id: `ad-${adCount}` })
       }
-
-      // 공지사항 삽입
       result.push({ type: 'notice', data: notice })
     })
 
