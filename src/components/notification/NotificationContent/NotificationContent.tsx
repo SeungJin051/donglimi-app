@@ -1,35 +1,44 @@
-import { useMemo, useState, useCallback } from 'react'
+import { useState, useCallback } from 'react'
 
 import { Ionicons } from '@expo/vector-icons'
-import * as Linking from 'expo-linking'
-import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native'
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ActivityIndicator,
+  FlatList,
+} from 'react-native'
 
 import useFetchNotification from '@/hooks/useFetchNotification'
+import { PushNotificationItem } from '@/types/notification.type'
 
 import { NotificaitonItem } from '../NotificaitonItem/NotificaitonItem'
 
 export const NotificationContent = () => {
   const [selectedTab, setSelectedTab] = useState<'all' | 'unread'>('all')
-  const { items, loading, error, markAsRead, deleteNotification } =
-    useFetchNotification({
-      pageSize: 100,
-      realtime: true,
-    })
+  const {
+    items,
+    loading,
+    error,
+    markAsRead,
+    deleteNotification,
+    loadMore,
+    hasMore,
+    loadingMore,
+  } = useFetchNotification({
+    pageSize: 10,
+    realtime: false,
+    filterUnread: selectedTab === 'unread',
+  })
 
-  const filtered = useMemo(
-    () => (selectedTab === 'unread' ? items.filter((x) => !x.read) : items),
-    [items, selectedTab]
-  )
-
-  const isEmptyUnread = selectedTab === 'unread' && filtered.length === 0
-  const isEmptyAll = selectedTab === 'all' && filtered.length === 0
+  const isEmptyUnread = selectedTab === 'unread' && items.length === 0
+  const isEmptyAll = selectedTab === 'all' && items.length === 0
 
   const handlePress = useCallback(
-    async (item: { id: string; noticeLink?: string; noticeId?: string }) => {
-      if (item.noticeLink) {
-        Linking.openURL(item.noticeLink)
+    async (item: PushNotificationItem) => {
+      if (!item.read) {
+        await markAsRead(item.id)
       }
-      await markAsRead(item.id)
     },
     [markAsRead]
   )
@@ -99,10 +108,31 @@ export const NotificationContent = () => {
               </Text>
             </View>
           ) : (
-            <NotificaitonItem
-              items={filtered}
-              onPress={handlePress}
-              onDelete={handleDelete}
+            <FlatList
+              data={items}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => (
+                <NotificaitonItem
+                  items={[item]}
+                  onPress={() => handlePress(item)}
+                  onDelete={handleDelete}
+                />
+              )}
+              onEndReachedThreshold={0.6}
+              onEndReached={() => {
+                if (hasMore && !loadingMore) {
+                  loadMore()
+                }
+              }}
+              ListFooterComponent={
+                loadingMore ? (
+                  <View className="py-4">
+                    <ActivityIndicator size="small" color="#3B82F6" />
+                  </View>
+                ) : null
+              }
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{ paddingBottom: 24 }}
             />
           )}
         </>
