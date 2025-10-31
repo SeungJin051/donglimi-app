@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 
 import { ScrollView, View, Text, TouchableOpacity } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 import SettingDetailHeader from '@/components/layout/SettingDetailHeader/SettingDetailHeader'
 import InAppBrowser from '@/components/ui/InAppBrowser/InAppBrowser'
@@ -103,7 +104,7 @@ export default function OpenSourceLicensesScreen() {
   }
 
   return (
-    <View className="flex-1 bg-gray-50">
+    <SafeAreaView className="flex-1 bg-white">
       <SettingDetailHeader title="오픈소스 라이선스" />
 
       <ScrollView
@@ -151,6 +152,6 @@ export default function OpenSourceLicensesScreen() {
         url={browserUrl}
         onClose={handleCloseBrowser}
       />
-    </View>
+    </SafeAreaView>
   )
 }

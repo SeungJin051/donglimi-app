@@ -11,6 +11,7 @@ import Swipeable, {
 import InAppBrowser from '@/components/ui/InAppBrowser/InAppBrowser'
 import RightSwipeActions from '@/components/ui/RightSwipeActions/RightSwipeActions'
 import { db } from '@/config/firebaseConfig'
+import { useInternetStatus } from '@/hooks/useInternetStatus'
 import { useInterstitialAd } from '@/hooks/useInterstitialAd'
 import { useAdStore } from '@/store/adStore'
 import { useScrapStore } from '@/store/scrapStore'
@@ -18,6 +19,7 @@ import { Notice } from '@/types/notice.type'
 import { canShowAd } from '@/utils/adManager'
 import { getFormattedDate } from '@/utils/dateUtils'
 import { getDepartmentStyles } from '@/utils/departmentStyles'
+import { enqueueScrapDelta } from '@/utils/scrapSync'
 import { showInfoToast, showSuccessToast } from '@/utils/toastUtils'
 
 interface NoticeContentProps {
@@ -69,7 +71,13 @@ export const NoticeContent = ({ item }: NoticeContentProps) => {
     addScrap({ notice: item })
     swipeableRef.current?.close()
 
+    const { isOnline } = useInternetStatus()
     try {
+      if (isOnline === false) {
+        await enqueueScrapDelta(item.content_hash, 1)
+        showSuccessToast('내 스크랩에 추가했어요')
+        return
+      }
       // 서버에 업데이트 시도
       await updateDoc(docRef, {
         scrap_count: increment(1),
@@ -96,7 +104,13 @@ export const NoticeContent = ({ item }: NoticeContentProps) => {
     removeScrap({ notice: item })
     swipeableRef.current?.close()
 
+    const { isOnline } = useInternetStatus()
     try {
+      if (isOnline === false) {
+        await enqueueScrapDelta(item.content_hash, -1)
+        showSuccessToast('내 스크랩에서 삭제했어요')
+        return
+      }
       // 서버에 업데이트 시도
       await updateDoc(docRef, {
         scrap_count: increment(-1),

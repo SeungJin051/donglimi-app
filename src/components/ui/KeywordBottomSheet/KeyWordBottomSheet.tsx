@@ -7,7 +7,8 @@ import {
   KEYWORD_CATEGORIES,
   type SelectedKeywords,
 } from '@/constants/keyword'
-import { showSuccessToast } from '@/utils/toastUtils'
+import { useNetworkGuard } from '@/hooks/useNetworkGuard'
+import { showInfoToast, showSuccessToast } from '@/utils/toastUtils'
 
 interface KeywordBottomSheetProps {
   selectedKeywords?: SelectedKeywords
@@ -23,10 +24,18 @@ export const KeywordBottomSheet = ({
   const [selectedKeywords, setSelectedKeywords] = useState<SelectedKeywords>(
     initialSelectedKeywords
   )
+  const { ensureOnline } = useNetworkGuard()
 
   const handleKeywordToggle = (
     categoryKey: keyof typeof NOTIFICATION_KEYWORDS
   ) => {
+    if (!ensureOnline()) {
+      showInfoToast(
+        '오프라인 상태입니다',
+        '네트워크 연결 후 다시 시도해 주세요.'
+      )
+      return
+    }
     const isCurrentlySelected = selectedKeywords[categoryKey] || false
 
     let newSelectedKeywords: SelectedKeywords
@@ -48,9 +57,13 @@ export const KeywordBottomSheet = ({
   }
 
   const handleComplete = () => {
-    // 선택 완료 처리 로직
-    console.log('선택된 키워드들:', selectedKeywords)
-    // 상위 컴포넌트에 선택된 키워드 전달
+    if (!ensureOnline()) {
+      showInfoToast(
+        '오프라인 상태입니다',
+        '네트워크 연결 후 다시 시도해 주세요.'
+      )
+      return
+    }
     onKeywordsUpdate?.(selectedKeywords)
     showSuccessToast('키워드가 업데이트되었어요')
     onComplete?.()

@@ -15,6 +15,7 @@ import { View, Text, TouchableOpacity, ScrollView } from 'react-native'
 import InAppBrowser from '@/components/ui/InAppBrowser/InAppBrowser'
 import { db } from '@/config/firebaseConfig'
 import { quickItem, uniPlan, uniPlanUrl } from '@/constants/utilContent'
+import { useInternetStatus } from '@/hooks/useInternetStatus'
 import { Notice } from '@/types/notice.type'
 import { getFormattedDate } from '@/utils/dateUtils'
 import { calculateDDay } from '@/utils/dDay'
@@ -25,6 +26,7 @@ export const UtilContent = () => {
   const [isLoading, setIsLoading] = useState(true)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [error, setError] = useState<string | null>(null)
+  const { isOnline } = useInternetStatus()
 
   // 인앱 브라우저 상태
   const [browserVisible, setBrowserVisible] = useState(false)
@@ -44,6 +46,11 @@ export const UtilContent = () => {
       const fetchPopularPosts = async () => {
         setIsLoading(true)
         setError(null)
+        if (isOnline === false) {
+          // 오프라인: 네트워크 호출 건너뛰고 로딩 종료
+          setIsLoading(false)
+          return
+        }
         try {
           const noticesRef = collection(db, 'notices')
 
@@ -72,7 +79,7 @@ export const UtilContent = () => {
       }
 
       fetchPopularPosts()
-    }, [])
+    }, [isOnline])
   )
   return (
     <>

@@ -9,11 +9,13 @@ import { NotificationHeader } from '@/components/layout/NotificationHeader'
 import { ScrapHeader } from '@/components/layout/ScrapHeader/ScrapHeader'
 import { SettingHeader } from '@/components/layout/SettingHeader/SettingHeader'
 import { UtilHeader } from '@/components/layout/UtilHeader/UtilHeader'
+import { OfflineToastBridge } from '@/components/network/OfflineToastBridge'
 
 export default function TabLayout() {
   return (
     // 안전 영역
     <SafeAreaProvider>
+      <OfflineToastBridge />
       {/* 공통 레이아웃 안에서 페이지 내용이 표시될 위치 */}
       <Tabs
         screenOptions={{

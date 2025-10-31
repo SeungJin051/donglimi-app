@@ -1,5 +1,6 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 
+import { Ionicons } from '@expo/vector-icons'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import {
   Text,
@@ -14,6 +15,8 @@ import { CenterAdCard } from '@/components/notice/CenterAdCard/CenterAdCard'
 import { NoticeContent } from '@/components/notice/NoticeContent/NoticeContent'
 import SwipeGuideHeader from '@/components/ui/SwipeGuideHeader/SwipeGuideHeader'
 import { useFetchNotices } from '@/hooks/useFetchNotices'
+import { useInternetStatus } from '@/hooks/useInternetStatus'
+import { useNetworkGuard } from '@/hooks/useNetworkGuard'
 import type { Notice } from '@/types/notice.type'
 import { homeScrollRef } from '@/utils/scrollRefs'
 
@@ -35,6 +38,12 @@ export default function HomeScreen() {
     refetch,
     isRefetching,
   } = useFetchNotices()
+
+  // 네트워크 상태
+  const { isOnline } = useInternetStatus()
+  const { guardAsync } = useNetworkGuard()
+  const [showOfflineSnippet, setShowOfflineSnippet] = useState(false)
+  const snippetTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // 공지사항 배열에 광고 아이템 삽입
   const listData = useMemo<ListItem[]>(() => {
@@ -90,15 +99,26 @@ export default function HomeScreen() {
 
   // 다음 페이지 로드 함수
   const handleLoadMore = () => {
-    if (hasNextPage && !isFetchingNextPage) {
-      fetchNextPage()
+    if (!hasNextPage || isFetchingNextPage) return
+    if (isOnline === false) {
+      if (snippetTimerRef.current) clearTimeout(snippetTimerRef.current)
+      setShowOfflineSnippet(true)
+      snippetTimerRef.current = setTimeout(() => {
+        setShowOfflineSnippet(false)
+      }, 1000)
+      return
     }
+    fetchNextPage()
   }
 
   // 새로고침 함수
-  const handleRefresh = () => {
-    refetch()
-  }
+  const handleRefresh = guardAsync(async () => {
+    await refetch()
+  })
+
+  const handleRetry = guardAsync(async () => {
+    await refetch()
+  })
 
   // 로딩 중일 때 보여줄 화면
   if (isLoading) {
@@ -110,12 +130,26 @@ export default function HomeScreen() {
   }
 
   // 에러가 발생했을 때 보여줄 화면
-  if (error) {
+  if (error && (!data || data.pages.length === 0)) {
     return (
-      <SafeAreaView className="flex-1 items-center justify-center bg-white">
-        <Text className="text-base text-red-500">
-          데이터를 불러오는 중 오류가 발생했습니다.
+      <SafeAreaView className="flex-1 items-center justify-center bg-white px-8">
+        <Ionicons name="cloud-offline" size={48} color="#EF4444" />
+        <Text className="mt-4 text-lg font-semibold text-gray-900">
+          데이터를 불러올 수 없어요
         </Text>
+        <Text className="mt-1 text-center text-sm text-gray-500">
+          연결 상태를 확인한 뒤 다시 시도해 주세요.
+        </Text>
+        <View className="mt-6 w-full items-center">
+          <View className="w-full max-w-[240px]">
+            <Text
+              onPress={handleRetry}
+              className="rounded-lg bg-deu-light-blue px-4 py-3 text-center text-white"
+            >
+              다시 시도
+            </Text>
+          </View>
+        </View>
       </SafeAreaView>
     )
   }
@@ -155,9 +189,17 @@ export default function HomeScreen() {
         }
         // 다음 페이지 로딩 중일 때 하단에 로딩 표시
         ListFooterComponent={
-          isFetchingNextPage ? (
+          isFetchingNextPage || showOfflineSnippet ? (
             <View className="items-center py-4">
-              <ActivityIndicator size="small" color="#3B82F6" />
+              {isFetchingNextPage ? (
+                <ActivityIndicator size="small" color="#3B82F6" />
+              ) : (
+                <View className="w-full px-4">
+                  <View className="mb-3 h-24 w-full rounded-lg bg-gray-200" />
+                  <View className="mb-3 h-24 w-full rounded-lg bg-gray-200" />
+                  <View className="mb-3 h-24 w-full rounded-lg bg-gray-200" />
+                </View>
+              )}
             </View>
           ) : null
         }

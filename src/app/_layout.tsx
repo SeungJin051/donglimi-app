@@ -11,6 +11,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import Toast from 'react-native-toast-message'
 
 import HomeDrawer from '@/components/layout/HomeDrawer/HomeDrawer'
+import { RefetchOnReconnectBridge } from '@/components/network/RefetchOnReconnectBridge'
 import { toastConfig } from '@/components/ui/CustomToast/CustomToast'
 import { useOnboarding } from '@/hooks/useOnboarding'
 import { useAdStore } from '@/store/adStore'
@@ -52,6 +53,7 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <QueryClientProvider client={queryClient}>
         <BottomSheetModalProvider>
+          <RefetchOnReconnectBridge />
           <Drawer
             drawerContent={(props) => <HomeDrawer {...props} />}
             screenOptions={{

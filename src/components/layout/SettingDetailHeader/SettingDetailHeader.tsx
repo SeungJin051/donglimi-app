@@ -12,7 +12,7 @@ export default function SettingDetailHeader({
   const router = useRouter()
 
   return (
-    <View className="flex-row items-center gap-4 bg-white px-4 pt-20">
+    <View className="flex-row items-center gap-4 bg-white px-4 pb-2">
       <TouchableOpacity onPress={() => router.back()}>
         <Ionicons name="arrow-back" size={24} color="black" />
       </TouchableOpacity>
