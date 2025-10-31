@@ -10,7 +10,9 @@ import { DepatmentBottomSheet } from '@/components/ui/DepatmentBottomSheet/Depat
 import { KeywordBottomSheet } from '@/components/ui/KeywordBottomSheet/KeyWordBottomSheet'
 import { TagList } from '@/components/ui/TagList/TagList'
 import { NOTIFICATION_KEYWORDS } from '@/constants/keyword'
+import { useNetworkGuard } from '@/hooks/useNetworkGuard'
 import { useNotificationSettings } from '@/hooks/useNotificationSettings'
+// (공통 훅에서 토스트를 띄우므로 여기선 직접 사용하지 않음)
 
 export default function NotificationSetting() {
   // 알림 설정 관련 비즈니스 로직
@@ -25,6 +27,8 @@ export default function NotificationSetting() {
     handleDepartmentRemove,
   } = useNotificationSettings()
 
+  const { ensureOnline, guardAction } = useNetworkGuard()
+
   // 백드랍 렌더
   const renderBackdrop = useBottomSheetBackdrop()
 
@@ -37,12 +41,37 @@ export default function NotificationSetting() {
 
   // 바텀 시트를 펼치는 함수
   const handleKeywordOpenPress = useCallback(() => {
+    if (!ensureOnline()) return
     keywordBottomSheetRef.current?.present()
-  }, [])
+  }, [ensureOnline])
 
   const handleDepartmentOpenPress = useCallback(() => {
+    if (!ensureOnline()) return
     departmentBottomSheetRef.current?.present()
-  }, [])
+  }, [ensureOnline])
+
+  // 오프라인 가드 래퍼 (추가 useCallback 불필요)
+  const guardedToggleNotification = guardAction(handleNotificationToggle)
+
+  const guardedKeywordUpdate = guardAction(
+    (...args: Parameters<typeof handleKeywordUpdate>) =>
+      handleKeywordUpdate(...args)
+  )
+
+  const guardedDepartmentUpdate = guardAction(
+    (...args: Parameters<typeof handleDepartmentUpdate>) =>
+      handleDepartmentUpdate(...args)
+  )
+
+  const guardedKeywordRemove = guardAction(
+    (...args: Parameters<typeof handleKeywordRemove>) =>
+      handleKeywordRemove(...args)
+  )
+
+  const guardedDepartmentRemove = guardAction(
+    (...args: Parameters<typeof handleDepartmentRemove>) =>
+      handleDepartmentRemove(...args)
+  )
 
   // 키워드 태그 데이터 변환
   const keywordTags = useMemo(() => {
@@ -96,7 +125,7 @@ export default function NotificationSetting() {
 
             <Switch
               value={notificationEnabled}
-              onValueChange={handleNotificationToggle}
+              onValueChange={guardedToggleNotification}
               trackColor={{ false: '#D1D5DB', true: '#93C5FD' }}
               thumbColor={notificationEnabled ? '#093a87' : '#F3F4F6'}
             />
@@ -120,7 +149,7 @@ export default function NotificationSetting() {
 
           <TagList
             items={keywordTags}
-            onRemove={handleKeywordRemove}
+            onRemove={guardedKeywordRemove}
             onAdd={handleKeywordOpenPress}
             emptyText="키워드를 선택하세요"
             addButtonText="키워드"
@@ -138,7 +167,7 @@ export default function NotificationSetting() {
 
           <TagList
             items={departmentTags}
-            onRemove={handleDepartmentRemove}
+            onRemove={guardedDepartmentRemove}
             onAdd={handleDepartmentOpenPress}
             emptyText="학과를 선택하세요"
             addButtonText="학과"
@@ -156,7 +185,7 @@ export default function NotificationSetting() {
         <BottomSheetView style={{ flex: 1 }}>
           <KeywordBottomSheet
             selectedKeywords={selectedKeywords}
-            onKeywordsUpdate={handleKeywordUpdate}
+            onKeywordsUpdate={guardedKeywordUpdate}
             onComplete={handleCloseKeywords}
           />
         </BottomSheetView>
@@ -173,7 +202,7 @@ export default function NotificationSetting() {
         <BottomSheetView style={{ flex: 1 }}>
           <DepatmentBottomSheet
             selectedDepartments={selectedDepartments}
-            onDepartmentsUpdate={handleDepartmentUpdate}
+            onDepartmentsUpdate={guardedDepartmentUpdate}
             onComplete={handleCloseDepartments}
           />
         </BottomSheetView>

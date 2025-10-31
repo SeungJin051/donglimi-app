@@ -3,7 +3,8 @@ import { useState } from 'react'
 import { View, Text, TouchableOpacity } from 'react-native'
 
 import { DEPARTMENTS_BY_COLLEGE } from '@/constants/collge'
-import { showSuccessToast } from '@/utils/toastUtils'
+import { useNetworkGuard } from '@/hooks/useNetworkGuard'
+import { showInfoToast, showSuccessToast } from '@/utils/toastUtils'
 
 interface DepatmentBottomSheetProps {
   selectedDepartments?: string[]
@@ -38,6 +39,7 @@ export const DepatmentBottomSheet = ({
   )
   const [currentPage, setCurrentPage] = useState(0)
   const itemsPerPage = 7
+  const { ensureOnline } = useNetworkGuard()
 
   const colleges = Object.keys(DEPARTMENTS_BY_COLLEGE)
   const currentCollege =
@@ -78,6 +80,13 @@ export const DepatmentBottomSheet = ({
   }
 
   const handleDepartmentSelect = (departmentId: string) => {
+    if (!ensureOnline()) {
+      showInfoToast(
+        '오프라인 상태입니다',
+        '네트워크 연결 후 다시 시도해 주세요.'
+      )
+      return
+    }
     const departmentName = getDepartmentNameById(departmentId, selectedCollege)
 
     let newSelectedDepartments: string[]
@@ -103,8 +112,13 @@ export const DepatmentBottomSheet = ({
   }
 
   const handleComplete = () => {
-    // 선택 완료 처리 로직 - 선택된 학과는 이미 실시간으로 업데이트됨
-    console.log('선택된 학과들:', selectedDepartments)
+    if (!ensureOnline()) {
+      showInfoToast(
+        '오프라인 상태입니다',
+        '네트워크 연결 후 다시 시도해 주세요.'
+      )
+      return
+    }
     // 바텀시트만 닫기 (선택 상태는 이미 상위 컴포넌트에 전달됨)
     showSuccessToast('학과 선택이 저장되었어요')
     onComplete?.()
@@ -231,6 +245,13 @@ export const DepatmentBottomSheet = ({
           </Text>
           <TouchableOpacity
             onPress={() => {
+              if (!ensureOnline()) {
+                showInfoToast(
+                  '오프라인 상태입니다',
+                  '네트워크 연결 후 다시 시도해 주세요.'
+                )
+                return
+              }
               const newSelectedDepartments: string[] = []
               setSelectedDepartments(newSelectedDepartments)
               onDepartmentsUpdate?.(newSelectedDepartments) // 상위 컴포넌트에도 전달
