@@ -14,10 +14,12 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 import SettingDetailHeader from '@/components/layout/SettingDetailHeader/SettingDetailHeader'
 import { db } from '@/config/firebaseConfig'
-import { showSuccessToast } from '@/utils/toastUtils'
+import { useInternetStatus } from '@/hooks/useInternetStatus'
+import { showInfoToast, showSuccessToast } from '@/utils/toastUtils'
 
 const suggestionTypes = [
   {
@@ -72,6 +74,7 @@ export default function SuggestionScreen() {
   const [content, setContent] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [step, setStep] = useState<1 | 2>(1)
+  const { isOnline } = useInternetStatus()
 
   // 화면 재진입 시 항상 STEP 1부터 시작
   useFocusEffect(
@@ -83,6 +86,15 @@ export default function SuggestionScreen() {
 
   // 건의사항 전송
   const handleSubmit = async () => {
+    // 오프라인이면 전송 차단 + 토스트
+    if (isOnline === false) {
+      showInfoToast(
+        '오프라인 상태입니다',
+        '네트워크 연결 후 다시 시도해 주세요.'
+      )
+      return
+    }
+
     setIsSubmitting(true)
 
     try {
@@ -104,7 +116,7 @@ export default function SuggestionScreen() {
   }
 
   return (
-    <View className="flex-1 bg-gray-50">
+    <SafeAreaView className="flex-1 bg-white">
       <SettingDetailHeader title="건의하기" />
 
       <KeyboardAvoidingView
@@ -236,6 +248,6 @@ export default function SuggestionScreen() {
           )}
         </ScrollView>
       </KeyboardAvoidingView>
-    </View>
+    </SafeAreaView>
   )
 }
