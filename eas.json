@@ -12,10 +12,21 @@
       "distribution": "internal"
     },
     "production": {
-      "autoIncrement": true
+      "ios": {
+        "resourceClass": "m-medium",
+        "image": "latest",
+        "autoIncrement": true,
+        "scheme": "donglimiapp",
+        "buildConfiguration": "Release",
+        "credentialsSource": "remote"
+      }
     }
   },
   "submit": {
-    "production": {}
+    "production": {
+      "ios": {
+        "ascAppId": "6754769898"
+      }
+    }
   }
 }
