@@ -1,5 +1,6 @@
 import { useRouter } from 'expo-router'
 import { ScrollView, View, Text, TouchableOpacity } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 import SettingDetailHeader from '@/components/layout/SettingDetailHeader/SettingDetailHeader'
 
@@ -11,7 +12,7 @@ export default function TermsOfServiceScreen() {
   }
 
   return (
-    <View className="flex-1 bg-gray-50">
+    <SafeAreaView className="flex-1 bg-white">
       <SettingDetailHeader title="이용 약관" />
 
       <ScrollView
@@ -131,6 +132,6 @@ export default function TermsOfServiceScreen() {
           </View>
         </View>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   )
 }
