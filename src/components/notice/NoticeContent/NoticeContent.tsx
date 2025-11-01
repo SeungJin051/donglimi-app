@@ -37,6 +37,9 @@ export const NoticeContent = ({ item }: NoticeContentProps) => {
   // 스크랩 스토어 호출
   const { scraps, addScrap, removeScrap } = useScrapStore()
 
+  // 인터넷 상태 (훅은 컴포넌트 최상위에서 호출)
+  const { isOnline } = useInternetStatus()
+
   // 광고 관련
   const {
     linkOpenCount,
@@ -72,7 +75,6 @@ export const NoticeContent = ({ item }: NoticeContentProps) => {
     addScrap({ notice: item })
     swipeableRef.current?.close()
 
-    const { isOnline } = useInternetStatus()
     try {
       if (isOnline === false) {
         await enqueueScrapDelta(item.content_hash, 1)
@@ -109,7 +111,6 @@ export const NoticeContent = ({ item }: NoticeContentProps) => {
     removeScrap({ notice: item })
     swipeableRef.current?.close()
 
-    const { isOnline } = useInternetStatus()
     try {
       if (isOnline === false) {
         await enqueueScrapDelta(item.content_hash, -1)
