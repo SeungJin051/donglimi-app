@@ -14,7 +14,8 @@ import { View, Text, TouchableOpacity, ScrollView } from 'react-native'
 
 import InAppBrowser from '@/components/ui/InAppBrowser/InAppBrowser'
 import { db } from '@/config/firebaseConfig'
-import { quickItem, uniPlan, uniPlanUrl } from '@/constants/utilContent'
+import { quickItem } from '@/constants/utilContent'
+import { useAcademicSchedule } from '@/hooks/useAcademicSchedule'
 import { useInternetStatus } from '@/hooks/useInternetStatus'
 import { Notice } from '@/types/notice.type'
 import { getFormattedDate } from '@/utils/dateUtils'
@@ -27,6 +28,10 @@ export const UtilContent = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [error, setError] = useState<string | null>(null)
   const { isOnline } = useInternetStatus()
+
+  // 학사일정 데이터 (Firestore에서 가져오기)
+  const { schedules: academicSchedules, url: academicScheduleUrl } =
+    useAcademicSchedule()
 
   // 인앱 브라우저 상태
   const [browserVisible, setBrowserVisible] = useState(false)
@@ -140,7 +145,7 @@ export const UtilContent = () => {
               <MaterialIcons name="calendar-today" size={18} color="black" />
             </View>
             <View className="gap-3">
-              {uniPlan
+              {academicSchedules
                 .map((plan) => ({
                   ...plan,
                   dday: calculateDDay(plan.date),
@@ -183,7 +188,7 @@ export const UtilContent = () => {
                 ))}
               <TouchableOpacity
                 className="w-full items-center justify-center rounded-xl border border-gray-100 px-4 py-3"
-                onPress={() => handleOpenLink(uniPlanUrl)}
+                onPress={() => handleOpenLink(academicScheduleUrl)}
               >
                 <Text className="text-base font-medium">
                   전체 학사일정 보기
