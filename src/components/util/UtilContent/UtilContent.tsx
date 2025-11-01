@@ -145,47 +145,55 @@ export const UtilContent = () => {
               <MaterialIcons name="calendar-today" size={18} color="black" />
             </View>
             <View className="gap-3">
-              {academicSchedules
-                .map((plan) => ({
-                  ...plan,
-                  dday: calculateDDay(plan.date),
-                }))
-                .filter((plan) => {
-                  // D-Day 또는 D-로 시작하는 항목만 필터링
-                  return (
-                    plan.dday.text === 'D-Day' ||
-                    plan.dday.text.startsWith('D-')
-                  )
-                })
-                .slice(0, 3)
-                .map((plan) => (
-                  <View
-                    key={plan.id}
-                    className="w-full rounded-xl bg-gray-50 px-4 py-2"
-                  >
-                    <View className="flex-row justify-between">
-                      <View>
-                        <Text className="text-base font-medium">
-                          {plan.title}
-                        </Text>
-                        <Text className="text-sm text-gray-500">
-                          {plan.date}
-                        </Text>
-                      </View>
-                      <View className="justify-center">
-                        <View
-                          className={`justify-center rounded-lg ${plan.dday.bgColor} px-1.5 py-0.5`}
-                        >
-                          <Text
-                            className={`text-sm font-medium ${plan.dday.textColor}`}
-                          >
-                            {plan.dday.text}
+              {academicSchedules.length > 0 ? (
+                academicSchedules
+                  .map((plan) => ({
+                    ...plan,
+                    dday: calculateDDay(plan.date),
+                  }))
+                  .filter((plan) => {
+                    // D-Day 또는 D-로 시작하는 항목만 필터링
+                    return (
+                      plan.dday.text === 'D-Day' ||
+                      plan.dday.text.startsWith('D-')
+                    )
+                  })
+                  .slice(0, 3)
+                  .map((plan) => (
+                    <View
+                      key={plan.id}
+                      className="w-full rounded-xl bg-gray-50 px-4 py-2"
+                    >
+                      <View className="flex-row justify-between">
+                        <View>
+                          <Text className="text-base font-medium">
+                            {plan.title}
                           </Text>
+                          <Text className="text-sm text-gray-500">
+                            {plan.date}
+                          </Text>
+                        </View>
+                        <View className="justify-center">
+                          <View
+                            className={`justify-center rounded-lg ${plan.dday.bgColor} px-1.5 py-0.5`}
+                          >
+                            <Text
+                              className={`text-sm font-medium ${plan.dday.textColor}`}
+                            >
+                              {plan.dday.text}
+                            </Text>
+                          </View>
                         </View>
                       </View>
                     </View>
-                  </View>
-                ))}
+                  ))
+              ) : (
+                <View className="w-full items-center justify-center rounded-xl bg-gray-50 px-4 py-6">
+                  <Text className="text-center text-sm text-gray-500">
+                    학사일정을 불러올 수 없어요
+                  </Text>
+                </View>
+              )}
               <TouchableOpacity
                 className="w-full items-center justify-center rounded-xl border border-gray-100 px-4 py-3"
                 onPress={() => handleOpenLink(academicScheduleUrl)}
