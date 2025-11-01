@@ -1,7 +1,8 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { Ionicons } from '@expo/vector-icons'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { useFocusEffect } from '@react-navigation/native'
 import {
   Text,
   View,
@@ -18,6 +19,7 @@ import { useFetchNotices } from '@/hooks/useFetchNotices'
 import { useInternetStatus } from '@/hooks/useInternetStatus'
 import { useNetworkGuard } from '@/hooks/useNetworkGuard'
 import type { Notice } from '@/types/notice.type'
+import { logScreenView } from '@/utils/analytics'
 import { homeScrollRef } from '@/utils/scrollRefs'
 
 // FlatList 아이템 타입 정의
@@ -72,6 +74,13 @@ export default function HomeScreen() {
 
     return result
   }, [data])
+
+  // 화면 조회 추적 (화면이 포커스될 때마다)
+  useFocusEffect(
+    useCallback(() => {
+      logScreenView('home')
+    }, [])
+  )
 
   // AsyncStorage에서 스와이프 가이드 확인 여부 체크
   useEffect(() => {
