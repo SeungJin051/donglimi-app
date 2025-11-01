@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useState, useEffect, useRef } from 'react'
 
 import { Ionicons } from '@expo/vector-icons'
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -27,6 +27,7 @@ const TOTAL_PAGES = 5
 export default function OnboardingScreen() {
   const router = useRouter()
   const [currentPage, setCurrentPage] = useState(0)
+  const hasTriggeredNotification = useRef(false)
 
   // Zustand 스토어에서 상태와 액션 가져오기
   const {
@@ -41,6 +42,24 @@ export default function OnboardingScreen() {
   } = useNotificationStore()
 
   const { getPushToken, handleToggleNotification } = usePushNotifications()
+
+  // case 4로 진입 시 자동으로 알림 활성화 및 권한 요청
+  useEffect(() => {
+    if (
+      currentPage === 4 &&
+      !notificationEnabled &&
+      !hasTriggeredNotification.current
+    ) {
+      hasTriggeredNotification.current = true
+      // 알림 활성화 및 권한 요청
+      void handleToggleNotification(true, setNotificationEnabled)
+    }
+  }, [
+    currentPage,
+    notificationEnabled,
+    handleToggleNotification,
+    setNotificationEnabled,
+  ])
 
   // 스위치 ON 시에만 권한 요청 (훅 사용)
   const onToggleNotification = useCallback(
