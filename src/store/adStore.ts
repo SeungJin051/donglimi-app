@@ -3,24 +3,30 @@ import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
 export interface AdState {
-  todayAdCount: number // 오늘 노출 횟수
-  lastAdDate: string | null // 마지막 광고 날짜
-  linkOpenCount: number // 링크 열람 횟수 (세션 단위)
-  increaseCount: () => void // 카운트 증가
-  incrementLinkCount: () => void // 링크 카운트 증가
-  resetLinkCount: () => void // 링크 카운트 리셋
-  resetIfDateChanged: () => void // 날짜 변경 시 리셋
+  todayAdCount: number
+  lastAdDate: string | null
+  linkOpenCount: number
+  _hasHydrated: boolean // hydration 상태 추적
+  setHasHydrated: (state: boolean) => void // 추가
+  increaseCount: () => void
+  incrementLinkCount: () => void
+  resetLinkCount: () => void
+  resetIfDateChanged: () => void
 }
 
-// 광고 상태 영구 저장
 export const useAdStore = create(
   persist<AdState>(
     (set, get) => ({
       todayAdCount: 0,
       lastAdDate: null,
       linkOpenCount: 0,
+      _hasHydrated: false, // 추가
 
-      // 오늘 카운트 증가
+      // hydration 상태 설정
+      setHasHydrated: (state) => {
+        set({ _hasHydrated: state })
+      },
+
       increaseCount: () => {
         const current = get().todayAdCount
         if (current < 3) {
@@ -28,32 +34,46 @@ export const useAdStore = create(
         }
       },
 
-      // 링크 열람 횟수 증가
       incrementLinkCount: () => {
         set({ linkOpenCount: get().linkOpenCount + 1 })
       },
 
-      // 링크 카운트 리셋 (세션 변경 시)
       resetLinkCount: () => {
         set({ linkOpenCount: 0 })
       },
 
-      // 날짜 변경 체크 및 리셋
       resetIfDateChanged: () => {
-        const today = new Date().toDateString()
-        const lastDate = get().lastAdDate
+        try {
+          const state = get()
 
-        if (lastDate !== today) {
-          set({
-            todayAdCount: 0,
-            lastAdDate: today,
-          })
+          // hydrate 전이면 실행하지 않음
+          if (!state._hasHydrated) {
+            console.log('Store not hydrated yet, skipping resetIfDateChanged')
+            return
+          }
+
+          const today = new Date().toDateString()
+          const lastDate = state.lastAdDate
+
+          if (lastDate !== today) {
+            set({
+              todayAdCount: 0,
+              lastAdDate: today,
+            })
+          }
+        } catch (error) {
+          console.error('resetIfDateChanged error:', error)
         }
       },
     }),
     {
       name: 'ad-storage',
       storage: createJSONStorage(() => AsyncStorage),
+      // hydration 완료 후 콜백
+      onRehydrateStorage: () => (state) => {
+        console.log('Store hydration complete')
+        state?.setHasHydrated(true)
+      },
     }
   )
 )

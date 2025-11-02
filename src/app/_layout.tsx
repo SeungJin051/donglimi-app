@@ -18,34 +18,45 @@ import { useAdStore } from '@/store/adStore'
 import { resetSessionFlag } from '@/utils/adManager'
 import { queryClient } from '@/utils/queryClient'
 
-// _를 붙이면 일반 페이지가 아니라 레이아웃(layout), 슬롯(slot), API 라우트 등 특별한 기능을 하는 파일로 취급됩니다.
 export default function RootLayout() {
-  // 온보딩 완료 여부 확인
   const { isOnboardingComplete } = useOnboarding()
 
-  // 세션 리셋 관리
-  const { resetLinkCount, resetIfDateChanged } = useAdStore()
+  // hydration 상태 추가
+  const { resetLinkCount, resetIfDateChanged, _hasHydrated } = useAdStore()
 
   useEffect(() => {
-    // 날짜 체크 후 리셋 (persist 값 확인)
-    resetIfDateChanged()
+    // store가 hydrate된 후에만 실행
+    if (!_hasHydrated) {
+      console.log('Waiting for store hydration...')
+      return
+    }
 
-    // 초기 마운트 시 링크 카운트 리셋
-    resetLinkCount()
+    console.log('Store hydrated, initializing...')
 
+    try {
+      resetIfDateChanged()
+      resetLinkCount()
+    } catch (error) {
+      console.error('Store initialization error:', error)
+    }
+
+    // 앱 활성화 시 세션 리셋 + 날짜 체크
     const subscription = AppState.addEventListener('change', (state) => {
       if (state === 'active') {
-        // 앱 활성화 시 세션 리셋 + 날짜 체크
-        resetSessionFlag()
-        resetIfDateChanged()
+        try {
+          resetSessionFlag()
+          resetIfDateChanged()
+        } catch (error) {
+          console.error('AppState change error:', error)
+        }
       }
     })
 
     return () => subscription.remove()
-  }, [resetLinkCount, resetIfDateChanged])
+  }, [_hasHydrated, resetLinkCount, resetIfDateChanged])
 
-  // 로딩 중일 때는 빈 화면 표시
-  if (isOnboardingComplete === null) {
+  // 온보딩 체크 또는 store hydration 대기
+  if (isOnboardingComplete === null || !_hasHydrated) {
     return <GestureHandlerRootView style={{ flex: 1 }} />
   }
 
