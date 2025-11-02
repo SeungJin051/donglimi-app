@@ -8,7 +8,7 @@ module.exports = function (api) {
       [
         'react-native-reanimated/plugin',
         {
-          strict: false,
+          strict: true,
         },
       ],
     ],
