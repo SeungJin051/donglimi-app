@@ -8,7 +8,7 @@ const config: ExpoConfig = {
   icon: './src/assets/images/icon.png',
   scheme: 'donglimiapp',
   userInterfaceStyle: 'automatic',
-  newArchEnabled: false,
+  newArchEnabled: true,
   splash: {
     image: './src/assets/images/splash.png',
     resizeMode: 'contain',
