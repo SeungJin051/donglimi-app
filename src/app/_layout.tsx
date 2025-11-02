@@ -5,7 +5,6 @@ import { useEffect } from 'react'
 
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet'
 import { QueryClientProvider } from '@tanstack/react-query'
-import * as Analytics from 'expo-firebase-analytics'
 import { Drawer } from 'expo-router/drawer'
 import { AppState } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
@@ -28,11 +27,6 @@ export default function RootLayout() {
   const { resetLinkCount, resetIfDateChanged } = useAdStore()
 
   useEffect(() => {
-    // Firebase Analytics 초기화 (앱 시작 시 한 번만)
-    Analytics.setAnalyticsCollectionEnabled(true).catch(() => {
-      // 초기화 실패 시 무시
-    })
-
     // 날짜 체크 후 리셋 (persist 값 확인)
     resetIfDateChanged()
 

@@ -19,7 +19,6 @@ import { DEPARTMENTS_BY_COLLEGE } from '@/constants/collge'
 import { NOTIFICATION_KEYWORDS } from '@/constants/keyword'
 import { usePushNotifications } from '@/hooks/usePushNotifications'
 import { useNotificationStore } from '@/store/notificationStore'
-import { analytics } from '@/utils/analytics'
 
 const ONBOARDING_KEY = 'hasSeenOnboarding'
 const TOTAL_PAGES = 5
@@ -119,8 +118,6 @@ export default function OnboardingScreen() {
 
       // 온보딩 완료 표시 후 이동
       await AsyncStorage.setItem(ONBOARDING_KEY, 'true')
-      // Analytics: 온보딩 완료 추적
-      analytics.onboardingCompleted()
       router.replace('/(tabs)')
     } catch (error) {
       console.error('온보딩 완료 처리 실패:', error)

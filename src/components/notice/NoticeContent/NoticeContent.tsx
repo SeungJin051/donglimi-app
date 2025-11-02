@@ -17,7 +17,6 @@ import { useAdStore } from '@/store/adStore'
 import { useScrapStore } from '@/store/scrapStore'
 import { Notice } from '@/types/notice.type'
 import { canShowAd } from '@/utils/adManager'
-import { analytics } from '@/utils/analytics'
 import { getFormattedDate } from '@/utils/dateUtils'
 import { getDepartmentStyles } from '@/utils/departmentStyles'
 import { enqueueScrapDelta } from '@/utils/scrapSync'
@@ -78,8 +77,6 @@ export const NoticeContent = ({ item }: NoticeContentProps) => {
     try {
       if (isOnline === false) {
         await enqueueScrapDelta(item.content_hash, 1)
-        // Analytics: 오프라인 스크랩 추가도 추적
-        analytics.scrapAdded()
         showSuccessToast('내 스크랩에 추가했어요')
         return
       }
@@ -87,8 +84,6 @@ export const NoticeContent = ({ item }: NoticeContentProps) => {
       await updateDoc(docRef, {
         scrap_count: increment(1),
       })
-      // Analytics: 스크랩 추가 추적
-      analytics.scrapAdded()
       showSuccessToast('내 스크랩에 추가했어요')
     } catch (error) {
       // 서버 업데이트 실패!
@@ -114,8 +109,6 @@ export const NoticeContent = ({ item }: NoticeContentProps) => {
     try {
       if (isOnline === false) {
         await enqueueScrapDelta(item.content_hash, -1)
-        // Analytics: 오프라인 스크랩 삭제도 추적
-        analytics.scrapRemoved()
         showSuccessToast('내 스크랩에서 삭제했어요')
         return
       }
@@ -123,8 +116,6 @@ export const NoticeContent = ({ item }: NoticeContentProps) => {
       await updateDoc(docRef, {
         scrap_count: increment(-1),
       })
-      // Analytics: 스크랩 삭제 추적
-      analytics.scrapRemoved()
       showSuccessToast('내 스크랩에서 삭제했어요')
     } catch (error) {
       // 서버 업데이트 실패 시 롤백

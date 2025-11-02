@@ -18,7 +18,6 @@ import { NoticeContent } from '@/components/notice/NoticeContent/NoticeContent'
 import { useAlgoliaSearch } from '@/hooks/useAlgoliaSearch'
 import { useSearchStore } from '@/store/searchStore'
 import { Notice } from '@/types/notice.type'
-import { analytics } from '@/utils/analytics'
 
 export default function HomepageSearch() {
   const router = useRouter()
@@ -101,9 +100,6 @@ export default function HomepageSearch() {
 
     addHistory(trimmedTerm) // 검색 기록 추가
     setHasSearched(true) // 검색 시도 상태로 변경
-
-    // Analytics: 검색 실행 추적
-    analytics.searchPerformed(trimmedTerm)
 
     // Algolia 검색 실행
     await search(trimmedTerm)

@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react'
 import { Platform, StatusBar } from 'react-native'
 import mobileAds, { AdEventType } from 'react-native-google-mobile-ads'
 
-import { analytics } from '@/utils/analytics'
 import { getInterstitialAd, setAdMobInitialized } from '@/utils/interstitialAd'
 
 // 전역 상태 관리 (모든 컴포넌트가 공유)
@@ -57,8 +56,6 @@ export const useInterstitialAd = () => {
           if (Platform.OS === 'ios') {
             StatusBar.setHidden(true)
           }
-          // Analytics: 전면 광고 노출 추적
-          analytics.adInterstitialShown()
         })
 
         // 광고 닫힘
