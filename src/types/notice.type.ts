@@ -10,4 +10,5 @@ export interface Notice {
   scrap_count: number
   tags: string[]
   title: string
+  target_id?: string
 }

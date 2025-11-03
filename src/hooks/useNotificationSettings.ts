@@ -2,7 +2,7 @@ import { useMemo, useCallback, useEffect, useState } from 'react'
 
 import { doc, setDoc, deleteDoc, serverTimestamp } from 'firebase/firestore'
 
-import { db } from '@/config/firebaseConfig'
+import { requireDb } from '@/config/firebaseConfig'
 import {
   NOTIFICATION_KEYWORDS,
   type SelectedKeywords,
@@ -54,8 +54,8 @@ export function useNotificationSettings() {
   // Firestore 저장 함수 (알림 OFF 시 삭제, ON 시 upsert)
   const saveSettingsToFirestore = useCallback(async () => {
     if (!pushToken) return // 토큰 없으면 무시 (웹/시뮬레이터/권한 미허용 등)
-
-    const docRef = doc(db, 'device_tokens', pushToken)
+    const firestoreDb = requireDb()
+    const docRef = doc(firestoreDb, 'device_tokens', pushToken)
 
     if (!notificationEnabled) {
       try {

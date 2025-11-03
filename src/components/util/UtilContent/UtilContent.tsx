@@ -13,7 +13,7 @@ import {
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native'
 
 import InAppBrowser from '@/components/ui/InAppBrowser/InAppBrowser'
-import { db } from '@/config/firebaseConfig'
+import { requireDb } from '@/config/firebaseConfig'
 import { quickItem } from '@/constants/utilContent'
 import { useAcademicSchedule } from '@/hooks/useAcademicSchedule'
 import { useInternetStatus } from '@/hooks/useInternetStatus'
@@ -57,7 +57,8 @@ export const UtilContent = () => {
           return
         }
         try {
-          const noticesRef = collection(db, 'notices')
+          const firestoreDb = requireDb()
+          const noticesRef = collection(firestoreDb, 'notices')
 
           // 파이어스토어 쿼리
           const q = query(

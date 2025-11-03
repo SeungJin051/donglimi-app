@@ -52,9 +52,10 @@ export const useCacheManager = () => {
         // 실제 Firestore 호출 대신 기존 함수 재사용
         const { collection, getDocs, query, orderBy, limit, where } =
           await import('firebase/firestore')
-        const { db } = await import('@/config/firebaseConfig')
+        const { requireDb } = await import('@/config/firebaseConfig')
+        const firestoreDb = requireDb()
 
-        const noticesCollectionRef = collection(db, 'notices')
+        const noticesCollectionRef = collection(firestoreDb, 'notices')
         let q
 
         if (category) {

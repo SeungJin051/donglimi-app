@@ -17,7 +17,7 @@ import {
   DocumentData,
 } from 'firebase/firestore'
 
-import { db } from '@/config/firebaseConfig'
+import { requireDb } from '@/config/firebaseConfig'
 import { usePushNotifications } from '@/hooks/usePushNotifications'
 import {
   useNotificationCacheStore,
@@ -102,7 +102,13 @@ export function useFetchNotification(
         setItems(cached.items)
       }
 
-      const col = collection(db, 'device_tokens', token, 'notifications')
+      const firestoreDb = requireDb()
+      const col = collection(
+        firestoreDb,
+        'device_tokens',
+        token,
+        'notifications'
+      )
       const base = options.filterUnread
         ? query(col, where('is_read', '==', false))
         : query(col)
@@ -173,8 +179,14 @@ export function useFetchNotification(
         setLoadingMore(false)
         return
       }
+      const firestoreDb = requireDb()
       const scope: NotificationScope = options.filterUnread ? 'unread' : 'all'
-      const col = collection(db, 'device_tokens', token, 'notifications')
+      const col = collection(
+        firestoreDb,
+        'device_tokens',
+        token,
+        'notifications'
+      )
       const base = options.filterUnread
         ? query(col, where('is_read', '==', false))
         : query(col)
@@ -236,7 +248,14 @@ export function useFetchNotification(
         const token = tokenRef.current ?? (await fetchToken())
         if (!token) return
 
-        const ref = doc(db, 'device_tokens', token, 'notifications', id)
+        const firestoreDb = requireDb()
+        const ref = doc(
+          firestoreDb,
+          'device_tokens',
+          token,
+          'notifications',
+          id
+        )
 
         await updateDoc(ref, { is_read: true })
         setItems((prev) =>
@@ -256,13 +275,17 @@ export function useFetchNotification(
       const token = tokenRef.current ?? (await fetchToken())
       if (!token) return
 
+      const firestoreDb = requireDb()
       const current = items.filter((x) => !x.read)
 
       await Promise.all(
         current.map((x) =>
-          updateDoc(doc(db, 'device_tokens', token, 'notifications', x.id), {
-            is_read: true,
-          })
+          updateDoc(
+            doc(firestoreDb, 'device_tokens', token, 'notifications', x.id),
+            {
+              is_read: true,
+            }
+          )
         )
       )
       setItems((prev) => prev.map((x) => ({ ...x, read: true })))
@@ -278,7 +301,14 @@ export function useFetchNotification(
         const token = tokenRef.current ?? (await fetchToken())
         if (!token) return
 
-        const ref = doc(db, 'device_tokens', token, 'notifications', id)
+        const firestoreDb = requireDb()
+        const ref = doc(
+          firestoreDb,
+          'device_tokens',
+          token,
+          'notifications',
+          id
+        )
         await deleteDoc(ref)
 
         setItems((prev) => prev.filter((x) => x.id !== id))

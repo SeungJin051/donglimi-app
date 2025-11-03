@@ -2,7 +2,17 @@ import { useRef, useMemo, useState, useEffect } from 'react'
 
 import { Ionicons } from '@expo/vector-icons'
 import * as Haptics from 'expo-haptics'
-import { doc, increment, updateDoc } from 'firebase/firestore'
+import {
+  collection,
+  doc,
+  getDocs,
+  increment,
+  limit,
+  query,
+  setDoc,
+  updateDoc,
+  where,
+} from 'firebase/firestore'
 import { View, Text, TouchableOpacity } from 'react-native'
 import Swipeable, {
   SwipeableMethods,
@@ -10,7 +20,7 @@ import Swipeable, {
 
 import InAppBrowser from '@/components/ui/InAppBrowser/InAppBrowser'
 import RightSwipeActions from '@/components/ui/RightSwipeActions/RightSwipeActions'
-import { db } from '@/config/firebaseConfig'
+import { requireDb } from '@/config/firebaseConfig'
 import { useInternetStatus } from '@/hooks/useInternetStatus'
 import { useInterstitialAd } from '@/hooks/useInterstitialAd'
 import { useAdStore } from '@/store/adStore'
@@ -27,9 +37,6 @@ interface NoticeContentProps {
 }
 
 export const NoticeContent = ({ item }: NoticeContentProps) => {
-  // Firestore 문서 참조
-  const docRef = doc(db, 'notices', item.content_hash)
-
   // 함수를 호출하여 현재 아이템의 부서에 맞는 스타일을 가져옵니다.
   const departmentStyle = getDepartmentStyles(item.department)
 
@@ -81,9 +88,33 @@ export const NoticeContent = ({ item }: NoticeContentProps) => {
         return
       }
       // 서버에 업데이트 시도
-      await updateDoc(docRef, {
-        scrap_count: increment(1),
-      })
+      const firestoreDb = requireDb()
+
+      // content_hash로 문서 찾기
+      const noticesRef = collection(firestoreDb, 'notices')
+      const q = query(
+        noticesRef,
+        where('content_hash', '==', item.content_hash),
+        limit(1)
+      )
+      const querySnapshot = await getDocs(q)
+
+      if (querySnapshot.empty) {
+        // 문서가 없으면 생성 (문서 ID는 자동 생성)
+        console.log('문서 없음 - 새로 생성')
+        const newDocRef = doc(noticesRef)
+        await setDoc(newDocRef, {
+          content_hash: item.content_hash,
+          scrap_count: 1,
+        })
+      } else {
+        // 문서가 있으면 업데이트
+        const docSnapshot = querySnapshot.docs[0]
+        console.log('문서 찾음 - 문서 ID:', docSnapshot.id)
+        await updateDoc(docSnapshot.ref, {
+          scrap_count: increment(1),
+        })
+      }
       showSuccessToast('내 스크랩에 추가했어요')
     } catch (error) {
       // 서버 업데이트 실패!
@@ -113,9 +144,33 @@ export const NoticeContent = ({ item }: NoticeContentProps) => {
         return
       }
       // 서버에 업데이트 시도
-      await updateDoc(docRef, {
-        scrap_count: increment(-1),
-      })
+      const firestoreDb = requireDb()
+
+      // content_hash로 문서 찾기
+      const noticesRef = collection(firestoreDb, 'notices')
+      const q = query(
+        noticesRef,
+        where('content_hash', '==', item.content_hash),
+        limit(1)
+      )
+      const querySnapshot = await getDocs(q)
+
+      if (querySnapshot.empty) {
+        // 문서가 없으면 생성 (스크랩 삭제이므로 0으로 설정)
+        console.log('문서 없음 - 새로 생성 (scrap_count: 0)')
+        const newDocRef = doc(noticesRef)
+        await setDoc(newDocRef, {
+          content_hash: item.content_hash,
+          scrap_count: 0,
+        })
+      } else {
+        // 문서가 있으면 업데이트
+        const docSnapshot = querySnapshot.docs[0]
+        console.log('문서 찾음 - 문서 ID:', docSnapshot.id)
+        await updateDoc(docSnapshot.ref, {
+          scrap_count: increment(-1),
+        })
+      }
       showSuccessToast('내 스크랩에서 삭제했어요')
     } catch (error) {
       // 서버 업데이트 실패 시 롤백

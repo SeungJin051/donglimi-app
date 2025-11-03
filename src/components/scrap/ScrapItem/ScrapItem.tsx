@@ -1,7 +1,17 @@
 import { useRef, useState } from 'react'
 
 import * as Haptics from 'expo-haptics'
-import { doc, updateDoc, increment } from 'firebase/firestore'
+import {
+  collection,
+  doc,
+  getDocs,
+  increment,
+  limit,
+  query,
+  setDoc,
+  updateDoc,
+  where,
+} from 'firebase/firestore'
 import { Text, View, TouchableOpacity } from 'react-native'
 import Swipeable, {
   SwipeableMethods,
@@ -9,7 +19,7 @@ import Swipeable, {
 
 import InAppBrowser from '@/components/ui/InAppBrowser/InAppBrowser'
 import RightSwipeActions from '@/components/ui/RightSwipeActions/RightSwipeActions'
-import { db } from '@/config/firebaseConfig'
+import { requireDb } from '@/config/firebaseConfig'
 import { Scrap, useScrapStore } from '@/store/scrapStore'
 import { getFormattedDate } from '@/utils/dateUtils'
 import { getDepartmentStyles } from '@/utils/departmentStyles'
@@ -25,9 +35,6 @@ export const ScrapItem = ({ scrap }: { scrap: Scrap }) => {
   const [browserVisible, setBrowserVisible] = useState(false)
   const [browserUrl, setBrowserUrl] = useState<string | null>(null)
 
-  // Firestore 문서 참조
-  const docRef = doc(db, 'notices', scrap.notice.content_hash)
-
   // 스크랩 삭제 핸들러
   const handleRemoveScrap = async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
@@ -38,9 +45,31 @@ export const ScrapItem = ({ scrap }: { scrap: Scrap }) => {
 
     try {
       // 서버: Firestore의 scrap_count -1 업데이트 시도
-      await updateDoc(docRef, {
-        scrap_count: increment(-1),
-      })
+      const firestoreDb = requireDb()
+
+      // content_hash로 문서 찾기
+      const noticesRef = collection(firestoreDb, 'notices')
+      const q = query(
+        noticesRef,
+        where('content_hash', '==', scrap.notice.content_hash),
+        limit(1)
+      )
+      const querySnapshot = await getDocs(q)
+
+      if (querySnapshot.empty) {
+        // 문서가 없으면 생성 (스크랩 삭제이므로 0으로 설정)
+        const newDocRef = doc(noticesRef)
+        await setDoc(newDocRef, {
+          content_hash: scrap.notice.content_hash,
+          scrap_count: 0,
+        })
+      } else {
+        // 문서가 있으면 업데이트
+        const docSnapshot = querySnapshot.docs[0]
+        await updateDoc(docSnapshot.ref, {
+          scrap_count: increment(-1),
+        })
+      }
       showSuccessToast('내 스크랩에서 삭제했어요')
     } catch (error) {
       // 롤백: 서버 업데이트 실패 시 로컬 상태 되돌리기

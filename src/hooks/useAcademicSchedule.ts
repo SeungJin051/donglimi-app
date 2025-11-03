@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 
 import { doc, getDoc, Timestamp } from 'firebase/firestore'
 
-import { db } from '@/config/firebaseConfig'
+import { requireDb } from '@/config/firebaseConfig'
 
 export interface AcademicScheduleItem {
   id: number
@@ -36,7 +36,8 @@ export function useAcademicSchedule() {
       setError(null)
 
       try {
-        const docRef = doc(db, 'academic_schedules', 'current')
+        const firestoreDb = requireDb()
+        const docRef = doc(firestoreDb, 'academic_schedules', 'current')
         const docSnap = await getDoc(docRef)
 
         if (docSnap.exists()) {

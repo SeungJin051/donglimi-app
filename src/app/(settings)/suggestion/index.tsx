@@ -17,7 +17,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import SettingDetailHeader from '@/components/layout/SettingDetailHeader/SettingDetailHeader'
-import { db } from '@/config/firebaseConfig'
+import { requireDb } from '@/config/firebaseConfig'
 import { useInternetStatus } from '@/hooks/useInternetStatus'
 import { showInfoToast, showSuccessToast } from '@/utils/toastUtils'
 
@@ -98,7 +98,8 @@ export default function SuggestionScreen() {
     setIsSubmitting(true)
 
     try {
-      await addDoc(collection(db, 'suggestions'), {
+      const firestoreDb = requireDb()
+      await addDoc(collection(firestoreDb, 'suggestions'), {
         type: selectedType,
         title: title.trim(),
         content: content.trim(),

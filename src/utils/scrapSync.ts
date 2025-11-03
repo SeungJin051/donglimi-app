@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { doc, increment, updateDoc } from 'firebase/firestore'
 
-import { db } from '@/config/firebaseConfig'
+import { requireDb } from '@/config/firebaseConfig'
 
 const STORAGE_KEY = 'pendingScrapIncrements'
 
@@ -40,12 +40,14 @@ export async function flushScrapQueue(): Promise<void> {
   }
 
   // 적용
+  const firestoreDb = requireDb()
+
   for (const [id, totalDelta] of merged.entries()) {
     if (!totalDelta) continue
     try {
-      const ref = doc(db, 'notices', id)
+      const ref = doc(firestoreDb, 'notices', id)
       await updateDoc(ref, { scrap_count: increment(totalDelta) })
-    } catch (e) {
+    } catch {
       // 실패 시 남겨두기 위해 조기 종료
       return
     }

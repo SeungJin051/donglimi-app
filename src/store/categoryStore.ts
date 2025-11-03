@@ -19,7 +19,9 @@ export const useCategoryStore = create<CategoryStore>()(
       // setSubscribedCategories 함수를 정의하여 상태를 업데이트합니다.
       setSubscribedCategories: (categories) =>
         // 스토어의 subscribedCategories 상태를 입력으로 받은 categories 배열로 완전히 덮어써라
-        set({ subscribedCategories: categories }),
+        set({
+          subscribedCategories: Array.isArray(categories) ? categories : [],
+        }),
     }),
     {
       name: 'category-storage', // AsyncStorage 키
@@ -27,6 +29,19 @@ export const useCategoryStore = create<CategoryStore>()(
       partialize: (state) => ({
         subscribedCategories: state.subscribedCategories,
       }),
+      // 데이터 복원 시 유효성 검증
+      migrate: (persistedState: any) => {
+        if (!persistedState || typeof persistedState !== 'object') {
+          return { subscribedCategories: [] }
+        }
+        return {
+          subscribedCategories: Array.isArray(
+            persistedState.subscribedCategories
+          )
+            ? persistedState.subscribedCategories
+            : [],
+        }
+      },
     }
   )
 )

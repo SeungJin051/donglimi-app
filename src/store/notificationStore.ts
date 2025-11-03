@@ -49,14 +49,20 @@ export const useNotificationStore = create<NotificationStore>()(
 
       // 키워드 토글 (있으면 제거, 없으면 추가)
       toggleKeyword: (keyword) =>
-        set((state) => ({
-          selectedKeywords: state.selectedKeywords.includes(keyword)
-            ? state.selectedKeywords.filter((k) => k !== keyword)
-            : [...state.selectedKeywords, keyword],
-        })),
+        set((state) => {
+          const currentKeywords = Array.isArray(state.selectedKeywords)
+            ? state.selectedKeywords
+            : []
+          return {
+            selectedKeywords: currentKeywords.includes(keyword)
+              ? currentKeywords.filter((k) => k !== keyword)
+              : [...currentKeywords, keyword],
+          }
+        }),
 
       // 키워드 배열 설정
-      setSelectedKeywords: (keywords) => set({ selectedKeywords: keywords }),
+      setSelectedKeywords: (keywords) =>
+        set({ selectedKeywords: Array.isArray(keywords) ? keywords : [] }),
 
       // 알림 활성화 토글
       setNotificationEnabled: (enabled) =>
@@ -74,6 +80,23 @@ export const useNotificationStore = create<NotificationStore>()(
         selectedKeywords: state.selectedKeywords,
         notificationEnabled: state.notificationEnabled,
       }),
+      // 데이터 복원 시 유효성 검증
+      migrate: (persistedState: any) => {
+        if (!persistedState || typeof persistedState !== 'object') {
+          return initialState
+        }
+        return {
+          selectedCollege: persistedState.selectedCollege ?? null,
+          selectedDepartment: persistedState.selectedDepartment ?? null,
+          selectedKeywords: Array.isArray(persistedState.selectedKeywords)
+            ? persistedState.selectedKeywords
+            : [],
+          notificationEnabled:
+            typeof persistedState.notificationEnabled === 'boolean'
+              ? persistedState.notificationEnabled
+              : false,
+        }
+      },
     }
   )
 )

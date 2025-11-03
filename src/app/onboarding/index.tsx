@@ -14,7 +14,7 @@ import {
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
-import { db } from '@/config/firebaseConfig'
+import { requireDb } from '@/config/firebaseConfig'
 import { DEPARTMENTS_BY_COLLEGE } from '@/constants/collge'
 import { NOTIFICATION_KEYWORDS } from '@/constants/keyword'
 import { usePushNotifications } from '@/hooks/usePushNotifications'
@@ -104,8 +104,9 @@ export default function OnboardingScreen() {
       ]
 
       // Firestore 저장 (문서 ID를 토큰으로 고정)
+      const firestoreDb = requireDb()
       await setDoc(
-        doc(db, 'device_tokens', token),
+        doc(firestoreDb, 'device_tokens', token),
         {
           token,
           subscribed_topics: subscribedTopics,
