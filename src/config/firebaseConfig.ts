@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp, getApps } from 'firebase/app'
-import { getFirestore } from 'firebase/firestore'
+import { initializeApp, getApps, FirebaseApp } from 'firebase/app'
+import { getFirestore, Firestore } from 'firebase/firestore'
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -18,8 +18,8 @@ const firebaseConfig = {
 }
 
 // Firebase 초기화를 안전하게 처리
-let app
-let db
+let app: FirebaseApp | undefined
+let db: Firestore | undefined
 
 try {
   // 이미 초기화된 앱이 있는지 확인
@@ -48,6 +48,14 @@ try {
 export { db }
 
 // Firebase 초기화 상태 확인 함수
-export function isFirebaseInitialized() {
+export function isFirebaseInitialized(): boolean {
   return db !== undefined && db !== null
+}
+
+// db가 없으면 에러를 던지는 헬퍼 함수
+export function requireDb(): Firestore {
+  if (!db) {
+    throw new Error('Firestore가 초기화되지 않았습니다.')
+  }
+  return db
 }
