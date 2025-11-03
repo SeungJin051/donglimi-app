@@ -21,6 +21,7 @@ const config: ExpoConfig = {
     infoPlist: {
       ITSAppUsesNonExemptEncryption: false,
     },
+    jsEngine: 'jsc',
   },
   android: {
     adaptiveIcon: {
@@ -30,6 +31,7 @@ const config: ExpoConfig = {
     edgeToEdgeEnabled: true,
     predictiveBackGestureEnabled: false,
     package: 'com.seungjin051.donglimiapp',
+    jsEngine: 'jsc',
   },
   web: {
     bundler: 'metro',
