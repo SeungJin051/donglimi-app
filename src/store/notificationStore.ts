@@ -81,6 +81,7 @@ export const useNotificationStore = create<NotificationStore>()(
         notificationEnabled: state.notificationEnabled,
       }),
       // 데이터 복원 시 유효성 검증
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       migrate: (persistedState: any) => {
         if (!persistedState || typeof persistedState !== 'object') {
           return initialState
