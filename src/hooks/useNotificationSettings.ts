@@ -80,6 +80,7 @@ export function useNotificationSettings() {
         {
           token: pushToken,
           subscribed_topics: merged,
+          user_department: selectedDepartment || null,
           notification_enabled: true,
           updated_at: serverTimestamp(),
           created_at: serverTimestamp(),
@@ -94,6 +95,7 @@ export function useNotificationSettings() {
     notificationEnabled,
     selectedKeywordsArray,
     selectedDepartments,
+    selectedDepartment,
   ])
 
   // 변경 자동 저장 (debounce)

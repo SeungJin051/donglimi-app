@@ -92,17 +92,10 @@ export const DepatmentBottomSheet = ({
     let newSelectedDepartments: string[]
     if (selectedDepartments.includes(departmentName)) {
       // 이미 선택된 학과는 해제
-      newSelectedDepartments = selectedDepartments.filter(
-        (name) => name !== departmentName
-      )
+      newSelectedDepartments = []
     } else {
-      // 새로 선택하려는 경우, 이미 2개가 선택되어 있으면 선택 불가
-      if (selectedDepartments.length >= 2) {
-        // 선택 제한 알림 (필요시 Toast나 Alert 추가)
-        console.log('최대 2개까지 선택 가능합니다')
-        return // 선택 제한 초과로 변경 없음
-      }
-      newSelectedDepartments = [...selectedDepartments, departmentName]
+      // 새로 선택하려는 경우, 단일 선택이므로 기존 선택을 모두 해제하고 새로 선택
+      newSelectedDepartments = [departmentName]
     }
 
     // 상태 업데이트
@@ -125,101 +118,49 @@ export const DepatmentBottomSheet = ({
   }
 
   const renderCollegeStep = () => {
-    // 단과대학도 페이지네이션 적용 (일관성을 위해)
-    const collegeItemsPerPage = 8 // 단과대학은 더 많이 보여줌
-    const collegeStartIndex = currentPage * collegeItemsPerPage
-    const collegeEndIndex = collegeStartIndex + collegeItemsPerPage
-    const currentColleges = colleges.slice(collegeStartIndex, collegeEndIndex)
-    const collegeTotalPages = Math.ceil(colleges.length / collegeItemsPerPage)
-
     return (
       <>
         <Text className="mb-6 text-center text-lg font-semibold">
           단과대학 선택
         </Text>
 
-        {/* 현재 페이지 단과대학 목록 */}
+        {/* 그리드 레이아웃으로 단과대학 목록 표시 (2열, 한 화면에 모두 표시) */}
         <View style={{ flex: 1, marginBottom: 16 }}>
-          {currentColleges.map((collegeKey) => {
-            const college =
-              DEPARTMENTS_BY_COLLEGE[
-                collegeKey as keyof typeof DEPARTMENTS_BY_COLLEGE
-              ]
-            return (
-              <TouchableOpacity
-                key={collegeKey}
-                className="mb-3 rounded-lg border border-gray-200 bg-white p-4"
-                onPress={() => handleCollegeSelect(collegeKey)}
-              >
-                <Text className="text-base font-medium text-gray-900">
-                  {college.title}
-                </Text>
-                <Text className="mt-1 text-sm text-gray-500">
-                  {college.departments.length}개 학과
-                </Text>
-              </TouchableOpacity>
-            )
-          })}
-        </View>
-
-        {/* 페이지네이션 컨트롤 (단과대학용) */}
-        {collegeTotalPages > 1 && (
-          <View className="mb-4">
-            <View className="mb-4 flex-row items-center justify-between">
-              <TouchableOpacity
-                className={`rounded-lg px-4 py-2 ${
-                  currentPage === 0 ? 'bg-gray-200' : 'bg-blue-500'
-                }`}
-                onPress={goToPreviousPage}
-                disabled={currentPage === 0}
-              >
-                <Text
-                  className={`font-semibold ${
-                    currentPage === 0 ? 'text-gray-400' : 'text-white'
-                  }`}
+          <View
+            style={{
+              flexDirection: 'row',
+              flexWrap: 'wrap',
+              justifyContent: 'space-between',
+            }}
+          >
+            {colleges.map((collegeKey) => {
+              const college =
+                DEPARTMENTS_BY_COLLEGE[
+                  collegeKey as keyof typeof DEPARTMENTS_BY_COLLEGE
+                ]
+              return (
+                <TouchableOpacity
+                  key={collegeKey}
+                  className="mb-3 rounded-lg border border-gray-200 bg-white p-4"
+                  style={{
+                    width: '48%', // 2열 그리드 (약간의 간격을 위해 48%)
+                    minHeight: 70,
+                    justifyContent: 'center',
+                  }}
+                  onPress={() => handleCollegeSelect(collegeKey)}
                 >
-                  이전
-                </Text>
-              </TouchableOpacity>
-
-              <Text className="text-sm text-gray-600">
-                {currentPage + 1} / {collegeTotalPages}
-              </Text>
-
-              <TouchableOpacity
-                className={`rounded-lg px-4 py-2 ${
-                  currentPage === collegeTotalPages - 1
-                    ? 'bg-gray-200'
-                    : 'bg-blue-500'
-                }`}
-                onPress={goToNextPage}
-                disabled={currentPage === collegeTotalPages - 1}
-              >
-                <Text
-                  className={`font-semibold ${
-                    currentPage === collegeTotalPages - 1
-                      ? 'text-gray-400'
-                      : 'text-white'
-                  }`}
-                >
-                  다음
-                </Text>
-              </TouchableOpacity>
-            </View>
-
-            {/* 페이지 인디케이터 */}
-            <View className="flex-row justify-center">
-              {Array.from({ length: collegeTotalPages }, (_, index) => (
-                <View
-                  key={index}
-                  className={`mx-1 h-2 w-2 rounded-full ${
-                    index === currentPage ? 'bg-blue-500' : 'bg-gray-300'
-                  }`}
-                />
-              ))}
-            </View>
+                  <Text
+                    className="text-lg font-medium text-gray-900"
+                    numberOfLines={2}
+                    style={{ textAlign: 'center' }}
+                  >
+                    {college.title}
+                  </Text>
+                </TouchableOpacity>
+              )
+            })}
           </View>
-        )}
+        </View>
       </>
     )
   }
@@ -264,7 +205,7 @@ export const DepatmentBottomSheet = ({
 
         {/* 부제 부분 */}
         <Text className="mb-4 text-center text-sm text-gray-600">
-          구독할 학과를 선택하세요 (최대 2개까지 선택 가능)
+          구독할 학과를 선택하세요
         </Text>
 
         {/* 현재 페이지 학과 목록 */}
@@ -365,14 +306,16 @@ export const DepatmentBottomSheet = ({
         </View>
 
         {/* 완료 버튼 */}
-        <TouchableOpacity
-          className="mb-2 rounded-lg bg-blue-500 p-4"
-          onPress={handleComplete}
-        >
-          <Text className="text-center text-lg font-semibold text-white">
-            선택 완료 ({selectedDepartments.length}/2개 선택)
-          </Text>
-        </TouchableOpacity>
+        {selectedDepartments.length > 0 && (
+          <TouchableOpacity
+            className="mb-2 rounded-lg bg-blue-500 p-4"
+            onPress={handleComplete}
+          >
+            <Text className="text-center text-lg font-semibold text-white">
+              선택 완료 ({selectedDepartments.length}/1개 선택)
+            </Text>
+          </TouchableOpacity>
+        )}
       </>
     )
   }

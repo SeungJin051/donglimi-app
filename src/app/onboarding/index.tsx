@@ -110,6 +110,7 @@ export default function OnboardingScreen() {
         {
           token,
           subscribed_topics: subscribedTopics,
+          user_department: selectedDepartment || null,
           notification_enabled: true,
           updated_at: serverTimestamp(),
           created_at: serverTimestamp(),
