@@ -7,6 +7,8 @@ export const SUBSCRIPTION_TAB_DEPARTMENT = [
   '한의과대학',
   '공과대학',
   '소프트웨어융합대학',
+  '예술디자인체육대학',
+  '자유전공학부',
 ]
 
 // 구독 탭

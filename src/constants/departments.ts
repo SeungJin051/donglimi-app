@@ -350,6 +350,30 @@ export const DEPARTMENT_LIST: DepartmentTarget[] = [
     url: 'https://radiology.deu.ac.kr/radiology/sub06_03.do',
     type: '학과공지',
   },
+  {
+    category: '의료·보건·생활대학',
+    name: '의료경영학과',
+    url: 'https://hcm1.deu.ac.kr/hcm/sub06_03.do',
+    type: '학과공지',
+  },
+  {
+    category: '의료·보건·생활대학',
+    name: '물리치료학과',
+    url: 'https://pt.deu.ac.kr/pt/sub06_03.do',
+    type: '학과공지',
+  },
+  {
+    category: '의료·보건·생활대학',
+    name: '식품영양학과',
+    url: 'https://fn.deu.ac.kr/food/sub06_03.do',
+    type: '학과공지',
+  },
+  {
+    category: '의료·보건·생활대학',
+    name: '응급구조학과',
+    url: 'https://ems.deu.ac.kr/ems/sub06_03.do',
+    type: '학과공지',
+  },
 
   // 한의과대학 (한의예과와 한의학과 모두 동일한 URL 사용)
   {
@@ -514,12 +538,6 @@ export const DEPARTMENT_LIST: DepartmentTarget[] = [
   // 소프트웨어융합대학
   {
     category: '소프트웨어융합대학',
-    name: '소프트웨어융합대학',
-    url: 'https://swcc.deu.ac.kr/swcc/sub01_04.do',
-    type: '학과공지',
-  },
-  {
-    category: '소프트웨어융합대학',
     name: '컴퓨터공학과',
     url: 'https://computer.deu.ac.kr/computer/sub06_03.do',
     type: '학과공지',
@@ -552,6 +570,70 @@ export const DEPARTMENT_LIST: DepartmentTarget[] = [
     category: '소프트웨어융합대학',
     name: '소프트웨어융합학과',
     url: 'https://deuhome.deu.ac.kr/sw/sub06_03.do',
+    type: '학과공지',
+  },
+
+  // 예술디자인체육대학
+  {
+    category: '예술디자인체육대학',
+    name: '음악학과',
+    url: 'https://music.deu.ac.kr/music/sub06_03.do',
+    type: '학과공지',
+  },
+  {
+    category: '예술디자인체육대학',
+    name: '디자인조형학과',
+    url: 'https://designart.deu.ac.kr/design/sub06_03.do',
+    type: '학과공지',
+  },
+  {
+    category: '예술디자인체육대학',
+    name: '패션디자인학과',
+    url: 'https://fashion.deu.ac.kr/fashion/sub06_03.do',
+    type: '학과공지',
+  },
+  {
+    category: '예술디자인체육대학',
+    name: '체육학과',
+    url: 'https://deptpe.deu.ac.kr/deptpe/sub06_03.do',
+    type: '학과공지',
+  },
+  {
+    category: '예술디자인체육대학',
+    name: '레저스포츠학과',
+    url: 'https://leisure.deu.ac.kr/leisure/sub06_03.do',
+    type: '학과공지',
+  },
+  {
+    category: '예술디자인체육대학',
+    name: '태권도학과',
+    url: 'https://tkd.deu.ac.kr/tkd/sub06_03.do',
+    type: '학과공지',
+  },
+  {
+    category: '예술디자인체육대학',
+    name: '경기지도학과',
+    url: 'https://sportscoaching.deu.ac.kr/sportscoaching/sub06_03.do',
+    type: '학과공지',
+  },
+  {
+    category: '예술디자인체육대학',
+    name: 'K-뷰티학과',
+    url: 'https://kbeauty.deu.ac.kr/kbeauty/sub07_01.do',
+    type: '학과공지',
+  },
+  {
+    category: '예술디자인체육대학',
+    name: '영화학과',
+    url: 'https://deuhome.deu.ac.kr/cinema/sub06_03.do',
+    type: '학과공지',
+  },
+
+  // 자유전공학부
+  {
+    category: '자유전공학부',
+    name: '자유전공학부',
+    url: 'https://deuhome.deu.ac.kr/freemajor/sub06_03.do',
     type: '학과공지',
   },
 ]
