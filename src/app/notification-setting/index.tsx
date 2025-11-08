@@ -12,7 +12,6 @@ import { TagList } from '@/components/ui/TagList/TagList'
 import { NOTIFICATION_KEYWORDS } from '@/constants/keyword'
 import { useNetworkGuard } from '@/hooks/useNetworkGuard'
 import { useNotificationSettings } from '@/hooks/useNotificationSettings'
-// (공통 훅에서 토스트를 띄우므로 여기선 직접 사용하지 않음)
 
 export default function NotificationSetting() {
   // 알림 설정 관련 비즈니스 로직
@@ -111,6 +110,22 @@ export default function NotificationSetting() {
       <NotificationSettingHeader />
 
       <View className="gap-5 px-4">
+        {/* 안내 문구 */}
+        <View className="rounded-2xl border border-purple-100 bg-purple-50 p-4">
+          <View className="flex-row flex-wrap items-center gap-1">
+            <Text className="font-semibold text-purple-400">사용</Text>
+            <Text className="text-purple-400">·</Text>
+            <Text
+              className="flex-1 text-purple-400"
+              numberOfLines={2}
+              ellipsizeMode="tail"
+            >
+              학과 공지는 선택한 학과만, 키워드 알림은 학과 공지 제외 전체
+              공지에서만 발송돼요.
+            </Text>
+          </View>
+        </View>
+
         {/* 푸시 알림 설정 섹션 */}
         <View className="rounded-xl border border-gray-200 bg-white px-4 py-4">
           <View className="flex-row items-center justify-between">
@@ -120,7 +135,7 @@ export default function NotificationSetting() {
                 size={22}
                 color="#F59E0B"
               />
-              <Text className="font-semibold">새 공지, 놓치지 마세요</Text>
+              <Text className="font-semibold">알림 받기</Text>
             </View>
 
             <Switch
@@ -133,7 +148,7 @@ export default function NotificationSetting() {
           {/* 푸시 알림 설정 설명 - OFF 상태일 때만 표시 */}
           {!notificationEnabled && (
             <Text className="text-sm text-gray-500">
-              장학금, 학사일정 등 중요 소식을 실시간으로 알려드려요.
+              아래 설정한 키워드와 학과 알림을 받을 수 있어요.
             </Text>
           )}
         </View>
@@ -143,7 +158,7 @@ export default function NotificationSetting() {
           <View className="gap-2">
             <Text className="font-semibold">맞춤 키워드 알림</Text>
             <Text className="text-sm text-gray-500">
-              '장학금'처럼 원하는 키워드의 새 공지만 쏙쏙 알려드려요.
+              학교 전체 공지 중 원하는 키워드의 새 공지만 알려드려요.
             </Text>
           </View>
 
