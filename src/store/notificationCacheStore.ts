@@ -45,6 +45,7 @@ type NotificationCacheState = {
     patch: Partial<PushNotificationItem>
   ) => void // 특정 아이템 부분 업데이트
   removeItem: (scope: NotificationScope, id: string) => void // 특정 아이템 삭제
+  clearScope: (scope: NotificationScope) => void // 특정 스코프 캐시 초기화
   clearAll: () => void // 전체 캐시 초기화
 }
 
@@ -121,6 +122,14 @@ export const useNotificationCacheStore = create<NotificationCacheState>()(
               ...state.scopes[scope],
               items: state.scopes[scope].items.filter((x) => x.id !== id),
             },
+          },
+        })),
+      // 특정 스코프 캐시 초기화
+      clearScope: (scope) =>
+        set((state) => ({
+          scopes: {
+            ...state.scopes,
+            [scope]: initialScope(),
           },
         })),
       // 전체 캐시 초기화

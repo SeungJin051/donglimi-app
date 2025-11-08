@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   FlatList,
+  Alert,
 } from 'react-native'
 
 import useFetchNotification from '@/hooks/useFetchNotification'
@@ -22,6 +23,7 @@ export const NotificationContent = () => {
     error,
     markAsRead,
     deleteNotification,
+    deleteAllNotifications,
     loadMore,
     hasMore,
     loadingMore,
@@ -54,25 +56,68 @@ export const NotificationContent = () => {
     [deleteNotification]
   )
 
+  const handleDeleteAll = useCallback(() => {
+    if (items.length === 0) return
+
+    const tabName = selectedTab === 'all' ? '전체' : '안 읽은'
+    Alert.alert(
+      '알림 삭제',
+      `${tabName} 알림 ${items.length}개를 모두 삭제하시겠어요?`,
+      [
+        {
+          text: '취소',
+          style: 'cancel',
+        },
+        {
+          text: '삭제',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await deleteAllNotifications()
+            } catch (error) {
+              console.error('알림 전체 삭제 실패:', error)
+              Alert.alert('오류', '알림 삭제 중 문제가 발생했어요.')
+            }
+          },
+        },
+      ]
+    )
+  }, [items.length, selectedTab, deleteAllNotifications])
+
   return (
     <View className="flex-1 bg-gray-50">
-      <View className="mb-4 flex-row items-center justify-center bg-gray-100 py-1">
-        <TouchableOpacity
-          className={`px-20 py-2 ${
-            selectedTab === 'all' ? 'rounded-full bg-white' : 'bg-gray-100'
-          }`}
-          onPress={() => setSelectedTab('all')}
-        >
-          <Text className="font-semibold">전체</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          className={`px-20 py-2 ${
-            selectedTab === 'unread' ? 'rounded-full bg-white' : 'bg-gray-100'
-          }`}
-          onPress={() => setSelectedTab('unread')}
-        >
-          <Text className="font-semibold">안 읽음</Text>
-        </TouchableOpacity>
+      <View className="mb-4 flex-row items-center justify-between bg-gray-100 px-4 py-1">
+        <View className="flex-1 flex-row items-center justify-center">
+          <TouchableOpacity
+            className={`px-20 py-2 ${
+              selectedTab === 'all' ? 'rounded-full bg-white' : 'bg-gray-100'
+            }`}
+            onPress={() => setSelectedTab('all')}
+          >
+            <Text className="font-semibold">전체</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            className={`px-20 py-2 ${
+              selectedTab === 'unread' ? 'rounded-full bg-white' : 'bg-gray-100'
+            }`}
+            onPress={() => setSelectedTab('unread')}
+          >
+            <Text className="font-semibold">안 읽음</Text>
+          </TouchableOpacity>
+        </View>
+        {items.length > 0 && (
+          <TouchableOpacity
+            onPress={handleDeleteAll}
+            className="ml-2 p-2"
+            disabled={loading}
+          >
+            <Ionicons
+              name="trash-outline"
+              size={20}
+              color={loading ? '#9CA3AF' : '#6B7280'}
+            />
+          </TouchableOpacity>
+        )}
       </View>
       {loading ? (
         <View className="flex-1 items-center justify-center bg-white">
