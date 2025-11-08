@@ -111,12 +111,12 @@ export default function NotificationSetting() {
 
       <View className="gap-5 px-4">
         {/* 안내 문구 */}
-        <View className="rounded-2xl border border-purple-100 bg-purple-50 p-4">
+        <View className="rounded-2xl border border-blue-100 bg-blue-50 p-4">
           <View className="flex-row flex-wrap items-center gap-1">
-            <Text className="font-semibold text-purple-400">사용</Text>
-            <Text className="text-purple-400">·</Text>
+            <Text className="font-semibold text-blue-400">사용</Text>
+            <Text className="text-blue-400">·</Text>
             <Text
-              className="flex-1 text-purple-400"
+              className="flex-1 text-blue-400"
               numberOfLines={2}
               ellipsizeMode="tail"
             >
