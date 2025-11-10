@@ -19,6 +19,7 @@ import { useInternetStatus } from '@/hooks/useInternetStatus'
 import { useNetworkGuard } from '@/hooks/useNetworkGuard'
 import type { Notice } from '@/types/notice.type'
 import { homeScrollRef } from '@/utils/scrollRefs'
+import { showSuccessToast, showInfoToast } from '@/utils/toastUtils'
 
 // FlatList 아이템 타입 정의
 type ListItem = { type: 'notice'; data: Notice } | { type: 'ad'; id: string }
@@ -26,6 +27,10 @@ type ListItem = { type: 'notice'; data: Notice } | { type: 'ad'; id: string }
 export default function HomeScreen() {
   // 스와이프 가이드 표시 상태
   const [showSwipeGuide, setShowSwipeGuide] = useState(false)
+
+  // 새로고침 피드백을 위한 이전 데이터 개수 추적
+  const previousNoticesCountRef = useRef<number>(0)
+  const shouldShowFeedbackRef = useRef<boolean>(false)
 
   // 무한스크롤 훅을 호출하여 데이터, 로딩 상태, 에러 상태를 가져옵니다.
   const {
@@ -118,9 +123,44 @@ export default function HomeScreen() {
     fetchNextPage()
   }
 
+  // 새로고침 완료 감지 (isRefetching이 false로 변경될 때)
+  useEffect(() => {
+    if (!isRefetching && shouldShowFeedbackRef.current) {
+      shouldShowFeedbackRef.current = false
+
+      // 약간의 딜레이를 두고 피드백 표시 (데이터 업데이트 대기)
+      setTimeout(() => {
+        const previousCount = previousNoticesCountRef.current
+        const newCount = data?.pages.flatMap((page) => page.notices).length || 0
+
+        // 항상 피드백 표시
+        if (newCount > previousCount) {
+          // 새로운 데이터가 있으면
+          showSuccessToast('새로운 공지사항이 업데이트되었어요')
+        } else if (newCount === previousCount && previousCount > 0) {
+          // 데이터 개수가 같고 데이터가 있으면
+          showInfoToast('최신 정보입니다')
+        } else {
+          // 데이터가 없어도 피드백 표시
+          showInfoToast('새로고침 완료')
+        }
+      }, 500)
+    }
+  }, [isRefetching, data])
+
   // 새로고침 함수
   const handleRefresh = guardAsync(async () => {
-    await refetch()
+    // 새로고침 시작 전 데이터 개수 저장
+    const currentCount = data?.pages.flatMap((page) => page.notices).length || 0
+    previousNoticesCountRef.current = currentCount
+    shouldShowFeedbackRef.current = true
+
+    try {
+      await refetch()
+    } catch (error) {
+      console.error('새로고침 실패:', error)
+      shouldShowFeedbackRef.current = false
+    }
   })
 
   const handleRetry = guardAsync(async () => {
@@ -192,6 +232,9 @@ export default function HomeScreen() {
             onRefresh={handleRefresh}
             colors={['#3B82F6']}
             tintColor="#3B82F6"
+            progressViewOffset={showSwipeGuide ? 60 : 0}
+            title={isRefetching ? '새로고침 중...' : undefined}
+            titleColor="#6B7280"
           />
         }
         // 다음 페이지 로딩 중일 때 하단에 로딩 표시
