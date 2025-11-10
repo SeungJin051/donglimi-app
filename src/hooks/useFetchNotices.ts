@@ -105,12 +105,18 @@ const fetchNoticesFromAlgolia = async ({
     }
   })
 
+  // saved_at 기준 최신순 정렬 (내림차순)
+  const sortedNotices = notices.sort((a, b) => {
+    const aTime = a.saved_at.toMillis()
+    const bTime = b.saved_at.toMillis()
+    return bTime - aTime // 최신순 (큰 값이 먼저)
+  })
+
   // 다음 페이지 번호 계산
   const nextPage =
     result.page + 1 < result.nbPages ? result.page + 1 : undefined
 
-  // Algolia 서버가 필터링을 처리했으므로, 클라이언트 측 로직 없이 서버 결과를 그대로 반환
-  return { notices, nextPage, nbPages: result.nbPages }
+  return { notices: sortedNotices, nextPage, nbPages: result.nbPages }
 }
 
 export const useFetchNotices = (limitCount = 10) => {

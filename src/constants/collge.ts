@@ -108,7 +108,6 @@ export const DEPARTMENTS_BY_COLLEGE = {
   softwareConvergence: {
     title: '소프트웨어융합대학',
     departments: [
-      { id: 'softwareConvergenceCollege', name: '소프트웨어융합대학' },
       { id: 'computerEng', name: '컴퓨터공학과' },
       { id: 'computerSwEng', name: '컴퓨터소프트웨어공학과' },
       { id: 'appliedSwEng', name: '응용소프트웨어공학과' },
@@ -116,5 +115,26 @@ export const DEPARTMENTS_BY_COLLEGE = {
       { id: 'gameEng', name: '게임공학과' },
       { id: 'softwareConvergenceDept', name: '소프트웨어융합학과' },
     ],
+  },
+
+  artDesignSports: {
+    title: '예술디자인체육대학',
+    departments: [
+      { id: 'music', name: '음악학과' },
+      { id: 'designArt', name: '디자인조형학과' },
+      { id: 'fashionDesign', name: '패션디자인학과' },
+      { id: 'physicalEdu', name: '체육학과' },
+      { id: 'leisureSports', name: '레저스포츠학과' },
+      { id: 'taekwondo', name: '태권도학과' },
+      { id: 'sportsCoaching', name: '경기지도학과' },
+      { id: 'kBeauty', name: 'K-뷰티학과' },
+      { id: 'cinema', name: '영화학과' },
+    ],
+  },
+
+  // 자유전공학부
+  freeMajor: {
+    title: '자유전공학부',
+    departments: [{ id: 'freeMajor', name: '자유전공학부' }],
   },
 }

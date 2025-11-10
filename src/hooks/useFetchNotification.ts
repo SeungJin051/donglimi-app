@@ -322,6 +322,62 @@ export function useFetchNotification(
     [fetchToken, options.filterUnread, getCacheState]
   )
 
+  const deleteAllNotifications = useCallback(async () => {
+    try {
+      const token = tokenRef.current ?? (await fetchToken())
+      if (!token) return
+
+      const firestoreDb = requireDb()
+      const notificationsRef = collection(
+        firestoreDb,
+        'device_tokens',
+        token,
+        'notifications'
+      )
+
+      // 현재 탭에 따라 필터링
+      let q
+      if (options.filterUnread) {
+        // 안 읽음 탭: 안 읽은 알림만 삭제
+        q = query(notificationsRef, where('is_read', '==', false))
+      } else {
+        // 전체 탭: 모든 알림 삭제
+        q = query(notificationsRef)
+      }
+
+      const snapshot = await getDocs(q)
+      const deletePromises = snapshot.docs.map((docSnapshot) =>
+        deleteDoc(docSnapshot.ref)
+      )
+
+      await Promise.all(deletePromises)
+
+      // 상태 업데이트
+      if (options.filterUnread) {
+        setItems((prev) => prev.filter((x) => x.read))
+      } else {
+        setItems([])
+      }
+
+      // 캐시 업데이트
+      const scope: NotificationScope = options.filterUnread ? 'unread' : 'all'
+      if (options.filterUnread) {
+        // 안 읽은 항목만 캐시에서 제거
+        items.forEach((item) => {
+          if (!item.read) {
+            getCacheState().removeItem(scope, item.id)
+          }
+        })
+      } else {
+        // 전체 캐시 클리어
+        getCacheState().clearScope(scope)
+      }
+    } catch (e) {
+      console.error('[useFetchNotification] deleteAllNotifications error', e)
+      throw e
+    }
+  }, [fetchToken, options.filterUnread, items, getCacheState])
+
   const unreadCount = useMemo(
     () => items.filter((x) => !x.read).length,
     [items]
@@ -336,6 +392,7 @@ export function useFetchNotification(
     markAsRead,
     markAllAsRead,
     deleteNotification,
+    deleteAllNotifications,
     loadMore,
     hasMore,
     loadingMore,

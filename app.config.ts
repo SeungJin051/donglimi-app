@@ -3,7 +3,7 @@ import type { ExpoConfig } from 'expo/config'
 const config: ExpoConfig = {
   name: '동리미',
   slug: 'donglimi-app',
-  version: '1.1',
+  version: '1.2',
   orientation: 'portrait',
   icon: './src/assets/images/icon.png',
   scheme: 'donglimiapp',
@@ -31,7 +31,7 @@ const config: ExpoConfig = {
     edgeToEdgeEnabled: true,
     predictiveBackGestureEnabled: false,
     package: 'com.seungjin051.donglimiapp',
-    jsEngine: 'jsc',
+    jsEngine: 'hermes',
   },
   web: {
     bundler: 'metro',
@@ -45,7 +45,7 @@ const config: ExpoConfig = {
       'react-native-google-mobile-ads',
       {
         iosAppId: 'ca-app-pub-6797307832453076~2539092522',
-        androidAppId: 'ca-app-pub-3940256099942544~3347511713',
+        androidAppId: 'ca-app-pub-6797307832453076~5357795152',
       },
     ],
     [

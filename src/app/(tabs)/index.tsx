@@ -59,11 +59,18 @@ export default function HomeScreen() {
       return true
     })
 
+    // saved_at 기준 최신순 정렬 (내림차순)
+    const sorted = deduped.sort((a, b) => {
+      const aTime = a.saved_at.toMillis()
+      const bTime = b.saved_at.toMillis()
+      return bTime - aTime // 최신순 (큰 값이 먼저)
+    })
+
     const result: ListItem[] = []
     const adInterval = 7 // 7개마다 광고
     let adCount = 0
 
-    deduped.forEach((notice, index) => {
+    sorted.forEach((notice, index) => {
       if (index !== 0 && index % adInterval === 0) {
         adCount += 1
         result.push({ type: 'ad', id: `ad-${adCount}` })

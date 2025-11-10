@@ -60,7 +60,7 @@ export default function ManagingNotificationSubscriptions() {
       setSubscribedCategories(
         selectedItems.map((item) => ({ id: item, name: item }))
       )
-      showSuccessToast('공지 구독을 저장했어요')
+      showSuccessToast('공지 피드 설정을 저장했어요')
       router.back()
     }
   }, [hasChanges, selectedItems, setSubscribedCategories, router])
@@ -71,7 +71,7 @@ export default function ManagingNotificationSubscriptions() {
         <TouchableOpacity onPress={() => router.back()}>
           <Ionicons name="arrow-back" size={24} color="black" />
         </TouchableOpacity>
-        <Text className="text-2xl font-bold">공지 구독 관리</Text>
+        <Text className="text-2xl font-bold">공지 피드 관리</Text>
       </View>
 
       <View className="mt-4 flex-row px-4">
@@ -201,7 +201,7 @@ export default function ManagingNotificationSubscriptions() {
             }`}
           >
             {hasChanges
-              ? `공지 구독 저장하기  (${selectedItems.length})`
+              ? `공지 피드 설정 저장하기 (${selectedItems.length})`
               : '변경사항이 없어요'}
           </Text>
         </TouchableOpacity>

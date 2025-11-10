@@ -13,6 +13,8 @@ import Toast from 'react-native-toast-message'
 import HomeDrawer from '@/components/layout/HomeDrawer/HomeDrawer'
 import { RefetchOnReconnectBridge } from '@/components/network/RefetchOnReconnectBridge'
 import { toastConfig } from '@/components/ui/CustomToast/CustomToast'
+import UpdateModal from '@/components/ui/UpdateModal/UpdateModal'
+import { useAppUpdateCheck } from '@/hooks/useAppUpdateCheck'
 import { useOnboarding } from '@/hooks/useOnboarding'
 import { useAdStore } from '@/store/adStore'
 import { resetSessionFlag } from '@/utils/adManager'
@@ -50,9 +52,13 @@ export default function RootLayout() {
   const { isOnboardingComplete } = useOnboarding()
   const [isInitialized, setIsInitialized] = useState(false)
   const initTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [showUpdateModal, setShowUpdateModal] = useState(false)
 
   // hydration 상태 추가
   const { resetLinkCount, resetIfDateChanged, _hasHydrated } = useAdStore()
+
+  // 업데이트 체크
+  const { updateInfo, isChecking, openStore } = useAppUpdateCheck()
 
   useEffect(() => {
     // 초기화 타임아웃 설정 (10초 후 강제 진행)
@@ -114,6 +120,17 @@ export default function RootLayout() {
     }
   }, [_hasHydrated, isOnboardingComplete, resetLinkCount, resetIfDateChanged])
 
+  // 업데이트 모달 표시
+  useEffect(() => {
+    if (!isChecking && updateInfo?.needsUpdate && isInitialized) {
+      // 초기화 완료 후 약간의 딜레이를 두고 모달 표시
+      const timer = setTimeout(() => {
+        setShowUpdateModal(true)
+      }, 1000)
+      return () => clearTimeout(timer)
+    }
+  }, [isChecking, updateInfo, isInitialized])
+
   // 온보딩 체크 또는 store hydration 대기
   if (!isInitialized || isOnboardingComplete === null || !_hasHydrated) {
     return <GestureHandlerRootView style={{ flex: 1 }} />
@@ -138,6 +155,16 @@ export default function RootLayout() {
               />
             </Drawer>
             <Toast config={toastConfig} />
+            {updateInfo && (
+              <UpdateModal
+                visible={showUpdateModal}
+                currentVersion={updateInfo.currentVersion}
+                latestVersion={updateInfo.latestVersion}
+                onUpdate={openStore}
+                onLater={() => setShowUpdateModal(false)}
+                forceUpdate={false}
+              />
+            )}
           </BottomSheetModalProvider>
         </QueryClientProvider>
       </GestureHandlerRootView>
