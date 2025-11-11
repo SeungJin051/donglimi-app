@@ -1,11 +1,15 @@
 import { useEffect, useState } from 'react'
 
+import * as Application from 'expo-application'
 import Constants from 'expo-constants'
 import * as Linking from 'expo-linking'
 import { Platform } from 'react-native'
 
 // 최신 버전 (앱 스토어에 출시된 버전)
-const LATEST_VERSION = '1.2'
+// app.config.ts의 extra.LATEST_STORE_VERSION에서 가져옴
+const getLatestVersion = (): string => {
+  return Constants.expoConfig?.extra?.LATEST_STORE_VERSION || '1.0'
+}
 
 // 스토어 링크
 const IOS_APP_STORE_URL = 'https://apps.apple.com/app/id6754769898'
@@ -49,24 +53,33 @@ export function useAppUpdateCheck() {
   useEffect(() => {
     const checkUpdate = async () => {
       try {
-        // 현재 앱 버전 가져오기
+        // 실제 설치된 앱 버전 가져오기 (네이티브 버전)
+        const nativeVersion = Application.nativeApplicationVersion
+        const expoConfigVersion = Constants.expoConfig?.version
+        const manifestVersion = Constants.manifest?.version
+
+        // fallback으로 expo config 버전 사용
         const currentVersion =
-          Constants.expoConfig?.version || Constants.manifest?.version || '1.0'
+          nativeVersion || expoConfigVersion || manifestVersion || '1.0'
+
+        // 스토어 최신 버전 가져오기
+        const latestVersion = getLatestVersion()
 
         // 버전 비교
-        const needsUpdate = compareVersions(currentVersion, LATEST_VERSION)
+        const needsUpdate = compareVersions(currentVersion, latestVersion)
 
         setUpdateInfo({
           needsUpdate,
           currentVersion,
-          latestVersion: LATEST_VERSION,
+          latestVersion,
         })
       } catch (error) {
         console.error('업데이트 체크 실패:', error)
+        const latestVersion = getLatestVersion()
         setUpdateInfo({
           needsUpdate: false,
           currentVersion: '1.0',
-          latestVersion: LATEST_VERSION,
+          latestVersion,
         })
       } finally {
         setIsChecking(false)

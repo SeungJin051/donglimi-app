@@ -64,6 +64,10 @@ export const DEPARTMENTS_BY_COLLEGE = {
       { id: 'clinicalPathology', name: '임상병리학과' },
       { id: 'dentalHygiene', name: '치위생과' },
       { id: 'radiology', name: '방사선학과' },
+      { id: 'healthCareManagement', name: '의료경영학과' },
+      { id: 'physicalTherapy', name: '물리치료학과' },
+      { id: 'foodNutrition', name: '식품영양학과' },
+      { id: 'ems', name: '응급구조학과' },
     ],
   },
   // 한의과대학
