@@ -1,7 +1,6 @@
 import Ionicons from '@expo/vector-icons/Ionicons'
 import MaterialIcons from '@expo/vector-icons/MaterialIcons'
 import { Tabs } from 'expo-router'
-import { Platform } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 
 import { HomeHeader } from '@/components/layout/HomeHeader'
@@ -25,8 +24,8 @@ export default function TabLayout() {
             backgroundColor: '#FFFFFF',
             borderTopWidth: 0, // 탭 바 상단 보더 제거
             elevation: 0, // 안드로이드 그림자 제거
-            height: Platform.OS === 'ios' ? 75 : 60, // 탭 바 높이 조정 (iOS는 하단 세이프 에어리어 고려)
-            paddingBottom: Platform.OS === 'ios' ? 20 : 0, // iOS 하단 패딩 조정
+            height: 75,
+            paddingBottom: 20, // iOS 하단 패딩 조정
           },
           tabBarIconStyle: {
             marginTop: 10, // 아이콘을 아래로 5px 내립니다.
