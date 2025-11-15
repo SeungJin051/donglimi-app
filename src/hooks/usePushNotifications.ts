@@ -45,8 +45,9 @@ export function usePushNotifications() {
 
       if (Platform.OS === 'android') {
         await Notifications.setNotificationChannelAsync('default', {
-          name: 'default',
+          name: '동리미',
           importance: Notifications.AndroidImportance.MAX,
+          vibrationPattern: [0, 250, 250, 250],
         })
       }
 
