@@ -14,6 +14,7 @@ import {
   Animated,
   Share,
 } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { WebView } from 'react-native-webview'
 
 interface InAppBrowserProps {
@@ -163,9 +164,9 @@ export default function InAppBrowser({
 
   return (
     <Modal visible={visible} animationType="slide" onRequestClose={onClose}>
-      <View className="flex-1 bg-white">
+      <SafeAreaView className="flex-1 bg-white">
         {/* 헤더 */}
-        <View className="border-b border-gray-100 bg-white px-4 pb-3 pt-20">
+        <View className="border-b border-gray-100 bg-white px-4 pb-3">
           <View className="flex-row items-center justify-between">
             <TouchableOpacity
               className="flex-1 pr-3"
@@ -339,7 +340,7 @@ export default function InAppBrowser({
             </TouchableOpacity>
           </View>
         )}
-      </View>
+      </SafeAreaView>
     </Modal>
   )
 }
