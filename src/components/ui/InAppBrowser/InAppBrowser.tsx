@@ -34,6 +34,7 @@ export default function InAppBrowser({
   const [canGoForward, setCanGoForward] = useState(false)
   const [pageTitle, setPageTitle] = useState('')
   const [showActionSheet, setShowActionSheet] = useState(false)
+  const [hasError, setHasError] = useState(false)
 
   // 스크롤 관련 상태
   const scrollY = useRef(0)
@@ -112,6 +113,17 @@ export default function InAppBrowser({
     },
     []
   )
+
+  // 에러 처리
+  const handleError = useCallback(() => {
+    setHasError(true)
+  }, [])
+
+  // 에러 재시도
+  const handleRetry = useCallback(() => {
+    setHasError(false)
+    webViewRef.current?.reload()
+  }, [])
 
   // 스크롤 메시지
   const handleMessage = useCallback(
@@ -203,30 +215,63 @@ export default function InAppBrowser({
 
         {/* 웹뷰 */}
         <View className="flex-1">
-          <WebView
-            ref={webViewRef}
-            source={{ uri: url }}
-            style={{ flex: 1 }}
-            javaScriptEnabled
-            domStorageEnabled
-            allowFileAccess
-            mixedContentMode="compatibility"
-            originWhitelist={['*']}
-            onFileDownload={handleFileDownload}
-            onNavigationStateChange={(navState) => {
-              setCanGoBack(navState.canGoBack)
-              setCanGoForward(navState.canGoForward)
-              setPageTitle(navState.title || '')
-            }}
-            onMessage={handleMessage}
-            injectedJavaScript={injectedJavaScript}
-            startInLoadingState
-            renderLoading={() => (
-              <View className="absolute inset-0 items-center justify-center bg-white">
-                <ActivityIndicator size="large" color="#0158a6" />
+          {hasError ? (
+            <View className="flex-1 items-center justify-center bg-white px-8">
+              <Ionicons name="alert-circle-outline" size={64} color="#EF4444" />
+              <Text className="mt-6 text-center text-lg font-semibold text-gray-900">
+                페이지를 불러올 수 없습니다
+              </Text>
+              <Text className="mt-2 text-center text-sm text-gray-500">
+                SSL 보안 오류가 발생했습니다.{'\n'}
+                외부 브라우저로 열어주세요.
+              </Text>
+              <View className="mt-8 w-full gap-3">
+                <TouchableOpacity
+                  onPress={handleOpenInBrowser}
+                  className="w-full rounded-lg bg-deu-light-blue px-6 py-3"
+                >
+                  <Text className="text-center text-base font-semibold text-white">
+                    외부 브라우저에서 열기
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={handleRetry}
+                  className="w-full rounded-lg border border-gray-300 px-6 py-3"
+                >
+                  <Text className="text-center text-base font-semibold text-gray-700">
+                    다시 시도
+                  </Text>
+                </TouchableOpacity>
               </View>
-            )}
-          />
+            </View>
+          ) : (
+            <WebView
+              ref={webViewRef}
+              source={{ uri: url }}
+              style={{ flex: 1 }}
+              javaScriptEnabled
+              domStorageEnabled
+              allowFileAccess
+              mixedContentMode="compatibility"
+              originWhitelist={['*']}
+              onFileDownload={handleFileDownload}
+              onNavigationStateChange={(navState) => {
+                setCanGoBack(navState.canGoBack)
+                setCanGoForward(navState.canGoForward)
+                setPageTitle(navState.title || '')
+              }}
+              onError={handleError}
+              onHttpError={handleError}
+              onMessage={handleMessage}
+              injectedJavaScript={injectedJavaScript}
+              startInLoadingState
+              renderLoading={() => (
+                <View className="absolute inset-0 items-center justify-center bg-white">
+                  <ActivityIndicator size="large" color="#0158a6" />
+                </View>
+              )}
+            />
+          )}
 
           {/* 푸터 */}
           <Animated.View
