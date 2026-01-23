@@ -13,8 +13,12 @@ import {
   Alert,
   Animated,
   Share,
+  Linking,
+  Platform,
 } from 'react-native'
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { WebView } from 'react-native-webview'
+import type { ShouldStartLoadRequest } from 'react-native-webview/lib/WebViewTypes'
 
 interface InAppBrowserProps {
   visible: boolean
@@ -27,11 +31,13 @@ export default function InAppBrowser({
   url,
   onClose,
 }: InAppBrowserProps) {
+  const insets = useSafeAreaInsets()
   const webViewRef = useRef<WebView>(null)
   const [canGoBack, setCanGoBack] = useState(false)
   const [canGoForward, setCanGoForward] = useState(false)
   const [pageTitle, setPageTitle] = useState('')
   const [showActionSheet, setShowActionSheet] = useState(false)
+  const [hasError, setHasError] = useState(false)
 
   // 스크롤 관련 상태
   const scrollY = useRef(0)
@@ -111,6 +117,79 @@ export default function InAppBrowser({
     []
   )
 
+  // 에러 처리
+  const handleError = useCallback(
+    (syntheticEvent: { nativeEvent: { url?: string; code?: number } }) => {
+      const { url: errorUrl, code } = syntheticEvent.nativeEvent
+      // 도서관 도메인의 SSL 에러(-1200)는 무시
+      if (errorUrl?.includes('lib.deu.ac.kr') && code === -1200) {
+        return
+      }
+      setHasError(true)
+    },
+    []
+  )
+
+  // 에러 재시도
+  const handleRetry = useCallback(() => {
+    setHasError(false)
+    webViewRef.current?.reload()
+  }, [])
+
+  // 도서관 사이트는 외부 브라우저로 열기
+  const handleShouldStartLoad = useCallback(
+    (request: ShouldStartLoadRequest): boolean => {
+      const { url: requestUrl } = request
+
+      // 도서관 도메인인 경우 외부 브라우저로 열기
+      if (requestUrl.includes('lib.deu.ac.kr')) {
+        // 최초 로드는 WebView에서 시도
+        if (requestUrl === url) {
+          return true
+        }
+        // 네비게이션이나 클릭은 외부 브라우저로
+        Linking.openURL(requestUrl).catch((err) => {
+          console.error('외부 브라우저 열기 실패:', err)
+        })
+        return false
+      }
+
+      // Android intent:// 처리
+      if (Platform.OS === 'android' && requestUrl.startsWith('intent://')) {
+        // intent를 http로 변환 시도
+        try {
+          const intentUrl = requestUrl.replace('intent://', 'https://')
+          Linking.openURL(intentUrl).catch(() => {
+            // 실패하면 원본 URL로 시도
+            Linking.openURL(requestUrl).catch((err) => {
+              console.error('Intent 열기 실패:', err)
+            })
+          })
+        } catch (err) {
+          console.error('Intent 처리 실패:', err)
+        }
+        return false
+      }
+
+      // 일반 HTTP/HTTPS는 WebView에서 처리
+      if (
+        requestUrl.startsWith('http://') ||
+        requestUrl.startsWith('https://')
+      ) {
+        return true
+      }
+
+      // 기타 scheme (tel:, mailto: 등)은 외부 앱으로
+      Linking.canOpenURL(requestUrl).then((supported) => {
+        if (supported) {
+          Linking.openURL(requestUrl)
+        }
+      })
+      return false
+    },
+    [url]
+  )
+
   // 스크롤 메시지
   const handleMessage = useCallback(
     (event: { nativeEvent: { data: string } }) => {
@@ -162,10 +241,18 @@ export default function InAppBrowser({
   if (!url) return null
 
   return (
-    <Modal visible={visible} animationType="slide" onRequestClose={onClose}>
-      <View className="flex-1 bg-white">
+    <Modal
+      visible={visible}
+      animationType="slide"
+      onRequestClose={onClose}
+      presentationStyle="fullScreen"
+    >
+      <SafeAreaView
+        className="flex-1 bg-white"
+        edges={['top', 'left', 'right']}
+      >
         {/* 헤더 */}
-        <View className="border-b border-gray-100 bg-white px-4 pb-3 pt-20">
+        <View className="border-b border-gray-100 bg-white px-4 pb-3">
           <View className="flex-row items-center justify-between">
             <TouchableOpacity
               className="flex-1 pr-3"
@@ -193,30 +280,64 @@ export default function InAppBrowser({
 
         {/* 웹뷰 */}
         <View className="flex-1">
-          <WebView
-            ref={webViewRef}
-            source={{ uri: url }}
-            style={{ flex: 1 }}
-            javaScriptEnabled
-            domStorageEnabled
-            allowFileAccess
-            mixedContentMode="compatibility"
-            originWhitelist={['*']}
-            onFileDownload={handleFileDownload}
-            onNavigationStateChange={(navState) => {
-              setCanGoBack(navState.canGoBack)
-              setCanGoForward(navState.canGoForward)
-              setPageTitle(navState.title || '')
-            }}
-            onMessage={handleMessage}
-            injectedJavaScript={injectedJavaScript}
-            startInLoadingState
-            renderLoading={() => (
-              <View className="absolute inset-0 items-center justify-center bg-white">
-                <ActivityIndicator size="large" color="#0158a6" />
+          {hasError ? (
+            <View className="flex-1 items-center justify-center bg-white px-8">
+              <Ionicons name="alert-circle-outline" size={64} color="#EF4444" />
+              <Text className="mt-6 text-center text-lg font-semibold text-gray-900">
+                페이지를 불러올 수 없습니다
+              </Text>
+              <Text className="mt-2 text-center text-sm text-gray-500">
+                SSL 보안 오류가 발생했습니다.{'\n'}
+                외부 브라우저로 열어주세요.
+              </Text>
+              <View className="mt-8 w-full gap-3">
+                <TouchableOpacity
+                  onPress={handleOpenInBrowser}
+                  className="w-full rounded-lg bg-deu-light-blue px-6 py-3"
+                >
+                  <Text className="text-center text-base font-semibold text-white">
+                    외부 브라우저에서 열기
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={handleRetry}
+                  className="w-full rounded-lg border border-gray-300 px-6 py-3"
+                >
+                  <Text className="text-center text-base font-semibold text-gray-700">
+                    다시 시도
+                  </Text>
+                </TouchableOpacity>
               </View>
-            )}
-          />
+            </View>
+          ) : (
+            <WebView
+              ref={webViewRef}
+              source={{ uri: url }}
+              style={{ flex: 1 }}
+              javaScriptEnabled
+              domStorageEnabled
+              allowFileAccess
+              mixedContentMode="compatibility"
+              originWhitelist={['*']}
+              onShouldStartLoadWithRequest={handleShouldStartLoad}
+              onFileDownload={handleFileDownload}
+              onNavigationStateChange={(navState) => {
+                setCanGoBack(navState.canGoBack)
+                setCanGoForward(navState.canGoForward)
+                setPageTitle(navState.title || '')
+              }}
+              onError={handleError}
+              onHttpError={handleError}
+              onMessage={handleMessage}
+              injectedJavaScript={injectedJavaScript}
+              startInLoadingState
+              renderLoading={() => (
+                <View className="absolute inset-0 items-center justify-center bg-white">
+                  <ActivityIndicator size="large" color="#0158a6" />
+                </View>
+              )}
+            />
+          )}
 
           {/* 푸터 */}
           <Animated.View
@@ -225,9 +346,10 @@ export default function InAppBrowser({
               bottom: 0,
               left: 0,
               right: 0,
+              paddingBottom: insets.bottom || 8,
               transform: [{ translateY: footerTranslateY }],
             }}
-            className="border-t border-gray-100 bg-white px-4 pb-8 pt-2"
+            className="border-t border-gray-100 bg-white px-4 pt-2"
           >
             <View className="flex-row items-center justify-between">
               <View className="flex-row items-center gap-2">
@@ -281,7 +403,10 @@ export default function InAppBrowser({
             >
               <View className="flex-1 justify-end">
                 <TouchableOpacity onPress={(e) => e.stopPropagation()}>
-                  <View className="rounded-t-3xl bg-white pb-8 pt-4">
+                  <View
+                    className="rounded-t-3xl bg-white pt-4"
+                    style={{ paddingBottom: insets.bottom + 32 }}
+                  >
                     <View className="mb-4 items-center">
                       <View className="h-1 w-10 rounded-full bg-gray-300" />
                     </View>
@@ -339,7 +464,7 @@ export default function InAppBrowser({
             </TouchableOpacity>
           </View>
         )}
-      </View>
+      </SafeAreaView>
     </Modal>
   )
 }
