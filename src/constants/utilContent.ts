@@ -3,7 +3,7 @@ export const quickItem = [
     id: 1,
     title: '동의대학교 홈',
     icon: 'home',
-    link: 'https://dap.deu.ac.kr/',
+    link: 'https://www.deu.ac.kr/',
   },
   {
     id: 2,
