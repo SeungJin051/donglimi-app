@@ -14,7 +14,7 @@ import {
   Animated,
   Share,
 } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { WebView } from 'react-native-webview'
 
 interface InAppBrowserProps {
@@ -28,6 +28,7 @@ export default function InAppBrowser({
   url,
   onClose,
 }: InAppBrowserProps) {
+  const insets = useSafeAreaInsets()
   const webViewRef = useRef<WebView>(null)
   const [canGoBack, setCanGoBack] = useState(false)
   const [canGoForward, setCanGoForward] = useState(false)
@@ -163,8 +164,16 @@ export default function InAppBrowser({
   if (!url) return null
 
   return (
-    <Modal visible={visible} animationType="slide" onRequestClose={onClose}>
-      <SafeAreaView className="flex-1 bg-white">
+    <Modal
+      visible={visible}
+      animationType="slide"
+      onRequestClose={onClose}
+      presentationStyle="fullScreen"
+    >
+      <SafeAreaView
+        className="flex-1 bg-white"
+        edges={['top', 'left', 'right']}
+      >
         {/* 헤더 */}
         <View className="border-b border-gray-100 bg-white px-4 pb-3">
           <View className="flex-row items-center justify-between">
@@ -226,9 +235,10 @@ export default function InAppBrowser({
               bottom: 0,
               left: 0,
               right: 0,
+              paddingBottom: insets.bottom || 8,
               transform: [{ translateY: footerTranslateY }],
             }}
-            className="border-t border-gray-100 bg-white px-4 pb-8 pt-2"
+            className="border-t border-gray-100 bg-white px-4 pt-2"
           >
             <View className="flex-row items-center justify-between">
               <View className="flex-row items-center gap-2">
@@ -282,7 +292,10 @@ export default function InAppBrowser({
             >
               <View className="flex-1 justify-end">
                 <TouchableOpacity onPress={(e) => e.stopPropagation()}>
-                  <View className="rounded-t-3xl bg-white pb-8 pt-4">
+                  <View
+                    className="rounded-t-3xl bg-white pt-4"
+                    style={{ paddingBottom: insets.bottom + 32 }}
+                  >
                     <View className="mb-4 items-center">
                       <View className="h-1 w-10 rounded-full bg-gray-300" />
                     </View>
