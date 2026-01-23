@@ -1,6 +1,7 @@
 import { useState } from 'react'
 
 import { MaterialIcons } from '@expo/vector-icons'
+import * as WebBrowser from 'expo-web-browser'
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native'
 
 import InAppBrowser from '@/components/ui/InAppBrowser/InAppBrowser'
@@ -19,10 +20,17 @@ export const UtilContent = () => {
 
   // 링크 열기
   const handleOpenLink = (link: string) => {
-    if (link) {
-      setBrowserUrl(link)
-      setBrowserVisible(true)
+    if (!link) return
+
+    // 도서관 사이트는 외부 브라우저로 바로 열기 (SSL 이슈)
+    if (link.includes('lib.deu.ac.kr')) {
+      WebBrowser.openBrowserAsync(link)
+      return
     }
+
+    // 나머지는 InApp 브라우저
+    setBrowserUrl(link)
+    setBrowserVisible(true)
   }
 
   return (

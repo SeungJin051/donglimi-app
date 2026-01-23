@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 
 import * as Haptics from 'expo-haptics'
+import * as WebBrowser from 'expo-web-browser'
 import {
   collection,
   doc,
@@ -88,10 +89,17 @@ export const ScrapItem = ({ scrap }: { scrap: Scrap }) => {
 
   // 링크 열기
   const handleOpenLink = () => {
-    if (scrap.notice.link) {
-      setBrowserUrl(scrap.notice.link)
-      setBrowserVisible(true)
+    if (!scrap.notice.link) return
+
+    // 도서관 사이트는 외부 브라우저로 바로 열기 (SSL 이슈)
+    if (scrap.notice.link.includes('lib.deu.ac.kr')) {
+      WebBrowser.openBrowserAsync(scrap.notice.link)
+      return
     }
+
+    // 나머지는 InApp 브라우저
+    setBrowserUrl(scrap.notice.link)
+    setBrowserVisible(true)
   }
 
   return (

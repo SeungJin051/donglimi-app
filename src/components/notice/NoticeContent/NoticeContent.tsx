@@ -2,6 +2,7 @@ import { useRef, useMemo, useState, useEffect } from 'react'
 
 import { Ionicons } from '@expo/vector-icons'
 import * as Haptics from 'expo-haptics'
+import * as WebBrowser from 'expo-web-browser'
 import {
   collection,
   doc,
@@ -192,12 +193,31 @@ export const NoticeContent = ({ item }: NoticeContentProps) => {
 
   // 공지 링크 열기
   const handleOpenLink = () => {
-    if (item.link) {
-      setBrowserUrl(item.link)
-      setBrowserVisible(true)
-      // 링크 열람 카운트 증가
-      incrementLinkCount()
+    if (!item.link) return
+
+    // 링크 열람 카운트 증가
+    incrementLinkCount()
+
+    // 도서관 사이트는 외부 브라우저로 바로 열기 (SSL 이슈)
+    if (item.link.includes('lib.deu.ac.kr')) {
+      WebBrowser.openBrowserAsync(item.link)
+      // 외부 브라우저는 광고 로직 즉시 실행
+      const shouldShow = canShowAd({
+        viewedCount: linkOpenCount,
+        todayCount: todayAdCount,
+      })
+      if (shouldShow) {
+        setTimeout(() => {
+          showAd()
+          increaseCount()
+        }, 500)
+      }
+      return
     }
+
+    // 나머지는 InApp 브라우저
+    setBrowserUrl(item.link)
+    setBrowserVisible(true)
   }
 
   // 브라우저 닫기 핸들러 (광고 로직 포함)

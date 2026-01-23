@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 
 import * as Haptics from 'expo-haptics'
+import * as WebBrowser from 'expo-web-browser'
 import { View, Text, TouchableOpacity } from 'react-native'
 import Swipeable, {
   SwipeableMethods,
@@ -107,10 +108,16 @@ function NotificationItemContent({
       return
     }
 
-    // 읽음이면 링크가 있을 때만 인앱 브라우저 오픈 후 상위 onPress
+    // 읽음이면 링크가 있을 때만 브라우저 오픈 후 상위 onPress
     if (item.noticeLink) {
-      setBrowserUrl(item.noticeLink)
-      setBrowserVisible(true)
+      // 도서관 사이트는 외부 브라우저로 바로 열기 (SSL 이슈)
+      if (item.noticeLink.includes('lib.deu.ac.kr')) {
+        WebBrowser.openBrowserAsync(item.noticeLink)
+      } else {
+        // 나머지는 InApp 브라우저
+        setBrowserUrl(item.noticeLink)
+        setBrowserVisible(true)
+      }
     }
     onPress?.({
       id: item.id,

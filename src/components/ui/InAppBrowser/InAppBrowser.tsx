@@ -13,9 +13,12 @@ import {
   Alert,
   Animated,
   Share,
+  Linking,
+  Platform,
 } from 'react-native'
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { WebView } from 'react-native-webview'
+import type { ShouldStartLoadRequest } from 'react-native-webview/lib/WebViewTypes'
 
 interface InAppBrowserProps {
   visible: boolean
@@ -115,15 +118,77 @@ export default function InAppBrowser({
   )
 
   // 에러 처리
-  const handleError = useCallback(() => {
-    setHasError(true)
-  }, [])
+  const handleError = useCallback(
+    (syntheticEvent: { nativeEvent: { url?: string; code?: number } }) => {
+      const { url: errorUrl, code } = syntheticEvent.nativeEvent
+      // 도서관 도메인의 SSL 에러(-1200)는 무시
+      if (errorUrl?.includes('lib.deu.ac.kr') && code === -1200) {
+        return
+      }
+      setHasError(true)
+    },
+    []
+  )
 
   // 에러 재시도
   const handleRetry = useCallback(() => {
     setHasError(false)
     webViewRef.current?.reload()
   }, [])
+
+  // 도서관 사이트는 외부 브라우저로 열기
+  const handleShouldStartLoad = useCallback(
+    (request: ShouldStartLoadRequest): boolean => {
+      const { url: requestUrl } = request
+
+      // 도서관 도메인인 경우 외부 브라우저로 열기
+      if (requestUrl.includes('lib.deu.ac.kr')) {
+        // 최초 로드는 WebView에서 시도
+        if (requestUrl === url) {
+          return true
+        }
+        // 네비게이션이나 클릭은 외부 브라우저로
+        Linking.openURL(requestUrl).catch((err) => {
+          console.error('외부 브라우저 열기 실패:', err)
+        })
+        return false
+      }
+
+      // Android intent:// 처리
+      if (Platform.OS === 'android' && requestUrl.startsWith('intent://')) {
+        // intent를 http로 변환 시도
+        try {
+          const intentUrl = requestUrl.replace('intent://', 'https://')
+          Linking.openURL(intentUrl).catch(() => {
+            // 실패하면 원본 URL로 시도
+            Linking.openURL(requestUrl).catch((err) => {
+              console.error('Intent 열기 실패:', err)
+            })
+          })
+        } catch (err) {
+          console.error('Intent 처리 실패:', err)
+        }
+        return false
+      }
+
+      // 일반 HTTP/HTTPS는 WebView에서 처리
+      if (
+        requestUrl.startsWith('http://') ||
+        requestUrl.startsWith('https://')
+      ) {
+        return true
+      }
+
+      // 기타 scheme (tel:, mailto: 등)은 외부 앱으로
+      Linking.canOpenURL(requestUrl).then((supported) => {
+        if (supported) {
+          Linking.openURL(requestUrl)
+        }
+      })
+      return false
+    },
+    [url]
+  )
 
   // 스크롤 메시지
   const handleMessage = useCallback(
@@ -254,6 +319,7 @@ export default function InAppBrowser({
               allowFileAccess
               mixedContentMode="compatibility"
               originWhitelist={['*']}
+              onShouldStartLoadWithRequest={handleShouldStartLoad}
               onFileDownload={handleFileDownload}
               onNavigationStateChange={(navState) => {
                 setCanGoBack(navState.canGoBack)
