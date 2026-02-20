@@ -52,29 +52,25 @@ export default function HomeScreen() {
 
   // 공지사항 배열에 광고 아이템 삽입
   const listData = useMemo<ListItem[]>(() => {
-    const notices = data?.pages.flatMap((page) => page.notices) || []
+    if (!data?.pages) return []
 
-    // content_hash 기준 중복 제거
+    // 모든 페이지의 공지사항을 합치고 중복 제거
+    const allNotices = data.pages.flatMap((page) => page.notices)
     const seen = new Set<string>()
-    const deduped = notices.filter((n) => {
-      const id = n.content_hash
-      if (seen.has(id)) return false
-      seen.add(id)
+    const uniqueNotices = allNotices.filter((notice) => {
+      if (seen.has(notice.content_hash)) {
+        return false
+      }
+      seen.add(notice.content_hash)
       return true
     })
 
-    // saved_at 기준 최신순 정렬 (내림차순)
-    const sorted = deduped.sort((a, b) => {
-      const aTime = a.saved_at.toMillis()
-      const bTime = b.saved_at.toMillis()
-      return bTime - aTime // 최신순 (큰 값이 먼저)
-    })
-
+    // 광고 삽입
     const result: ListItem[] = []
-    const adInterval = 7 // 7개마다 광고
+    const adInterval = 5
     let adCount = 0
 
-    sorted.forEach((notice, index) => {
+    uniqueNotices.forEach((notice, index) => {
       if (index !== 0 && index % adInterval === 0) {
         adCount += 1
         result.push({ type: 'ad', id: `ad-${adCount}` })
@@ -224,7 +220,11 @@ export default function HomeScreen() {
         }
         // 리스트 끝에서 화면 높이의 80% 지점에서 다음 페이지 로드
         onEndReached={handleLoadMore}
-        onEndReachedThreshold={0.8}
+        onEndReachedThreshold={0.3}
+        windowSize={10}
+        maxToRenderPerBatch={10}
+        updateCellsBatchingPeriod={50}
+        removeClippedSubviews={true}
         // pull-to-refresh
         refreshControl={
           <RefreshControl
