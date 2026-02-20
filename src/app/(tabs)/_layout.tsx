@@ -1,6 +1,8 @@
+import { useEffect } from 'react'
+
 import Ionicons from '@expo/vector-icons/Ionicons'
 import MaterialIcons from '@expo/vector-icons/MaterialIcons'
-import { Tabs } from 'expo-router'
+import { Tabs, usePathname } from 'expo-router'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 
 import { HomeHeader } from '@/components/layout/HomeHeader'
@@ -9,8 +11,43 @@ import { ScrapHeader } from '@/components/layout/ScrapHeader/ScrapHeader'
 import { SettingHeader } from '@/components/layout/SettingHeader/SettingHeader'
 import { UtilHeader } from '@/components/layout/UtilHeader/UtilHeader'
 import { OfflineToastBridge } from '@/components/network/OfflineToastBridge'
+import { useInterstitialAd } from '@/hooks/useInterstitialAd'
+import { useAdStore } from '@/store/adStore'
+import { canShowTabSwitchAd } from '@/utils/adManager'
 
 export default function TabLayout() {
+  const pathname = usePathname()
+  const { showAd } = useInterstitialAd()
+  const {
+    tabSwitchCount,
+    todayAdCount,
+    incrementTabSwitchCount,
+    increaseCount,
+  } = useAdStore()
+
+  // 탭 전환 감지
+  useEffect(() => {
+    // 초기 로드는 무시
+    if (!pathname) return
+
+    // 탭 전환 카운트 증가
+    incrementTabSwitchCount()
+
+    // 광고 표시 판단
+    const shouldShow = canShowTabSwitchAd({
+      tabSwitchCount: tabSwitchCount + 1,
+      todayCount: todayAdCount,
+    })
+
+    if (shouldShow) {
+      setTimeout(() => {
+        showAd()
+        increaseCount()
+      }, 800)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname])
+
   return (
     // 안전 영역
     <SafeAreaProvider>

@@ -4,6 +4,7 @@ import Feather from '@expo/vector-icons/Feather'
 import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet'
 import { View, Text, TouchableOpacity } from 'react-native'
 
+import { CenterAdCard } from '@/components/notice/CenterAdCard/CenterAdCard'
 import { useBottomSheetBackdrop } from '@/components/ui/BottomSheetBackdropComponent/BottomSheetBackdropComponent'
 import ScrapFilterBottomSheet from '@/components/ui/ScrapFilterBottomSheet/ScrapFilterBottomSheet'
 import { useFilteredAndSortedScraps } from '@/hooks/useFilteredAndSortedScraps'
@@ -60,6 +61,10 @@ export const ScrapContent = () => {
         <Text className="text-sm text-gray-500">
           {filteredAndSortedScraps.length}개
         </Text>
+      </View>
+
+      <View>
+        <CenterAdCard />
       </View>
 
       {/* 스크랩 목록 */}
