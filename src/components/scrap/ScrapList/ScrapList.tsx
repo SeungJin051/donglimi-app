@@ -27,7 +27,6 @@ export const ScrapList: React.FC<ScrapListProps> = ({ scraps }) => {
       data={scraps}
       keyExtractor={(item) => item.notice.content_hash}
       renderItem={({ item }) => <ScrapItem scrap={item} />}
-      contentContainerStyle={{ paddingTop: 20 }}
       showsVerticalScrollIndicator={true}
       style={{ flex: 1 }}
     />

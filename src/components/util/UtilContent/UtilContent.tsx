@@ -4,6 +4,7 @@ import { MaterialIcons } from '@expo/vector-icons'
 import * as WebBrowser from 'expo-web-browser'
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native'
 
+import { CenterAdCard } from '@/components/notice/CenterAdCard/CenterAdCard'
 import InAppBrowser from '@/components/ui/InAppBrowser/InAppBrowser'
 import { quickItem } from '@/constants/utilContent'
 import { useAcademicSchedule } from '@/hooks/useAcademicSchedule'
@@ -36,7 +37,11 @@ export const UtilContent = () => {
   return (
     <>
       <ScrollView>
-        <View className="gap-6 bg-gray-50 px-4 py-4">
+        {/* 상단 배너 광고 */}
+        <View>
+          <CenterAdCard />
+        </View>
+        <View className="gap-4 bg-gray-50 px-4">
           {/* 학사 일정 */}
           <View className="rounded-xl border border-gray-100 bg-white px-4 py-4">
             <View className="flex-row justify-between">

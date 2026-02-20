@@ -10,6 +10,7 @@ import {
   Alert,
 } from 'react-native'
 
+import { CenterAdCard } from '@/components/notice/CenterAdCard/CenterAdCard'
 import useFetchNotification from '@/hooks/useFetchNotification'
 import { PushNotificationItem } from '@/types/notification.type'
 
@@ -86,7 +87,7 @@ export const NotificationContent = () => {
 
   return (
     <View className="flex-1 bg-gray-50">
-      <View className="mb-4 flex-row items-center justify-between bg-gray-100 px-4 py-1">
+      <View className="flex-row items-center justify-between bg-gray-100 px-4 py-1">
         <View className="flex-1 flex-row items-center justify-center">
           <TouchableOpacity
             className={`px-20 py-2 ${
@@ -119,6 +120,13 @@ export const NotificationContent = () => {
           </TouchableOpacity>
         )}
       </View>
+
+      {items.length > 0 && (
+        <View>
+          <CenterAdCard />
+        </View>
+      )}
+
       {loading ? (
         <View className="flex-1 items-center justify-center bg-white">
           <ActivityIndicator size="large" color="#3B82F6" />
@@ -162,6 +170,11 @@ export const NotificationContent = () => {
                   onPress={() => handlePress(item)}
                   onDelete={handleDelete}
                 />
+              )}
+              ListHeaderComponent={() => (
+                <View>
+                  <CenterAdCard />
+                </View>
               )}
               onEndReachedThreshold={0.6}
               onEndReached={() => {
