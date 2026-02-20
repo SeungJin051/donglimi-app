@@ -16,7 +16,7 @@ import {
   Linking,
   Platform,
 } from 'react-native'
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { WebView } from 'react-native-webview'
 import type { ShouldStartLoadRequest } from 'react-native-webview/lib/WebViewTypes'
 
@@ -246,13 +246,11 @@ export default function InAppBrowser({
       animationType="slide"
       onRequestClose={onClose}
       presentationStyle="fullScreen"
+      statusBarTranslucent={false}
     >
-      <SafeAreaView
-        className="flex-1 bg-white"
-        edges={['top', 'left', 'right']}
-      >
+      <View className="flex-1 bg-white" style={{ paddingTop: insets.top }}>
         {/* 헤더 */}
-        <View className="border-b border-gray-100 bg-white px-4 pb-3">
+        <View className="border-b border-gray-100 bg-white px-4 pb-3 pt-2">
           <View className="flex-row items-center justify-between">
             <TouchableOpacity
               className="flex-1 pr-3"
@@ -464,7 +462,7 @@ export default function InAppBrowser({
             </TouchableOpacity>
           </View>
         )}
-      </SafeAreaView>
+      </View>
     </Modal>
   )
 }
