@@ -65,6 +65,12 @@ const config: ExpoConfig = {
       },
     ],
   ],
+  updates: {
+    url: 'https://u.expo.dev/e0b0a38e-f8a6-44b6-a6be-270eaaff6f7a',
+  },
+  runtimeVersion: {
+    policy: 'appVersion',
+  },
   experiments: {
     typedRoutes: true,
   },
