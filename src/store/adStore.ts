@@ -6,10 +6,16 @@ export interface AdState {
   todayAdCount: number
   lastAdDate: string | null
   linkOpenCount: number
-  _hasHydrated: boolean // hydration 상태 추적
-  setHasHydrated: (state: boolean) => void // 추가
+  appLaunchCount: number // 앱 실행 횟수
+  tabSwitchCount: number // 탭 전환 횟수
+  scrapActionCount: number // 스크랩 액션 횟수
+  _hasHydrated: boolean
+  setHasHydrated: (state: boolean) => void
   increaseCount: () => void
   incrementLinkCount: () => void
+  incrementAppLaunchCount: () => void
+  incrementTabSwitchCount: () => void
+  incrementScrapActionCount: () => void
   resetLinkCount: () => void
   resetIfDateChanged: () => void
 }
@@ -20,22 +26,37 @@ export const useAdStore = create(
       todayAdCount: 0,
       lastAdDate: null,
       linkOpenCount: 0,
-      _hasHydrated: false, // 추가
+      appLaunchCount: 0,
+      tabSwitchCount: 0,
+      scrapActionCount: 0,
+      _hasHydrated: false,
 
-      // hydration 상태 설정
       setHasHydrated: (state) => {
         set({ _hasHydrated: state })
       },
 
       increaseCount: () => {
         const current = get().todayAdCount
-        if (current < 3) {
+        if (current < 10) {
+          // 하루 최대 광고 수 증가
           set({ todayAdCount: current + 1 })
         }
       },
 
       incrementLinkCount: () => {
         set({ linkOpenCount: get().linkOpenCount + 1 })
+      },
+
+      incrementAppLaunchCount: () => {
+        set({ appLaunchCount: get().appLaunchCount + 1 })
+      },
+
+      incrementTabSwitchCount: () => {
+        set({ tabSwitchCount: get().tabSwitchCount + 1 })
+      },
+
+      incrementScrapActionCount: () => {
+        set({ scrapActionCount: get().scrapActionCount + 1 })
       },
 
       resetLinkCount: () => {
@@ -46,7 +67,6 @@ export const useAdStore = create(
         try {
           const state = get()
 
-          // hydrate 전이면 실행하지 않음
           if (!state._hasHydrated) {
             console.log('Store not hydrated yet, skipping resetIfDateChanged')
             return
@@ -59,6 +79,9 @@ export const useAdStore = create(
             set({
               todayAdCount: 0,
               lastAdDate: today,
+              appLaunchCount: 0,
+              tabSwitchCount: 0,
+              scrapActionCount: 0,
             })
           }
         } catch (error) {
@@ -69,7 +92,6 @@ export const useAdStore = create(
     {
       name: 'ad-storage',
       storage: createJSONStorage(() => AsyncStorage),
-      // hydration 완료 후 콜백
       onRehydrateStorage: () => (state) => {
         console.log('Store hydration complete')
         state?.setHasHydrated(true)

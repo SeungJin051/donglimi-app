@@ -29,7 +29,7 @@ export const CenterAdCard = () => {
     <View className="mb-4 items-center">
       <BannerAd
         unitId={AD_UNIT_ID}
-        size={BannerAdSize.LARGE_BANNER}
+        size={BannerAdSize.ADAPTIVE_BANNER}
         requestOptions={{
           requestNonPersonalizedAdsOnly: false,
         }}
