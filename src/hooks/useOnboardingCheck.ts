@@ -3,7 +3,6 @@ import { useState, useEffect, useRef } from 'react'
 import { AppState } from 'react-native'
 
 import { useAdStore } from '@/store/adStore'
-import { resetSessionFlag } from '@/utils/adManager'
 
 import { useOnboarding } from './useOnboarding'
 
@@ -61,7 +60,6 @@ export function useOnboardingCheck() {
       if (state === 'active') {
         setTimeout(() => {
           try {
-            resetSessionFlag()
             resetIfDateChanged()
           } catch (error) {
             console.error('AppState change error:', error)
@@ -76,5 +74,5 @@ export function useOnboardingCheck() {
     }
   }, [_hasHydrated, isOnboardingComplete, resetLinkCount, resetIfDateChanged])
 
-  return { isReady }
+  return { isReady, isOnboardingComplete }
 }

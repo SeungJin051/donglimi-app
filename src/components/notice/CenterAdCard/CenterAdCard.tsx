@@ -10,11 +10,13 @@ import {
 } from 'react-native-google-mobile-ads'
 
 // 환경별 광고 단위 ID
-const AD_UNIT_ID = __DEV__
-  ? TestIds.ADAPTIVE_BANNER
-  : Platform.OS === 'ios'
+const CONFIG_AD_UNIT_ID =
+  Platform.OS === 'ios'
     ? Constants.expoConfig?.extra?.EXPO_PUBLIC_IOS_BANNER_AD_UNIT
     : Constants.expoConfig?.extra?.EXPO_PUBLIC_ANDROID_BANNER_AD_UNIT
+
+const AD_UNIT_ID =
+  __DEV__ || !CONFIG_AD_UNIT_ID ? TestIds.ADAPTIVE_BANNER : CONFIG_AD_UNIT_ID
 
 export const CenterAdCard = () => {
   const bannerRef = useRef<BannerAd>(null)
@@ -24,6 +26,13 @@ export const CenterAdCard = () => {
       bannerRef.current?.load()
     }
   })
+
+  if (!AD_UNIT_ID) {
+    console.warn(
+      '배너 광고 단위 ID가 설정되지 않아 배너를 렌더링하지 않습니다.'
+    )
+    return null
+  }
 
   return (
     <View className="mb-4 items-center">

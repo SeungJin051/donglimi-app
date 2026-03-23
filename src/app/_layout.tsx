@@ -22,7 +22,7 @@ import { queryClient } from '@/utils/queryClient'
 
 export default function RootLayout() {
   // 온보딩 체크
-  const { isReady } = useOnboardingCheck()
+  const { isReady, isOnboardingComplete } = useOnboardingCheck()
 
   // 안드로이드 채널 설정
   useAndroidChannel()
@@ -40,6 +40,9 @@ export default function RootLayout() {
   // 앱 실행 시 광고 로직
   useEffect(() => {
     if (!isReady) return
+
+    // 온보딩 중이면 광고 표시하지 않음
+    if (!isOnboardingComplete) return
 
     // 날짜 체크
     resetIfDateChanged()
@@ -61,12 +64,14 @@ export default function RootLayout() {
       }, 2000)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isReady])
+  }, [isReady, isOnboardingComplete])
 
   // 로딩 체크
   if (!isReady) {
     // 로딩 중이거나, 온보딩이 완료되지 않았거나, 스토어 로딩이 끝나지 않음
-    return <GestureHandlerRootView style={{ flex: 1 }} />
+    return (
+      <GestureHandlerRootView style={{ flex: 1, backgroundColor: '#FFFFFF' }} />
+    )
   }
 
   return (

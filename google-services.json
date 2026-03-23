@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "139799513560",
+    "project_id": "hant-teut",
+    "storage_bucket": "hant-teut.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:139799513560:android:eceda6a90d48207fd80aad",
+        "android_client_info": {
+          "package_name": "com.seungjin051.donglimiapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "139799513560-aepsh80st8ptio90oheitchbmp11pb3h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD7Z9H6sEyFGiSLGWp8SYXXu6o8deIR9Pg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "139799513560-aepsh80st8ptio90oheitchbmp11pb3h.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "139799513560-6810e6u22b1n6dpea73i1u2o9bn2j05o.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.seungjin051.donglimiapp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

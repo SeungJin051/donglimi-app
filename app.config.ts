@@ -32,6 +32,8 @@ const config: ExpoConfig = {
     jsEngine: 'jsc',
   },
   android: {
+    versionCode: 4,
+    googleServicesFile: './google-services.json',
     adaptiveIcon: {
       foregroundImage: './src/assets/images/adaptive-icon.png',
       backgroundColor: '#ffffff',
@@ -49,6 +51,13 @@ const config: ExpoConfig = {
   plugins: [
     'expo-router',
     'expo-web-browser',
+    [
+      'expo-notifications',
+      {
+        icon: './src/assets/images/icon.png',
+        color: '#3182F6',
+      },
+    ],
     [
       'react-native-google-mobile-ads',
       {

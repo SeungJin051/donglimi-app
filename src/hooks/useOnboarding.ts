@@ -6,6 +6,13 @@ import { useRouter, useSegments } from 'expo-router'
 // AsyncStorage 키
 const ONBOARDING_KEY = 'hasSeenOnboarding'
 
+// Android 등에서 router.replace 후 루트 리마운트 시 AsyncStorage 지연을 보완 (모듈 변수는 리마운트 후에도 유지됨)
+let justCompletedOnboarding = false
+
+export function setJustCompletedOnboarding() {
+  justCompletedOnboarding = true
+}
+
 export function useOnboarding() {
   const [isOnboardingComplete, setIsOnboardingComplete] = useState<
     boolean | null
@@ -17,6 +24,11 @@ export function useOnboarding() {
   useEffect(() => {
     const checkOnboarding = async () => {
       try {
+        if (justCompletedOnboarding) {
+          justCompletedOnboarding = false
+          setIsOnboardingComplete(true)
+          return
+        }
         const value = await AsyncStorage.getItem(ONBOARDING_KEY)
         setIsOnboardingComplete(value === 'true')
       } catch (error) {
