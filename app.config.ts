@@ -3,7 +3,7 @@ import type { ExpoConfig } from 'expo/config'
 const config: ExpoConfig = {
   name: '동리미',
   slug: 'donglimi-app',
-  version: '1.5',
+  version: '1.6',
   orientation: 'portrait',
   icon: './src/assets/images/icon.png',
   scheme: 'donglimiapp',
@@ -65,11 +65,17 @@ const config: ExpoConfig = {
       },
     ],
   ],
+  updates: {
+    url: 'https://u.expo.dev/e0b0a38e-f8a6-44b6-a6be-270eaaff6f7a',
+  },
+  runtimeVersion: {
+    policy: 'appVersion',
+  },
   experiments: {
     typedRoutes: true,
   },
   extra: {
-    LATEST_STORE_VERSION: '1.5',
+    LATEST_STORE_VERSION: '1.6',
     EXPO_PUBLIC_IOS_BANNER_AD_UNIT: process.env.EXPO_PUBLIC_IOS_BANNER_AD_UNIT,
     EXPO_PUBLIC_IOS_INTERSTITIAL_AD_UNIT:
       process.env.EXPO_PUBLIC_IOS_INTERSTITIAL_AD_UNIT,

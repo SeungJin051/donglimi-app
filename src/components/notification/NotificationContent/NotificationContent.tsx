@@ -171,11 +171,6 @@ export const NotificationContent = () => {
                   onDelete={handleDelete}
                 />
               )}
-              ListHeaderComponent={() => (
-                <View>
-                  <CenterAdCard />
-                </View>
-              )}
               onEndReachedThreshold={0.6}
               onEndReached={() => {
                 if (hasMore && !loadingMore) {
