@@ -16,8 +16,11 @@ import { NoticeContent } from '@/components/notice/NoticeContent/NoticeContent'
 import SwipeGuideHeader from '@/components/ui/SwipeGuideHeader/SwipeGuideHeader'
 import { useFetchNotices } from '@/hooks/useFetchNotices'
 import { useInternetStatus } from '@/hooks/useInternetStatus'
+import { useInterstitialAd } from '@/hooks/useInterstitialAd'
 import { useNetworkGuard } from '@/hooks/useNetworkGuard'
+import { useAdStore } from '@/store/adStore'
 import type { Notice } from '@/types/notice.type'
+import { canShowHomeFeedLoadMoreAd } from '@/utils/adManager'
 import { homeScrollRef } from '@/utils/scrollRefs'
 import { showSuccessToast, showInfoToast } from '@/utils/toastUtils'
 
@@ -49,6 +52,57 @@ export default function HomeScreen() {
   const { guardAsync } = useNetworkGuard()
   const [showOfflineSnippet, setShowOfflineSnippet] = useState(false)
   const snippetTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const { showAd } = useInterstitialAd()
+  const { incrementHomeFeedLoadMoreCount, increaseCount, resetIfDateChanged } =
+    useAdStore()
+  const prevFeedPagesLenRef = useRef<number | null>(null)
+
+  useEffect(() => {
+    resetIfDateChanged()
+  }, [resetIfDateChanged])
+
+  // 무한스크롤: 다음 페이지가 붙을 때마다 카운트, 3번째마다 전면 광고
+  useEffect(() => {
+    const len = data?.pages?.length ?? 0
+    if (len === 0) {
+      prevFeedPagesLenRef.current = null
+      return
+    }
+    if (prevFeedPagesLenRef.current === null) {
+      prevFeedPagesLenRef.current = len
+      return
+    }
+    if (len < prevFeedPagesLenRef.current) {
+      prevFeedPagesLenRef.current = len
+      return
+    }
+    if (len > prevFeedPagesLenRef.current) {
+      const added = len - prevFeedPagesLenRef.current
+      prevFeedPagesLenRef.current = len
+      for (let i = 0; i < added; i++) {
+        incrementHomeFeedLoadMoreCount()
+        const { homeFeedLoadMoreCount, todayAdCount } = useAdStore.getState()
+        if (
+          canShowHomeFeedLoadMoreAd({
+            loadMoreCount: homeFeedLoadMoreCount,
+            todayCount: todayAdCount,
+          })
+        ) {
+          setTimeout(() => {
+            showAd()
+            increaseCount()
+          }, 400)
+        }
+      }
+    }
+  }, [
+    data?.pages?.length,
+    data?.pages,
+    incrementHomeFeedLoadMoreCount,
+    increaseCount,
+    showAd,
+  ])
 
   // 공지사항 배열에 광고 아이템 삽입
   const listData = useMemo<ListItem[]>(() => {

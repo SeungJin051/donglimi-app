@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import * as Haptics from 'expo-haptics'
 import * as WebBrowser from 'expo-web-browser'
@@ -9,7 +9,10 @@ import Swipeable, {
 
 import InAppBrowser from '@/components/ui/InAppBrowser/InAppBrowser'
 import RightSwipeActions from '@/components/ui/RightSwipeActions/RightSwipeActions'
+import { useInterstitialAd } from '@/hooks/useInterstitialAd'
+import { useAdStore } from '@/store/adStore'
 import { PushNotificationItem } from '@/types/notification.type'
+import { canShowAd } from '@/utils/adManager'
 import { getFormattedDate } from '@/utils/dateUtils'
 import { getDepartmentStyles } from '@/utils/departmentStyles'
 
@@ -75,6 +78,13 @@ function NotificationItemContent({
   // 스와이프 참조
   const swipeableRef = useRef<SwipeableMethods>(null)
 
+  const { incrementLinkCount, increaseCount, resetIfDateChanged } = useAdStore()
+  const { showAd } = useInterstitialAd()
+
+  useEffect(() => {
+    resetIfDateChanged()
+  }, [resetIfDateChanged])
+
   // 인앱 브라우저 상태
   const [browserVisible, setBrowserVisible] = useState(false)
   const [browserUrl, setBrowserUrl] = useState<string | null>(null)
@@ -110,9 +120,24 @@ function NotificationItemContent({
 
     // 읽음이면 링크가 있을 때만 브라우저 오픈 후 상위 onPress
     if (item.noticeLink) {
+      incrementLinkCount()
+
       // 도서관 사이트는 외부 브라우저로 바로 열기 (SSL 이슈)
       if (item.noticeLink.includes('lib.deu.ac.kr')) {
         WebBrowser.openBrowserAsync(item.noticeLink)
+        const { linkOpenCount: viewedAfter, todayAdCount: today } =
+          useAdStore.getState()
+        if (
+          canShowAd({
+            viewedCount: viewedAfter,
+            todayCount: today,
+          })
+        ) {
+          setTimeout(() => {
+            showAd()
+            increaseCount()
+          }, 500)
+        }
       } else {
         // 나머지는 InApp 브라우저
         setBrowserUrl(item.noticeLink)
@@ -216,7 +241,22 @@ function NotificationItemContent({
       <InAppBrowser
         visible={browserVisible}
         url={browserUrl}
-        onClose={() => setBrowserVisible(false)}
+        onClose={() => {
+          setBrowserVisible(false)
+          const { linkOpenCount: viewedAfter, todayAdCount: today } =
+            useAdStore.getState()
+          if (
+            canShowAd({
+              viewedCount: viewedAfter,
+              todayCount: today,
+            })
+          ) {
+            setTimeout(() => {
+              showAd()
+              increaseCount()
+            }, 500)
+          }
+        }}
       />
     </>
   )
