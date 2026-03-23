@@ -21,7 +21,6 @@
       "ios": {
         "resourceClass": "m-medium",
         "image": "latest",
-        "autoIncrement": true,
         "scheme": "donglimiapp",
         "buildConfiguration": "Release",
         "credentialsSource": "remote"

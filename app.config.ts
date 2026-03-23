@@ -3,7 +3,7 @@ import type { ExpoConfig } from 'expo/config'
 const config: ExpoConfig = {
   name: '동리미',
   slug: 'donglimi-app',
-  version: '1.6',
+  version: '1.7',
   orientation: 'portrait',
   icon: './src/assets/images/icon.png',
   scheme: 'donglimiapp',
@@ -17,7 +17,7 @@ const config: ExpoConfig = {
   ios: {
     supportsTablet: true,
     bundleIdentifier: 'com.seungjin051.donglimiapp',
-    buildNumber: '1',
+    buildNumber: '48',
     infoPlist: {
       ITSAppUsesNonExemptEncryption: false,
       NSAppTransportSecurity: {
@@ -32,7 +32,7 @@ const config: ExpoConfig = {
     jsEngine: 'jsc',
   },
   android: {
-    versionCode: 4,
+    versionCode: 48,
     googleServicesFile: './google-services.json',
     adaptiveIcon: {
       foregroundImage: './src/assets/images/adaptive-icon.png',
@@ -84,7 +84,7 @@ const config: ExpoConfig = {
     typedRoutes: true,
   },
   extra: {
-    LATEST_STORE_VERSION: '1.6',
+    LATEST_STORE_VERSION: '1.7',
     EXPO_PUBLIC_IOS_BANNER_AD_UNIT: process.env.EXPO_PUBLIC_IOS_BANNER_AD_UNIT,
     EXPO_PUBLIC_IOS_INTERSTITIAL_AD_UNIT:
       process.env.EXPO_PUBLIC_IOS_INTERSTITIAL_AD_UNIT,
