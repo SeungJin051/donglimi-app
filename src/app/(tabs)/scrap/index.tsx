@@ -4,7 +4,7 @@ import { ScrapContent } from '@/components/scrap/ScrapContent/ScrapContent'
 
 export default function ScrapScreen() {
   return (
-    <View className="flex-1 bg-gray-50">
+    <View className="flex-1 bg-gray-50" collapsable={false}>
       <ScrapContent />
     </View>
   )

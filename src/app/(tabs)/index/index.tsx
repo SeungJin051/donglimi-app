@@ -1,13 +1,16 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { Ionicons } from '@expo/vector-icons'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { useFocusEffect } from '@react-navigation/native'
+import { useNavigation } from 'expo-router'
 import {
   Text,
   View,
   FlatList,
   ActivityIndicator,
   RefreshControl,
+  Platform,
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
@@ -28,6 +31,32 @@ import { showSuccessToast, showInfoToast } from '@/utils/toastUtils'
 type ListItem = { type: 'notice'; data: Notice } | { type: 'ad'; id: string }
 
 export default function HomeScreen() {
+  const navigation = useNavigation()
+
+  // Native Tabs(iOS 26+): Stack 중첩 시 드로어까지 올라가며 스와이프 활성화
+  useFocusEffect(
+    useCallback(() => {
+      let parent = navigation.getParent()
+      while (parent) {
+        if (parent.getState?.().type === 'drawer') {
+          parent.setOptions({ swipeEnabled: true })
+          break
+        }
+        parent = parent.getParent()
+      }
+      return () => {
+        let p = navigation.getParent()
+        while (p) {
+          if (p.getState?.().type === 'drawer') {
+            p.setOptions({ swipeEnabled: false })
+            break
+          }
+          p = p.getParent()
+        }
+      }
+    }, [navigation])
+  )
+
   // 스와이프 가이드 표시 상태
   const [showSwipeGuide, setShowSwipeGuide] = useState(false)
 
@@ -253,10 +282,13 @@ export default function HomeScreen() {
 
   // 데이터 로딩이 완료되었을 때 공지사항 목록을 보여줍니다.
   return (
-    <View className="flex-1 bg-gray-50">
+    <View className="flex-1 bg-gray-50" collapsable={false}>
       <FlatList
         ref={homeScrollRef}
         data={listData}
+        contentInsetAdjustmentBehavior={
+          Platform.OS === 'ios' ? 'automatic' : undefined
+        }
         renderItem={({ item }) => {
           if (item.type === 'ad') {
             return <CenterAdCard />

@@ -1,23 +1,13 @@
 import React from 'react'
 
-import { Platform, Text, View } from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { Text, View } from 'react-native'
+
+import { TabScreenHeader } from '@/components/layout/TabScreenHeader'
 
 export function UtilHeader() {
-  const { top } = useSafeAreaInsets()
-
   return (
-    <View
-      className="flex-row items-center justify-between bg-white px-4 pb-2"
-      style={{
-        paddingTop: Platform.OS === 'android' ? top + 10 : top,
-      }}
-    >
-      <View className="flex-1 flex-row items-center justify-between">
-        <View>
-          <Text className="text-2xl font-semibold">편의 기능</Text>
-        </View>
-      </View>
-    </View>
+    <TabScreenHeader className="flex-row items-center justify-between px-4 pb-3">
+      <Text className="text-2xl font-bold">편의 기능</Text>
+    </TabScreenHeader>
   )
 }

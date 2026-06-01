@@ -162,6 +162,7 @@ export const NotificationContent = () => {
             </View>
           ) : (
             <FlatList
+              contentInsetAdjustmentBehavior="automatic"
               data={items}
               keyExtractor={(item) => item.id}
               renderItem={({ item }) => (

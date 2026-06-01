@@ -1,33 +1,25 @@
 import { Ionicons } from '@expo/vector-icons'
 import { DrawerActions } from '@react-navigation/native'
 import { useNavigation, useRouter } from 'expo-router'
-import { Platform, TouchableOpacity, View, Image } from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { TouchableOpacity, View, Image } from 'react-native'
 
+import { TabScreenHeader } from '@/components/layout/TabScreenHeader'
 import { scrollToTop } from '@/utils/scrollRefs'
 
 export function HomeHeader() {
   const router = useRouter()
   const navigation = useNavigation()
-  const { top } = useSafeAreaInsets()
 
-  // 사이드바 메뉴 열기
   const openMenu = () => {
     navigation.dispatch(DrawerActions.openDrawer())
   }
 
-  // 검색 페이지로 이동
   const goToSearch = () => {
     router.push('/homepage-search')
   }
 
   return (
-    <View
-      className="mt-[-10px] flex-row items-center justify-between bg-white px-2"
-      style={{
-        paddingTop: (Platform.OS === 'android' ? top + 10 : top) || top,
-      }}
-    >
+    <TabScreenHeader className="flex-row items-center justify-between px-2 pb-2">
       <TouchableOpacity onPress={openMenu} style={{ padding: 8 }}>
         <Ionicons name="menu" size={28} color="#999999" />
       </TouchableOpacity>
@@ -41,6 +33,6 @@ export function HomeHeader() {
       <TouchableOpacity onPress={goToSearch} style={{ padding: 8 }}>
         <Ionicons name="search" size={24} color="#999999" />
       </TouchableOpacity>
-    </View>
+    </TabScreenHeader>
   )
 }

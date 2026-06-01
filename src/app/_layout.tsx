@@ -5,6 +5,7 @@ import { BottomSheetModalProvider } from '@gorhom/bottom-sheet'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { Drawer } from 'expo-router/drawer'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
+import { SafeAreaProvider } from 'react-native-safe-area-context'
 import Toast from 'react-native-toast-message'
 
 import { ErrorBoundary } from '@/components/layout/ErrorBoundary/ErrorBoundary'
@@ -37,24 +38,26 @@ export default function RootLayout() {
   return (
     <ErrorBoundary>
       <GestureHandlerRootView style={{ flex: 1 }}>
-        <QueryClientProvider client={queryClient}>
-          <BottomSheetModalProvider>
-            <RefetchOnReconnectBridge />
-            <Drawer
-              drawerContent={(props) => <HomeDrawer {...props} />}
-              screenOptions={{
-                headerShown: false,
-                swipeEnabled: false,
-              }}
-            >
-              <Drawer.Screen
-                name="(tabs)"
-                options={{ drawerLabel: '홈', title: '홈' }}
-              />
-            </Drawer>
-            <Toast config={toastConfig} />
-          </BottomSheetModalProvider>
-        </QueryClientProvider>
+        <SafeAreaProvider>
+          <QueryClientProvider client={queryClient}>
+            <BottomSheetModalProvider>
+              <RefetchOnReconnectBridge />
+              <Drawer
+                drawerContent={(props) => <HomeDrawer {...props} />}
+                screenOptions={{
+                  headerShown: false,
+                  swipeEnabled: false,
+                }}
+              >
+                <Drawer.Screen
+                  name="(tabs)"
+                  options={{ drawerLabel: '홈', title: '홈' }}
+                />
+              </Drawer>
+              <Toast config={toastConfig} />
+            </BottomSheetModalProvider>
+          </QueryClientProvider>
+        </SafeAreaProvider>
       </GestureHandlerRootView>
     </ErrorBoundary>
   )

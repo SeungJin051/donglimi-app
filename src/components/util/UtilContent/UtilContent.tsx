@@ -36,7 +36,10 @@ export const UtilContent = () => {
 
   return (
     <>
-      <ScrollView>
+      <ScrollView
+        contentInsetAdjustmentBehavior="automatic"
+        style={{ flex: 1 }}
+      >
         {/* 상단 배너 광고 */}
         <View>
           <CenterAdCard />
