@@ -6,15 +6,16 @@ export interface AdState {
   todayAdCount: number
   lastAdDate: string | null
   linkOpenCount: number
-  appLaunchCount: number // 앱 실행 횟수
   tabSwitchCount: number // 탭 전환 횟수
+  /** 홈 피드에서 fetchNextPage 성공 횟수 (누적) */
+  homeFeedLoadMoreCount: number
   scrapActionCount: number // 스크랩 액션 횟수
   _hasHydrated: boolean
   setHasHydrated: (state: boolean) => void
   increaseCount: () => void
   incrementLinkCount: () => void
-  incrementAppLaunchCount: () => void
   incrementTabSwitchCount: () => void
+  incrementHomeFeedLoadMoreCount: () => void
   incrementScrapActionCount: () => void
   resetLinkCount: () => void
   resetIfDateChanged: () => void
@@ -26,8 +27,8 @@ export const useAdStore = create(
       todayAdCount: 0,
       lastAdDate: null,
       linkOpenCount: 0,
-      appLaunchCount: 0,
       tabSwitchCount: 0,
+      homeFeedLoadMoreCount: 0,
       scrapActionCount: 0,
       _hasHydrated: false,
 
@@ -47,12 +48,12 @@ export const useAdStore = create(
         set({ linkOpenCount: get().linkOpenCount + 1 })
       },
 
-      incrementAppLaunchCount: () => {
-        set({ appLaunchCount: get().appLaunchCount + 1 })
-      },
-
       incrementTabSwitchCount: () => {
         set({ tabSwitchCount: get().tabSwitchCount + 1 })
+      },
+
+      incrementHomeFeedLoadMoreCount: () => {
+        set({ homeFeedLoadMoreCount: get().homeFeedLoadMoreCount + 1 })
       },
 
       incrementScrapActionCount: () => {
@@ -79,8 +80,8 @@ export const useAdStore = create(
             set({
               todayAdCount: 0,
               lastAdDate: today,
-              appLaunchCount: 0,
               tabSwitchCount: 0,
+              homeFeedLoadMoreCount: 0,
               scrapActionCount: 0,
             })
           }

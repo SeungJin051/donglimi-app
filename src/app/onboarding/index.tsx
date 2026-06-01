@@ -17,6 +17,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { requireDb } from '@/config/firebaseConfig'
 import { DEPARTMENTS_BY_COLLEGE } from '@/constants/collge'
 import { NOTIFICATION_KEYWORDS } from '@/constants/keyword'
+import { setJustCompletedOnboarding } from '@/hooks/useOnboarding'
 import { usePushNotifications } from '@/hooks/usePushNotifications'
 import { useNotificationStore } from '@/store/notificationStore'
 
@@ -76,6 +77,7 @@ export default function OnboardingScreen() {
       // 알림이 꺼져있다면 Firestore 저장 없이 온보딩만 완료
       if (!notificationEnabled) {
         await AsyncStorage.setItem(ONBOARDING_KEY, 'true')
+        setJustCompletedOnboarding()
         router.replace('/(tabs)')
         return
       }
@@ -120,6 +122,7 @@ export default function OnboardingScreen() {
 
       // 온보딩 완료 표시 후 이동
       await AsyncStorage.setItem(ONBOARDING_KEY, 'true')
+      setJustCompletedOnboarding()
       router.replace('/(tabs)')
     } catch (error) {
       console.error('온보딩 완료 처리 실패:', error)

@@ -1,7 +1,7 @@
 {
   "cli": {
     "version": ">= 16.20.4",
-    "appVersionSource": "remote"
+    "appVersionSource": "local"
   },
   "build": {
     "development": {
@@ -15,10 +15,12 @@
     },
     "production": {
       "channel": "production",
+      "env": {
+        "GOOGLE_SERVICES_JSON": "@GOOGLE_SERVICES_JSON"
+      },
       "ios": {
         "resourceClass": "m-medium",
         "image": "latest",
-        "autoIncrement": true,
         "scheme": "donglimiapp",
         "buildConfiguration": "Release",
         "credentialsSource": "remote"

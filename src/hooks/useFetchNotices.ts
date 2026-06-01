@@ -1,140 +1,77 @@
 import { useInfiniteQuery } from '@tanstack/react-query'
-import { Timestamp } from 'firebase/firestore'
-
 import {
-  NOTICES_INDEX,
-  searchClient,
-  searchConfig,
-} from '@/config/algoliaConfig'
+  collection,
+  DocumentData,
+  getDocs,
+  limit,
+  orderBy,
+  query,
+  QueryDocumentSnapshot,
+  startAfter,
+  where,
+} from 'firebase/firestore'
+
+import { requireDb } from '@/config/firebaseConfig'
 import { useCategoryFilterStore } from '@/store/categoryFilterStore'
 import { Notice } from '@/types/notice.type'
+import { mapFirestoreDocToNotice } from '@/utils/noticeMappers'
 
-// Algolia 히트 타입 정의
-type Hit = {
-  saved_at_ms?: number
-  saved_at?: string | number
-  published_at_ms?: number
-  published_at?: string | number
-  category?: string
-  content_hash?: string
-  target_id?: string // Firestore 문서 ID
-  objectID: string
-  department?: string // 필터링에 사용되는 필드
-  link?: string
-  scrap_count?: number
-  tags?: string[]
-  title?: string
+type FetchNoticesPageResult = {
+  notices: Notice[]
+  lastVisible?: QueryDocumentSnapshot<DocumentData>
 }
 
-// Algolia에서 공지사항 데이터를 가져오는 함수 (페이지네이션: page 기반)
-const fetchNoticesFromAlgolia = async ({
-  page = 0,
+const fetchNoticesPage = async ({
+  pageParam,
   category,
-  hitsPerPage = 10,
+  limitCount,
 }: {
-  page?: number
+  pageParam?: QueryDocumentSnapshot<DocumentData>
   category?: string
-  hitsPerPage?: number
-}): Promise<{ notices: Notice[]; nextPage?: number; nbPages: number }> => {
-  let facetFilters: string[][] | undefined = undefined
+  limitCount: number
+}): Promise<FetchNoticesPageResult> => {
+  const firestoreDb = requireDb()
+  const noticesRef = collection(firestoreDb, 'notices')
 
-  // 서버 측 필터링(`facetFilters`) 사용으로 로직 간소화
-  if (category) {
-    // Algolia는 필터링을 위해 배열의 배열 형태를 사용하며,
-    // department 필드를 패싯(Facet)으로 설정해야 함.
-    // department 필드의 값이 category와 일치하는 항목만 필터링합니다.
-    facetFilters = [[`department:${category}`]]
-  }
+  const base = category
+    ? query(
+        noticesRef,
+        where('department', '==', category),
+        orderBy('saved_at', 'desc')
+      )
+    : query(noticesRef, orderBy('saved_at', 'desc'))
 
-  // Algolia 검색 요청 (facetFilters 적용)
-  const response = await searchClient.search({
-    requests: [
-      {
-        indexName: NOTICES_INDEX,
-        query: '',
-        page,
-        hitsPerPage: hitsPerPage,
-        facetFilters,
-        attributesToRetrieve: searchConfig.attributesToRetrieve,
-      },
-    ],
-  })
+  const q = pageParam
+    ? query(base, startAfter(pageParam), limit(limitCount))
+    : query(base, limit(limitCount))
 
-  const result = response.results[0] as unknown as {
-    hits: Hit[]
-    page: number
-    nbPages: number
-    nbHits: number
-  }
+  const snap = await getDocs(q)
+  const docs = snap.docs
+  const notices = docs.map(mapFirestoreDocToNotice)
+  const lastVisible = docs.length > 0 ? docs[docs.length - 1] : undefined
 
-  const hits = Array.isArray(result?.hits) ? result.hits : []
-
-  // Hit을 Notice 타입으로 변환 (Timestamp 로직 간소화)
-  const notices: Notice[] = hits.map((hit: Hit) => {
-    // saved_at_ms, saved_at, published_at_ms, published_at 순으로 유효성 검사
-    const savedAtVal =
-      hit.saved_at_ms ?? hit.saved_at ?? hit.published_at_ms ?? hit.published_at
-
-    let savedAtMs: number
-
-    if (typeof savedAtVal === 'number') {
-      savedAtMs = savedAtVal
-    } else if (typeof savedAtVal === 'string' && savedAtVal) {
-      // 유효한 문자열 날짜를 Date 객체로 변환
-      savedAtMs = new Date(savedAtVal).getTime()
-    } else {
-      // 유효한 값이 없는 경우 현재 시각 사용
-      savedAtMs = Date.now()
-    }
-
-    // Timestamp 생성 (유효한 숫자형태인지 확인)
-    const timestamp = Timestamp.fromMillis(
-      Number.isFinite(savedAtMs) ? savedAtMs : Date.now()
-    )
-
-    return {
-      category: hit.category ?? '',
-      content_hash: hit.content_hash ?? hit.objectID,
-      department: hit.department ?? '',
-      link: hit.link ?? '',
-      saved_at: timestamp,
-      scrap_count: hit.scrap_count ?? 0,
-      tags: Array.isArray(hit.tags) ? hit.tags : [],
-      title: hit.title ?? '',
-      target_id: hit.target_id, // Firestore 문서 ID (있으면 포함)
-    }
-  })
-
-  // saved_at 기준 최신순 정렬 (내림차순)
-  const sortedNotices = notices.sort((a, b) => {
-    const aTime = a.saved_at.toMillis()
-    const bTime = b.saved_at.toMillis()
-    return bTime - aTime // 최신순 (큰 값이 먼저)
-  })
-
-  // 다음 페이지 번호 계산
-  const nextPage =
-    result.page + 1 < result.nbPages ? result.page + 1 : undefined
-
-  return { notices: sortedNotices, nextPage, nbPages: result.nbPages }
+  return { notices, lastVisible }
 }
 
 export const useFetchNotices = (limitCount = 10) => {
   const { selectedCategory } = useCategoryFilterStore()
+  const categoryKey = selectedCategory ?? 'all'
 
   return useInfiniteQuery({
-    queryKey: ['notices_algolia', selectedCategory || undefined, limitCount],
-    queryFn: async ({ pageParam }) => {
-      const page = typeof pageParam === 'number' ? pageParam : 0
-      const result = await fetchNoticesFromAlgolia({
-        page,
+    queryKey: ['notices', 'list', categoryKey, limitCount],
+    queryFn: async ({ pageParam }) =>
+      fetchNoticesPage({
+        pageParam: pageParam as QueryDocumentSnapshot<DocumentData> | undefined,
         category: selectedCategory || undefined,
-        hitsPerPage: limitCount,
-      })
-      return result
+        limitCount,
+      }),
+    initialPageParam: undefined as
+      | QueryDocumentSnapshot<DocumentData>
+      | undefined,
+    getNextPageParam: (lastPage) => {
+      if (lastPage.notices.length < limitCount) return undefined
+      return lastPage.lastVisible
     },
-    initialPageParam: 0,
-    getNextPageParam: (lastPage) => lastPage.nextPage,
     staleTime: 10 * 60 * 1000,
     gcTime: 30 * 60 * 1000,
     refetchOnMount: false,

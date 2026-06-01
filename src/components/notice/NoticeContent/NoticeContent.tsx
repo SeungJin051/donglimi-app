@@ -49,7 +49,6 @@ export const NoticeContent = ({ item }: NoticeContentProps) => {
 
   // 광고 관련
   const {
-    linkOpenCount,
     todayAdCount,
     scrapActionCount,
     incrementLinkCount,
@@ -257,10 +256,11 @@ export const NoticeContent = ({ item }: NoticeContentProps) => {
     // 도서관 사이트는 외부 브라우저로 바로 열기 (SSL 이슈)
     if (item.link.includes('lib.deu.ac.kr')) {
       WebBrowser.openBrowserAsync(item.link)
-      // 외부 브라우저는 광고 로직 즉시 실행
+      const { linkOpenCount: viewedAfter, todayAdCount: today } =
+        useAdStore.getState()
       const shouldShow = canShowAd({
-        viewedCount: linkOpenCount,
-        todayCount: todayAdCount,
+        viewedCount: viewedAfter,
+        todayCount: today,
       })
       if (shouldShow) {
         setTimeout(() => {
@@ -280,10 +280,11 @@ export const NoticeContent = ({ item }: NoticeContentProps) => {
   const handleBrowserClose = () => {
     setBrowserVisible(false)
 
-    // 광고 노출 판단 (현재 링크 카운트 기준)
+    const { linkOpenCount: viewedAfter, todayAdCount: today } =
+      useAdStore.getState()
     const shouldShow = canShowAd({
-      viewedCount: linkOpenCount,
-      todayCount: todayAdCount,
+      viewedCount: viewedAfter,
+      todayCount: today,
     })
 
     if (shouldShow) {
