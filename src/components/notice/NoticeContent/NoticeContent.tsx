@@ -14,14 +14,16 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore'
-import { View, Text, TouchableOpacity } from 'react-native'
+import { View, Text } from 'react-native'
 import Swipeable, {
   SwipeableMethods,
 } from 'react-native-gesture-handler/ReanimatedSwipeable'
 
 import InAppBrowser from '@/components/ui/InAppBrowser/InAppBrowser'
+import PressableScale from '@/components/ui/PressableScale/PressableScale'
 import RightSwipeActions from '@/components/ui/RightSwipeActions/RightSwipeActions'
 import { requireDb } from '@/config/firebaseConfig'
+import { COLORS } from '@/constants/colors'
 import { useInternetStatus } from '@/hooks/useInternetStatus'
 import { useScrapStore } from '@/store/scrapStore'
 import { Notice } from '@/types/notice.type'
@@ -209,31 +211,30 @@ export const NoticeContent = ({ item }: NoticeContentProps) => {
         overshootLeft={false}
         overshootRight={false}
       >
-        <TouchableOpacity
-          className="ml-4 mr-0 min-h-[105px] rounded-l-lg border-b border-l border-t border-gray-200 bg-white p-5 pr-4"
+        <PressableScale
+          className="ml-4 min-h-[105px] rounded-l-card bg-surface p-4"
           onPress={handleOpenLink}
-          activeOpacity={0.7}
         >
-          <View className="flex-1 justify-between">
+          <View className="flex-1 justify-between gap-3">
             <View className="flex-row items-start justify-between">
               <Text
-                className="flex-1 pr-2 text-base font-medium leading-snug text-gray-900"
+                className="flex-1 pr-2 text-[15px] font-semibold leading-snug text-text-primary"
                 numberOfLines={2}
               >
                 {item.title}
               </Text>
               {isScraped && (
-                <Ionicons name="bookmark" size={20} color="#0158a6" />
+                <Ionicons name="bookmark" size={20} color={COLORS.primary} />
               )}
             </View>
 
             <View className="flex-row items-center justify-between gap-3">
-              <View className="flex-1 flex-row items-center gap-2">
+              <View className="flex-1 flex-row items-center gap-1.5">
                 <View
-                  className={`rounded-md px-2.5 py-1 ${departmentStyle.bg}`}
+                  className={`rounded-badge px-2.5 py-1 ${departmentStyle.bg}`}
                 >
                   <Text
-                    className={`text-xs font-medium ${departmentStyle.text}`}
+                    className={`text-xs font-semibold ${departmentStyle.text}`}
                   >
                     {item.department}
                   </Text>
@@ -241,23 +242,20 @@ export const NoticeContent = ({ item }: NoticeContentProps) => {
 
                 <View className="flex-1 flex-row flex-wrap gap-1.5">
                   {item.tags.slice(0, 2).map((tag) => (
-                    <View
-                      key={tag}
-                      className="rounded-md bg-gray-100 px-2 py-1"
-                    >
-                      <Text className="text-xs font-medium text-gray-600">
+                    <View key={tag} className="rounded-badge bg-bg px-2 py-1">
+                      <Text className="text-xs font-medium text-text-secondary">
                         #{tag}
                       </Text>
                     </View>
                   ))}
                 </View>
               </View>
-              <Text className="text-xs font-normal text-gray-500">
+              <Text className="text-xs font-normal text-text-tertiary">
                 {getFormattedDate(item.saved_at)}
               </Text>
             </View>
           </View>
-        </TouchableOpacity>
+        </PressableScale>
       </Swipeable>
 
       <InAppBrowser

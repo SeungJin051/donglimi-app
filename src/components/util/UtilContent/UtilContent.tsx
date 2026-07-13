@@ -6,6 +6,7 @@ import { View, Text, TouchableOpacity, ScrollView } from 'react-native'
 
 import { CenterAdCard } from '@/components/notice/CenterAdCard/CenterAdCard'
 import InAppBrowser from '@/components/ui/InAppBrowser/InAppBrowser'
+import { COLORS } from '@/constants/colors'
 import { quickItem } from '@/constants/utilContent'
 import { useAcademicSchedule } from '@/hooks/useAcademicSchedule'
 import { calculateDDay } from '@/utils/dDay'
@@ -44,16 +45,20 @@ export const UtilContent = () => {
         <View>
           <CenterAdCard />
         </View>
-        <View className="gap-4 bg-gray-50 px-4">
+        <View className="gap-4 bg-bg px-4 pb-6">
           {/* 학사 일정 */}
-          <View className="rounded-xl border border-gray-100 bg-white px-4 py-4">
-            <View className="flex-row justify-between">
-              <Text className="mb-5 text-center text-lg font-semibold">
+          <View className="rounded-card bg-surface p-5">
+            <View className="mb-4 flex-row items-center justify-between">
+              <Text className="text-[17px] font-bold text-text-primary">
                 잊지마세요! 주요 학사일정
               </Text>
-              <MaterialIcons name="calendar-today" size={18} color="black" />
+              <MaterialIcons
+                name="calendar-today"
+                size={18}
+                color={COLORS.textTertiary}
+              />
             </View>
-            <View className="gap-3">
+            <View className="gap-2.5">
               {academicSchedules.length > 0 ? (
                 academicSchedules
                   .map((plan) => ({
@@ -71,43 +76,42 @@ export const UtilContent = () => {
                   .map((plan) => (
                     <View
                       key={plan.id}
-                      className="w-full rounded-xl bg-gray-50 px-4 py-2"
+                      className="w-full rounded-control bg-bg px-4 py-3"
                     >
-                      <View className="flex-row justify-between">
-                        <View>
-                          <Text className="text-base font-medium">
+                      <View className="flex-row items-center justify-between">
+                        <View className="flex-1 pr-3">
+                          <Text className="text-[15px] font-semibold text-text-primary">
                             {plan.title}
                           </Text>
-                          <Text className="text-sm text-gray-500">
+                          <Text className="mt-0.5 text-[13px] text-text-tertiary">
                             {plan.date}
                           </Text>
                         </View>
-                        <View className="justify-center">
-                          <View
-                            className={`justify-center rounded-lg ${plan.dday.bgColor} px-1.5 py-0.5`}
+                        <View
+                          className={`justify-center rounded-badge ${plan.dday.bgColor} px-2 py-1`}
+                        >
+                          <Text
+                            className={`text-[13px] font-semibold ${plan.dday.textColor}`}
                           >
-                            <Text
-                              className={`text-sm font-medium ${plan.dday.textColor}`}
-                            >
-                              {plan.dday.text}
-                            </Text>
-                          </View>
+                            {plan.dday.text}
+                          </Text>
                         </View>
                       </View>
                     </View>
                   ))
               ) : (
-                <View className="w-full items-center justify-center rounded-xl bg-gray-50 px-4 py-6">
-                  <Text className="text-center text-sm text-gray-500">
+                <View className="w-full items-center justify-center rounded-control bg-bg px-4 py-6">
+                  <Text className="text-center text-[13px] text-text-tertiary">
                     학사일정을 불러올 수 없어요
                   </Text>
                 </View>
               )}
               <TouchableOpacity
-                className="w-full items-center justify-center rounded-xl border border-gray-100 px-4 py-3"
+                className="w-full items-center justify-center rounded-control bg-primary-soft px-4 py-3.5"
                 onPress={() => handleOpenLink(academicScheduleUrl)}
+                activeOpacity={0.7}
               >
-                <Text className="text-base font-medium">
+                <Text className="text-[15px] font-semibold text-primary">
                   전체 학사일정 보기
                 </Text>
               </TouchableOpacity>
@@ -115,23 +119,26 @@ export const UtilContent = () => {
           </View>
 
           {/* 빠른 바로가기 */}
-          <View className="rounded-xl border border-gray-100 bg-white px-4 py-4">
-            <Text className="mb-5 text-lg font-semibold">빠른 바로가기</Text>
+          <View className="rounded-card bg-surface p-5">
+            <Text className="mb-4 text-[17px] font-bold text-text-primary">
+              빠른 바로가기
+            </Text>
             <View className="flex-row flex-wrap justify-center gap-3">
               {quickItem.map((item) => (
                 <TouchableOpacity
                   key={item.id}
-                  className="w-[30%] items-center gap-3 rounded-2xl border border-gray-100 bg-gray-50 px-3 py-4 transition-all active:scale-95 active:bg-gray-100"
+                  className="w-[30%] items-center gap-2.5 rounded-control bg-bg px-3 py-4 active:bg-surface-pressed"
                   onPress={() => handleOpenLink(item.link)}
+                  activeOpacity={0.7}
                 >
-                  <View className="rounded-full bg-white p-3 shadow-sm">
+                  <View className="h-11 w-11 items-center justify-center rounded-full bg-primary-soft">
                     <MaterialIcons
                       name={item.icon as keyof typeof MaterialIcons.glyphMap}
-                      size={24}
-                      color="#3B82F6"
+                      size={22}
+                      color={COLORS.primary}
                     />
                   </View>
-                  <Text className="text-center text-sm font-medium text-gray-700">
+                  <Text className="text-center text-[13px] font-medium text-text-secondary">
                     {item.title}
                   </Text>
                 </TouchableOpacity>

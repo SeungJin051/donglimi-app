@@ -16,7 +16,7 @@ type Props = {
  */
 export function TabScreenHeader({ children, className, style }: Props) {
   return (
-    <SafeAreaView edges={['top']} className="border-b border-gray-100 bg-white">
+    <SafeAreaView edges={['top']} className="bg-surface">
       <View
         className={className}
         style={[Platform.OS === 'android' && { paddingTop: 10 }, style]}

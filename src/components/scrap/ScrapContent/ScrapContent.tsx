@@ -7,6 +7,7 @@ import { View, Text, TouchableOpacity } from 'react-native'
 import { CenterAdCard } from '@/components/notice/CenterAdCard/CenterAdCard'
 import { useBottomSheetBackdrop } from '@/components/ui/BottomSheetBackdropComponent/BottomSheetBackdropComponent'
 import ScrapFilterBottomSheet from '@/components/ui/ScrapFilterBottomSheet/ScrapFilterBottomSheet'
+import { COLORS } from '@/constants/colors'
 import { useFilteredAndSortedScraps } from '@/hooks/useFilteredAndSortedScraps'
 import { useScrapStore } from '@/store/scrapStore'
 
@@ -49,22 +50,25 @@ export const ScrapContent = () => {
 
   return (
     <View className="flex-1">
-      {/* 정렬/필터 */}
-      <View className="flex-row items-center justify-between border-b border-t border-gray-200 bg-white px-4 py-2">
-        <TouchableOpacity
-          className="flex-row items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2"
-          onPress={handleScrapFilterOpenPress}
-        >
-          <Feather name="filter" size={14} color="black" />
-          <Text className="text-sm font-medium">정렬/필터</Text>
-        </TouchableOpacity>
-        <Text className="text-sm text-gray-500">
-          {filteredAndSortedScraps.length}개
-        </Text>
-      </View>
-
       <View>
         <CenterAdCard />
+      </View>
+
+      {/* 정렬/필터 */}
+      <View className="flex-row items-center justify-between px-4 py-1">
+        <TouchableOpacity
+          className="flex-row items-center gap-1.5 rounded-full bg-surface px-4 py-2"
+          onPress={handleScrapFilterOpenPress}
+          activeOpacity={0.7}
+        >
+          <Feather name="filter" size={14} color={COLORS.textSecondary} />
+          <Text className="text-[14px] font-semibold text-text-secondary">
+            정렬/필터
+          </Text>
+        </TouchableOpacity>
+        <Text className="text-[13px] font-medium text-text-tertiary">
+          {filteredAndSortedScraps.length}개
+        </Text>
       </View>
 
       {/* 스크랩 목록 */}

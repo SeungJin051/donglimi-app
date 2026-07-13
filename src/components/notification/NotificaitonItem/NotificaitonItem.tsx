@@ -2,12 +2,13 @@ import { useRef, useState } from 'react'
 
 import * as Haptics from 'expo-haptics'
 import * as WebBrowser from 'expo-web-browser'
-import { View, Text, TouchableOpacity } from 'react-native'
+import { View, Text } from 'react-native'
 import Swipeable, {
   SwipeableMethods,
 } from 'react-native-gesture-handler/ReanimatedSwipeable'
 
 import InAppBrowser from '@/components/ui/InAppBrowser/InAppBrowser'
+import PressableScale from '@/components/ui/PressableScale/PressableScale'
 import RightSwipeActions from '@/components/ui/RightSwipeActions/RightSwipeActions'
 import { PushNotificationItem } from '@/types/notification.type'
 import { getFormattedDate } from '@/utils/dateUtils'
@@ -144,38 +145,33 @@ function NotificationItemContent({
         overshootLeft={false}
         overshootRight={false}
       >
-        <TouchableOpacity
-          className={`ml-4 mr-0 min-h-[105px] rounded-l-lg border-b border-l border-t ${
-            item.read
-              ? 'border-gray-200 bg-white'
-              : 'border-blue-200 bg-blue-50'
-          } p-5 pr-4`}
+        <PressableScale
+          className={`mx-4 min-h-[105px] rounded-card p-4 ${
+            item.read ? 'bg-surface' : 'bg-primary-soft'
+          }`}
           onPress={handlePress}
-          activeOpacity={0.7}
         >
-          <View className="flex-1 justify-between">
+          <View className="flex-1 justify-between gap-3">
             <View className="flex-row items-start justify-between">
               <Text
-                className={`flex-1 pr-2 text-base font-medium leading-snug ${
-                  item.read ? 'text-gray-900' : 'text-gray-800'
-                }`}
+                className="flex-1 pr-2 text-[15px] font-semibold leading-snug text-text-primary"
                 numberOfLines={2}
               >
                 {item.title}
               </Text>
               {!item.read && (
-                <View className="h-2 w-2 rounded-full bg-blue-500" />
+                <View className="mt-1 h-2 w-2 rounded-full bg-primary" />
               )}
             </View>
 
             <View className="flex-row items-center justify-between gap-3">
-              <View className="flex-1 flex-row items-center gap-2">
+              <View className="flex-1 flex-row items-center gap-1.5">
                 {item.department && departmentStyle && (
                   <View
-                    className={`rounded-md px-2.5 py-1 ${departmentStyle.bg}`}
+                    className={`rounded-badge px-2.5 py-1 ${departmentStyle.bg}`}
                   >
                     <Text
-                      className={`text-xs font-medium ${departmentStyle.text}`}
+                      className={`text-xs font-semibold ${departmentStyle.text}`}
                     >
                       {item.department}
                     </Text>
@@ -183,8 +179,12 @@ function NotificationItemContent({
                 )}
 
                 {item.category && (
-                  <View className="rounded-md bg-gray-100 px-2 py-1">
-                    <Text className="text-xs font-medium text-gray-600">
+                  <View
+                    className={`rounded-badge px-2 py-1 ${
+                      item.read ? 'bg-bg' : 'bg-white/70'
+                    }`}
+                  >
+                    <Text className="text-xs font-medium text-text-secondary">
                       #{item.category}
                     </Text>
                   </View>
@@ -195,9 +195,11 @@ function NotificationItemContent({
                     {item.tags.slice(0, 2).map((tag) => (
                       <View
                         key={tag}
-                        className="rounded-md bg-gray-100 px-2 py-1"
+                        className={`rounded-badge px-2 py-1 ${
+                          item.read ? 'bg-bg' : 'bg-white/70'
+                        }`}
                       >
-                        <Text className="text-xs font-medium text-gray-600">
+                        <Text className="text-xs font-medium text-text-secondary">
                           #{tag}
                         </Text>
                       </View>
@@ -205,12 +207,12 @@ function NotificationItemContent({
                   </View>
                 )}
               </View>
-              <Text className="text-xs font-normal text-gray-500">
+              <Text className="text-xs font-normal text-text-tertiary">
                 {getFormattedDate(item.createdAtMs)}
               </Text>
             </View>
           </View>
-        </TouchableOpacity>
+        </PressableScale>
       </Swipeable>
 
       <InAppBrowser

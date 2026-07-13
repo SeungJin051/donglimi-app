@@ -9,6 +9,7 @@ import { useBottomSheetBackdrop } from '@/components/ui/BottomSheetBackdropCompo
 import { DepatmentBottomSheet } from '@/components/ui/DepatmentBottomSheet/DepatmentBottomSheet'
 import { KeywordBottomSheet } from '@/components/ui/KeywordBottomSheet/KeyWordBottomSheet'
 import { TagList } from '@/components/ui/TagList/TagList'
+import { COLORS } from '@/constants/colors'
 import { NOTIFICATION_KEYWORDS } from '@/constants/keyword'
 import { useNetworkGuard } from '@/hooks/useNetworkGuard'
 import { useNotificationSettings } from '@/hooks/useNotificationSettings'
@@ -105,18 +106,22 @@ export default function NotificationSetting() {
   }, [])
 
   return (
-    <View className="flex-1 gap-5 bg-gray-50">
+    <View className="flex-1 gap-5 bg-surface">
       {/* 헤더 섹션 */}
       <NotificationSettingHeader />
 
-      <View className="gap-5 px-4">
+      <View className="gap-4 px-4">
         {/* 안내 문구 */}
-        <View className="rounded-2xl border border-blue-100 bg-blue-50 p-4">
-          <View className="flex-row flex-wrap items-center gap-1">
-            <Text className="font-semibold text-blue-400">사용</Text>
-            <Text className="text-blue-400">·</Text>
+        <View className="rounded-card bg-primary-soft p-4">
+          <View className="flex-row items-start gap-2">
+            <Ionicons
+              name="information-circle"
+              size={18}
+              color={COLORS.primary}
+              style={{ marginTop: 1 }}
+            />
             <Text
-              className="flex-1 text-blue-400"
+              className="flex-1 text-[13px] leading-5 text-text-secondary"
               numberOfLines={2}
               ellipsizeMode="tail"
             >
@@ -127,37 +132,43 @@ export default function NotificationSetting() {
         </View>
 
         {/* 푸시 알림 설정 섹션 */}
-        <View className="rounded-xl border border-gray-200 bg-white px-4 py-4">
+        <View className="px-1 py-2">
           <View className="flex-row items-center justify-between">
-            <View className="flex-row items-center gap-2">
-              <Ionicons
-                name="notifications-outline"
-                size={22}
-                color="#F59E0B"
-              />
-              <Text className="font-semibold">알림 받기</Text>
+            <View className="flex-row items-center gap-3">
+              <View className="h-9 w-9 items-center justify-center rounded-full bg-primary-soft">
+                <Ionicons
+                  name="notifications"
+                  size={18}
+                  color={COLORS.primary}
+                />
+              </View>
+              <Text className="text-[15px] font-semibold text-text-primary">
+                알림 받기
+              </Text>
             </View>
 
             <Switch
               value={notificationEnabled}
               onValueChange={guardedToggleNotification}
-              trackColor={{ false: '#D1D5DB', true: '#93C5FD' }}
-              thumbColor={notificationEnabled ? '#093a87' : '#F3F4F6'}
+              trackColor={{ false: COLORS.textDisabled, true: COLORS.primary }}
+              thumbColor="#FFFFFF"
             />
           </View>
           {/* 푸시 알림 설정 설명 - OFF 상태일 때만 표시 */}
           {!notificationEnabled && (
-            <Text className="text-sm text-gray-500">
+            <Text className="mt-2 text-[13px] text-text-tertiary">
               아래 설정한 키워드와 학과 알림을 받을 수 있어요.
             </Text>
           )}
         </View>
 
         {/* 키워드 알림 설정 섹션 */}
-        <View className="gap-5 rounded-xl border border-gray-200 bg-white px-4 py-4">
-          <View className="gap-2">
-            <Text className="font-semibold">맞춤 키워드 알림</Text>
-            <Text className="text-sm text-gray-500">
+        <View className="gap-4 border-t border-divider px-1 pt-5">
+          <View className="gap-1.5">
+            <Text className="text-[15px] font-semibold text-text-primary">
+              맞춤 키워드 알림
+            </Text>
+            <Text className="text-[13px] text-text-tertiary">
               학교 전체 공지 중 원하는 키워드의 새 공지만 알려드려요.
             </Text>
           </View>
@@ -172,10 +183,12 @@ export default function NotificationSetting() {
         </View>
 
         {/* 학과 공지 알림 설정 섹션 */}
-        <View className="gap-5 rounded-xl border border-gray-200 bg-white px-4 py-4">
-          <View className="gap-2">
-            <Text className="font-semibold">내 학과 공지 알림</Text>
-            <Text className="text-sm text-gray-500">
+        <View className="gap-4 border-t border-divider px-1 pt-5">
+          <View className="gap-1.5">
+            <Text className="text-[15px] font-semibold text-text-primary">
+              내 학과 공지 알림
+            </Text>
+            <Text className="text-[13px] text-text-tertiary">
               소속 학과의 모든 새 소식을 놓치지 않게 알려드려요.
             </Text>
           </View>

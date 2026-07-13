@@ -62,7 +62,7 @@ export function useOnboarding() {
         router.replace('/onboarding')
       } else if (isOnboardingComplete && inOnboarding) {
         // 온보딩 완료 상태인데 온보딩 화면에 있으면 메인으로 이동
-        router.replace('/(tabs)')
+        router.replace('/(tabs)/index')
       }
     }
 

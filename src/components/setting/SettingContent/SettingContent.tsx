@@ -3,6 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useRouter } from 'expo-router'
 import { View, Text, TouchableOpacity, Alert } from 'react-native'
 
+import { COLORS } from '@/constants/colors'
 import { useCategoryFilterStore } from '@/store/categoryFilterStore'
 import { useNotificationStore } from '@/store/notificationStore'
 import { useScrapStore } from '@/store/scrapStore'
@@ -82,58 +83,79 @@ export default function SettingContent() {
   return (
     <View className="gap-6 p-4">
       {/* 앱 지원 */}
-      <View className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-        <View className="border-b border-gray-200 px-4 py-3">
-          <Text className="text-base font-semibold text-gray-900">앱 지원</Text>
+      <View>
+        <Text className="mb-2 px-2 text-[13px] font-semibold text-text-tertiary">
+          앱 지원
+        </Text>
+        <View className="overflow-hidden rounded-card border border-stroke bg-surface">
+          {appSupportMenus.map((menu, index) => (
+            <View key={menu.id}>
+              {index > 0 && <View className="mx-4 h-[1px] bg-divider" />}
+              <TouchableOpacity
+                className="flex-row items-center justify-between px-4 py-4 active:bg-surface-pressed"
+                onPress={() => handleMenuPress(menu.id)}
+                activeOpacity={0.6}
+              >
+                <Text className="text-[15px] font-medium text-text-primary">
+                  {menu.title}
+                </Text>
+                <Feather
+                  name="chevron-right"
+                  size={20}
+                  color={COLORS.textDisabled}
+                />
+              </TouchableOpacity>
+            </View>
+          ))}
         </View>
-        {appSupportMenus.map((menu, index) => (
-          <TouchableOpacity
-            key={menu.id}
-            className={`flex-row items-center justify-between border-b border-gray-200 px-4 py-3.5 ${
-              index === appSupportMenus.length - 1 ? 'border-b-0' : ''
-            }`}
-            onPress={() => handleMenuPress(menu.id)}
-          >
-            <Text className="text-base text-gray-800">{menu.title}</Text>
-            <Feather name="chevron-right" size={22} color="#A0A0A0" />
-          </TouchableOpacity>
-        ))}
       </View>
 
       {/* 앱 정보 */}
-      <View className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-        <View className="border-b border-gray-200 px-4 py-3">
-          <Text className="text-base font-semibold text-gray-900">앱 정보</Text>
+      <View>
+        <Text className="mb-2 px-2 text-[13px] font-semibold text-text-tertiary">
+          앱 정보
+        </Text>
+        <View className="overflow-hidden rounded-card border border-stroke bg-surface">
+          {appInfoMenus.map((menu, index) => (
+            <View key={menu.id}>
+              {index > 0 && <View className="mx-4 h-[1px] bg-divider" />}
+              <TouchableOpacity
+                className="flex-row items-center justify-between px-4 py-4 active:bg-surface-pressed"
+                onPress={() => handleMenuPress(menu.id)}
+                activeOpacity={0.6}
+              >
+                <Text className="text-[15px] font-medium text-text-primary">
+                  {menu.title}
+                </Text>
+                <Feather
+                  name="chevron-right"
+                  size={20}
+                  color={COLORS.textDisabled}
+                />
+              </TouchableOpacity>
+            </View>
+          ))}
         </View>
-        {appInfoMenus.map((menu, index) => (
-          <TouchableOpacity
-            key={menu.id}
-            className={`flex-row items-center justify-between border-b border-gray-200 px-4 py-3.5 ${
-              index === appInfoMenus.length - 1 ? 'border-b-0' : ''
-            }`}
-            onPress={() => handleMenuPress(menu.id)}
-          >
-            <Text className="text-base text-gray-800">{menu.title}</Text>
-            <Feather name="chevron-right" size={22} color="#A0A0A0" />
-          </TouchableOpacity>
-        ))}
       </View>
 
       {/* 개발자 도구 (개발 환경에서만 표시) */}
       {__DEV__ && (
-        <View className="overflow-hidden rounded-xl border border-red-200 bg-red-50 shadow-sm">
-          <View className="border-b border-red-200 px-4 py-3">
-            <Text className="text-base font-semibold text-red-900">
-              개발자 도구
-            </Text>
+        <View>
+          <Text className="mb-2 px-2 text-[13px] font-semibold text-danger">
+            개발자 도구
+          </Text>
+          <View className="overflow-hidden rounded-card border border-stroke bg-surface">
+            <TouchableOpacity
+              className="flex-row items-center justify-between px-4 py-4"
+              onPress={handleDevReset}
+              activeOpacity={0.6}
+            >
+              <Text className="text-[15px] font-medium text-danger">
+                앱 영속성 초기화
+              </Text>
+              <Feather name="trash-2" size={20} color={COLORS.danger} />
+            </TouchableOpacity>
           </View>
-          <TouchableOpacity
-            className="flex-row items-center justify-between px-4 py-3.5"
-            onPress={handleDevReset}
-          >
-            <Text className="text-base text-red-800">앱 영속성 초기화</Text>
-            <Feather name="trash-2" size={22} color="#DC2626" />
-          </TouchableOpacity>
         </View>
       )}
     </View>

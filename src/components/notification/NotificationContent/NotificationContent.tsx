@@ -11,6 +11,7 @@ import {
 } from 'react-native'
 
 import { CenterAdCard } from '@/components/notice/CenterAdCard/CenterAdCard'
+import { COLORS } from '@/constants/colors'
 import useFetchNotification from '@/hooks/useFetchNotification'
 import { PushNotificationItem } from '@/types/notification.type'
 
@@ -86,36 +87,50 @@ export const NotificationContent = () => {
   }, [items.length, selectedTab, deleteAllNotifications])
 
   return (
-    <View className="flex-1 bg-gray-50">
-      <View className="flex-row items-center justify-between bg-gray-100 px-4 py-1">
-        <View className="flex-1 flex-row items-center justify-center">
+    <View className="flex-1 bg-bg">
+      <View className="flex-row items-center justify-between px-4 py-3">
+        <View className="flex-row gap-2">
           <TouchableOpacity
-            className={`px-20 py-2 ${
-              selectedTab === 'all' ? 'rounded-full bg-white' : 'bg-gray-100'
+            className={`rounded-full px-4 py-2 ${
+              selectedTab === 'all' ? 'bg-text-primary' : 'bg-surface'
             }`}
             onPress={() => setSelectedTab('all')}
+            activeOpacity={0.8}
           >
-            <Text className="font-semibold">전체</Text>
+            <Text
+              className={`text-[14px] font-semibold ${
+                selectedTab === 'all' ? 'text-white' : 'text-text-secondary'
+              }`}
+            >
+              전체
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            className={`px-20 py-2 ${
-              selectedTab === 'unread' ? 'rounded-full bg-white' : 'bg-gray-100'
+            className={`rounded-full px-4 py-2 ${
+              selectedTab === 'unread' ? 'bg-text-primary' : 'bg-surface'
             }`}
             onPress={() => setSelectedTab('unread')}
+            activeOpacity={0.8}
           >
-            <Text className="font-semibold">안 읽음</Text>
+            <Text
+              className={`text-[14px] font-semibold ${
+                selectedTab === 'unread' ? 'text-white' : 'text-text-secondary'
+              }`}
+            >
+              안 읽음
+            </Text>
           </TouchableOpacity>
         </View>
         {items.length > 0 && (
           <TouchableOpacity
             onPress={handleDeleteAll}
-            className="ml-2 p-2"
+            className="ml-2 h-9 w-9 items-center justify-center rounded-full bg-surface"
             disabled={loading}
           >
             <Ionicons
               name="trash-outline"
-              size={20}
-              color={loading ? '#9CA3AF' : '#6B7280'}
+              size={18}
+              color={loading ? COLORS.textDisabled : COLORS.textSecondary}
             />
           </TouchableOpacity>
         )}
@@ -128,35 +143,43 @@ export const NotificationContent = () => {
       )}
 
       {loading ? (
-        <View className="flex-1 items-center justify-center bg-white">
-          <ActivityIndicator size="large" color="#3B82F6" />
+        <View className="flex-1 items-center justify-center">
+          <ActivityIndicator size="large" color={COLORS.primary} />
         </View>
       ) : error ? (
-        <Text className="px-4 py-2 text-red-500">{error}</Text>
+        <Text className="px-4 py-2 text-danger">{error}</Text>
       ) : (
         <>
           {isEmptyUnread ? (
-            <View className="mx-4 items-center justify-center rounded-lg border border-gray-100 bg-white p-6">
-              <Text className="text-xl font-semibold text-gray-900">
+            <View className="mx-4 items-center justify-center rounded-card bg-surface px-6 py-12">
+              <View className="mb-4 h-14 w-14 items-center justify-center rounded-full bg-bg">
+                <Ionicons
+                  name="checkmark-done"
+                  size={26}
+                  color={COLORS.textTertiary}
+                />
+              </View>
+              <Text className="text-[17px] font-bold text-text-primary">
                 지금은 새 알림이 없어요
               </Text>
-              <Text className="mt-2 text-center text-base text-gray-500">
-                요한 학과 소식이 오면 잊지 않고 챙겨드릴게요.
+              <Text className="mt-2 text-center text-[14px] leading-5 text-text-tertiary">
+                중요한 학과 소식이 오면 잊지 않고 챙겨드릴게요.
               </Text>
             </View>
           ) : isEmptyAll ? (
-            <View className="mx-4 items-center justify-center rounded-lg border border-gray-100 bg-white p-6">
-              <Text className="text-xl font-semibold text-gray-900">
-                어떤 소식을 알려드릴까요?
-              </Text>
-              <Text className="mt-2 text-center text-base text-gray-500">
-                우측 상단{' '}
+            <View className="mx-4 items-center justify-center rounded-card bg-surface px-6 py-12">
+              <View className="mb-4 h-14 w-14 items-center justify-center rounded-full bg-bg">
                 <Ionicons
                   name="notifications-outline"
-                  size={14}
-                  color="#6B7280"
+                  size={26}
+                  color={COLORS.textTertiary}
                 />
-                에서 관심 주제를 설정하면,
+              </View>
+              <Text className="text-[17px] font-bold text-text-primary">
+                어떤 소식을 알려드릴까요?
+              </Text>
+              <Text className="mt-2 text-center text-[14px] leading-5 text-text-tertiary">
+                우측 상단 종 아이콘에서 관심 주제를 설정하면,
                 {'\n'}새 소식을 바로 알려드려요.
               </Text>
             </View>
@@ -181,7 +204,7 @@ export const NotificationContent = () => {
               ListFooterComponent={
                 loadingMore ? (
                   <View className="py-4">
-                    <ActivityIndicator size="small" color="#3B82F6" />
+                    <ActivityIndicator size="small" color={COLORS.primary} />
                   </View>
                 ) : null
               }

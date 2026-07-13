@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react'
 import { Ionicons } from '@expo/vector-icons'
 import { View, Text, TouchableOpacity } from 'react-native'
 
+import { COLORS } from '@/constants/colors'
 import { NOTIFICATION_KEYWORDS } from '@/constants/keyword'
 import { showSuccessToast } from '@/utils/toastUtils'
 
@@ -72,33 +73,39 @@ export default function ScrapFilterBottomSheet({
     <View className="flex-1 bg-white px-4">
       {/* 정렬 기준 - Segmented Control */}
       <View className="mb-6">
-        <Text className="mb-3 text-base font-semibold text-gray-700">
+        <Text className="mb-3 text-[15px] font-bold text-text-primary">
           정렬 기준
         </Text>
-        <View className="flex-row rounded-lg bg-gray-100 p-1">
+        <View className="flex-row rounded-control bg-bg p-1">
           <TouchableOpacity
-            className={`flex-1 rounded-md py-2.5 ${
-              localSortBy === 'latest' ? 'bg-deu-light-blue' : 'bg-transparent'
+            className={`flex-1 rounded-[9px] py-2.5 ${
+              localSortBy === 'latest' ? 'bg-surface' : 'bg-transparent'
             }`}
             onPress={() => setLocalSortBy('latest')}
+            activeOpacity={0.8}
           >
             <Text
-              className={`text-center text-sm font-semibold ${
-                localSortBy === 'latest' ? 'text-white' : 'text-gray-600'
+              className={`text-center text-[14px] font-semibold ${
+                localSortBy === 'latest'
+                  ? 'text-text-primary'
+                  : 'text-text-tertiary'
               }`}
             >
               최신순
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            className={`flex-1 rounded-md py-2.5 ${
-              localSortBy === 'oldest' ? 'bg-deu-light-blue' : 'bg-transparent'
+            className={`flex-1 rounded-[9px] py-2.5 ${
+              localSortBy === 'oldest' ? 'bg-surface' : 'bg-transparent'
             }`}
             onPress={() => setLocalSortBy('oldest')}
+            activeOpacity={0.8}
           >
             <Text
-              className={`text-center text-sm font-semibold ${
-                localSortBy === 'oldest' ? 'text-white' : 'text-gray-600'
+              className={`text-center text-[14px] font-semibold ${
+                localSortBy === 'oldest'
+                  ? 'text-text-primary'
+                  : 'text-text-tertiary'
               }`}
             >
               오래된순
@@ -108,11 +115,11 @@ export default function ScrapFilterBottomSheet({
       </View>
 
       {/* 구분선 */}
-      <View className="mb-6 h-px bg-gray-200" />
+      <View className="mb-6 h-px bg-divider" />
 
       {/* 키워드 필터 - 칩 UI */}
       <View className="mb-6">
-        <Text className="mb-3 text-base font-semibold text-gray-700">
+        <Text className="mb-3 text-[15px] font-bold text-text-primary">
           키워드 필터
         </Text>
         <View className="flex-row flex-wrap gap-2">
@@ -122,18 +129,17 @@ export default function ScrapFilterBottomSheet({
               <TouchableOpacity
                 key={key}
                 className={`flex-row items-center gap-1.5 rounded-full px-4 py-2.5 ${
-                  isSelected
-                    ? 'bg-deu-light-blue'
-                    : 'border border-gray-300 bg-white'
+                  isSelected ? 'bg-primary-soft' : 'bg-bg'
                 }`}
                 onPress={() => toggleKeyword(key)}
+                activeOpacity={0.8}
               >
                 {isSelected && (
-                  <Ionicons name="checkmark" size={14} color="white" />
+                  <Ionicons name="checkmark" size={14} color={COLORS.primary} />
                 )}
                 <Text
-                  className={`text-sm font-medium ${
-                    isSelected ? 'text-white' : 'text-gray-700'
+                  className={`text-[14px] font-semibold ${
+                    isSelected ? 'text-primary' : 'text-text-secondary'
                   }`}
                 >
                   {value.title}
@@ -145,24 +151,26 @@ export default function ScrapFilterBottomSheet({
       </View>
 
       {/* 푸터 - 고정 버튼 */}
-      <View className="mt-auto border-t border-gray-200 bg-white pt-4">
+      <View className="mt-auto pb-2 pt-4">
         <View className="flex-row gap-3">
           <TouchableOpacity
-            className="flex-1 rounded-lg border border-gray-300 bg-white py-4"
+            className="flex-1 rounded-control bg-bg py-4"
             onPress={handleReset}
+            activeOpacity={0.8}
           >
-            <Text className="text-center text-sm font-semibold text-gray-700">
+            <Text className="text-center text-[15px] font-semibold text-text-secondary">
               초기화
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            className={`flex-1 rounded-lg py-4 ${
-              hasChanges ? 'bg-deu-strong-blue' : 'bg-gray-300'
+            className={`flex-1 rounded-control py-4 ${
+              hasChanges ? 'bg-primary' : 'bg-text-disabled'
             }`}
             onPress={handleApply}
             disabled={!hasChanges}
+            activeOpacity={0.8}
           >
-            <Text className="text-center text-sm font-semibold text-white">
+            <Text className="text-center text-[15px] font-semibold text-white">
               적용하기
             </Text>
           </TouchableOpacity>

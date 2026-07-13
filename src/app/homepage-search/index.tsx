@@ -15,6 +15,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { NoticeContent } from '@/components/notice/NoticeContent/NoticeContent'
+import { COLORS } from '@/constants/colors'
 import { useAlgoliaSearch } from '@/hooks/useAlgoliaSearch'
 import { useSearchStore } from '@/store/searchStore'
 import { Notice } from '@/types/notice.type'
@@ -123,21 +124,27 @@ export default function HomepageSearch() {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-      <SafeAreaView className="flex-1 bg-white">
+      <SafeAreaView className="flex-1 bg-surface">
         {/* 헤더 부분 */}
-        <View className="flex-row items-center gap-4 px-4">
-          <TouchableOpacity onPress={handleBack}>
-            <Ionicons name="arrow-back" size={24} color="black" />
+        <View className="flex-row items-center gap-3 px-4 pt-2">
+          <TouchableOpacity
+            onPress={handleBack}
+            className="h-9 w-9 items-center justify-center rounded-full"
+            activeOpacity={0.6}
+          >
+            <Ionicons name="arrow-back" size={24} color={COLORS.textPrimary} />
           </TouchableOpacity>
-          <Text className="text-2xl font-bold">공지 검색</Text>
+          <Text className="text-[22px] font-bold text-text-primary">
+            공지 검색
+          </Text>
         </View>
 
         {/* 검색 입력 부분 */}
-        <View className="relative justify-center px-4 py-6">
+        <View className="relative justify-center px-4 py-4">
           <TextInput
             ref={inputRef}
-            className="h-12 rounded-xl bg-gray-100 py-0 pl-11 text-base"
-            placeholderTextColor="#B0B0B0"
+            className="h-12 rounded-control bg-bg py-0 pl-11 pr-4 text-[16px] leading-[20px] text-text-primary"
+            placeholderTextColor={COLORS.textTertiary}
             placeholder="어떤 공지사항을 찾으세요?"
             returnKeyType="search"
             value={searchTerm}
@@ -146,7 +153,7 @@ export default function HomepageSearch() {
             style={{ textAlignVertical: 'center' }}
           />
           <View className="absolute bottom-0 left-7 top-0 justify-center">
-            <Ionicons name="search" size={20} color="#999999" />
+            <Ionicons name="search" size={20} color={COLORS.textTertiary} />
           </View>
         </View>
 
@@ -155,34 +162,50 @@ export default function HomepageSearch() {
           {hasSearched ? (
             isLoading ? (
               <View className="flex-1 items-center justify-center">
-                <ActivityIndicator size="large" color="#007AFF" />
+                <ActivityIndicator size="large" color={COLORS.primary} />
               </View>
             ) : error ? (
               <View className="flex-1 items-center px-8 pt-16">
-                <Text className="text-xl font-bold text-gray-900">
+                <View className="mb-4 h-14 w-14 items-center justify-center rounded-full bg-bg">
+                  <Ionicons
+                    name="cloud-offline-outline"
+                    size={26}
+                    color={COLORS.textTertiary}
+                  />
+                </View>
+                <Text className="text-[17px] font-bold text-text-primary">
                   결과를 불러올 수 없어요
                 </Text>
-                <Text className="mt-2 text-center text-base text-gray-500">
+                <Text className="mt-2 text-center text-[14px] text-text-tertiary">
                   네트워크 상태를 확인한 뒤 다시 시도해주세요.
                 </Text>
               </View>
             ) : searchResults.length > 0 ? (
               <FlatList
+                className="bg-bg"
                 data={searchResults}
                 renderItem={({ item }) => <NoticeContent item={item} />}
                 keyExtractor={(item) =>
                   (item as Notice & { objectID?: string }).objectID ||
                   item.content_hash
                 }
+                contentContainerStyle={{ paddingTop: 10 }}
                 showsVerticalScrollIndicator={false}
                 onScrollBeginDrag={Keyboard.dismiss}
               />
             ) : (
               <View className="flex-1 items-center px-8 pt-16">
-                <Text className="text-xl font-bold text-gray-900">
+                <View className="mb-4 h-14 w-14 items-center justify-center rounded-full bg-bg">
+                  <Ionicons
+                    name="search-outline"
+                    size={26}
+                    color={COLORS.textTertiary}
+                  />
+                </View>
+                <Text className="text-[17px] font-bold text-text-primary">
                   검색 결과가 없어요
                 </Text>
-                <Text className="mt-2 text-center text-base text-gray-500">
+                <Text className="mt-2 text-center text-[14px] text-text-tertiary">
                   단어를 줄이거나 다른 키워드로 다시 검색해보세요.
                 </Text>
               </View>
@@ -190,19 +213,23 @@ export default function HomepageSearch() {
           ) : searchHistory.length > 0 ? (
             <View className="px-4">
               <View className="mb-4 flex-row items-center justify-between">
-                <Text className="text-base font-semibold">최근 검색</Text>
+                <Text className="text-[15px] font-semibold text-text-primary">
+                  최근 검색
+                </Text>
                 <View className="flex flex-row items-center justify-center gap-4">
                   {editMode && (
                     <TouchableOpacity onPress={() => clearHistory()}>
-                      <Text className="text-base font-normal text-gray-400">
+                      <Text className="text-[14px] font-normal text-text-tertiary">
                         모두 지우기
                       </Text>
                     </TouchableOpacity>
                   )}
                   <TouchableOpacity onPress={() => setEditMode(!editMode)}>
                     <Text
-                      className={`text-base ${
-                        editMode ? 'font-semibold' : 'font-normal text-gray-400'
+                      className={`text-[14px] ${
+                        editMode
+                          ? 'font-semibold text-primary'
+                          : 'font-normal text-text-tertiary'
                       }`}
                     >
                       {editMode ? '완료' : '수정'}
@@ -214,20 +241,22 @@ export default function HomepageSearch() {
                 {searchHistory.map((history, index) => (
                   <View
                     key={`${history}-${index}`}
-                    className="flex flex-row items-center justify-center gap-1 rounded-full bg-gray-100 px-4 py-2 text-sm"
+                    className="flex flex-row items-center justify-center gap-1 rounded-full bg-bg px-4 py-2"
                   >
                     <TouchableOpacity
                       onPress={() => !editMode && handleHistoryPress(history)}
                       disabled={editMode}
                     >
-                      <Text className="text-sm">{history}</Text>
+                      <Text className="text-[14px] text-text-secondary">
+                        {history}
+                      </Text>
                     </TouchableOpacity>
                     {editMode && (
                       <TouchableOpacity onPress={() => removeHistory(history)}>
                         <Ionicons
                           name="close-outline"
                           size={16}
-                          color="#999999"
+                          color={COLORS.textTertiary}
                         />
                       </TouchableOpacity>
                     )}
@@ -237,10 +266,17 @@ export default function HomepageSearch() {
             </View>
           ) : (
             <View className="flex-1 items-center px-8 pt-16">
-              <Text className="text-xl font-bold text-gray-900">
+              <View className="mb-4 h-14 w-14 items-center justify-center rounded-full bg-bg">
+                <Ionicons
+                  name="time-outline"
+                  size={26}
+                  color={COLORS.textTertiary}
+                />
+              </View>
+              <Text className="text-[17px] font-bold text-text-primary">
                 검색 기록이 없어요
               </Text>
-              <Text className="mt-2 text-center text-base text-gray-500">
+              <Text className="mt-2 text-center text-[14px] text-text-tertiary">
                 최근 검색어가 여기에 표시됩니다.
               </Text>
             </View>

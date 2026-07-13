@@ -4,7 +4,7 @@ import { NotificationContent } from '@/components/notification/NotificationConte
 
 export default function NotificationScreen() {
   return (
-    <View className="flex-1 bg-gray-50" collapsable={false}>
+    <View className="flex-1 bg-bg" collapsable={false}>
       <NotificationContent />
     </View>
   )

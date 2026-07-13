@@ -5,6 +5,7 @@ import { useRouter } from 'expo-router'
 import { View, Text, TouchableOpacity } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
+import { COLORS } from '@/constants/colors'
 import { DEPARTMENT_LIST } from '@/constants/departments'
 import { useCategoryStore } from '@/store/categoryStore'
 import {
@@ -66,22 +67,24 @@ export default function ManagingNotificationSubscriptions() {
   }, [hasChanges, selectedItems, setSubscribedCategories, router])
 
   return (
-    <SafeAreaView className="bg-white">
-      <View className="flex-row items-center gap-4 px-4">
+    <SafeAreaView className="bg-surface">
+      <View className="flex-row items-center gap-3 px-4">
         <TouchableOpacity onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={24} color="black" />
+          <Ionicons name="arrow-back" size={24} color={COLORS.textPrimary} />
         </TouchableOpacity>
-        <Text className="text-2xl font-bold">공지 피드 관리</Text>
+        <Text className="text-[22px] font-bold text-text-primary">
+          공지 피드 관리
+        </Text>
       </View>
 
       <View className="mt-4 flex-row px-4">
         {SUBSCRIPTION_TAB.map((tab) => (
           <TouchableOpacity key={tab} onPress={() => setActiveTab(tab)}>
             <Text
-              className={`px-5 py-4 ${
+              className={`px-5 py-4 text-[15px] ${
                 activeTab === tab
-                  ? 'border-b-2 border-deu-strong-blue font-medium text-[#1E3A5F]'
-                  : 'font-medium text-gray-700'
+                  ? 'border-b-2 border-text-primary font-semibold text-text-primary'
+                  : 'font-medium text-text-tertiary'
               }`}
             >
               {tab}
@@ -96,10 +99,12 @@ export default function ManagingNotificationSubscriptions() {
             <View className="mb-4 flex-row items-center gap-2">
               <Ionicons
                 name="information-circle-outline"
-                size={24}
-                color="#1E3A5F"
+                size={22}
+                color={COLORS.textPrimary}
               />
-              <Text className="text-lg font-semibold">정보광장</Text>
+              <Text className="text-[17px] font-bold text-text-primary">
+                정보광장
+              </Text>
             </View>
 
             <View className="flex-row flex-wrap">
@@ -112,10 +117,10 @@ export default function ManagingNotificationSubscriptions() {
                       onPress={() => handleItemToggle(item.name)}
                     >
                       <Text
-                        className={`rounded-lg px-3 py-3 ${
+                        className={`rounded-full px-4 py-2.5 text-[14px] ${
                           selectedItems.includes(item.name)
-                            ? 'bg-[#dbeafe] font-medium text-[#1E3A5F]'
-                            : 'bg-gray-50 text-gray-700'
+                            ? 'bg-primary-soft font-semibold text-primary'
+                            : 'bg-bg text-text-secondary'
                         }`}
                       >
                         {item.name}
@@ -130,20 +135,26 @@ export default function ManagingNotificationSubscriptions() {
           <View>
             <View>
               <View className="mb-4 flex-row items-center gap-2">
-                <Ionicons name="school-outline" size={24} color="#1E3A5F" />
-                <Text className="text-lg font-semibold">단과대학/학과</Text>
+                <Ionicons
+                  name="school-outline"
+                  size={22}
+                  color={COLORS.textPrimary}
+                />
+                <Text className="text-[17px] font-bold text-text-primary">
+                  단과대학/학과
+                </Text>
               </View>
-              <View className="flex-row flex-wrap">
+              <View className="flex-row flex-wrap gap-y-2">
                 {SUBSCRIPTION_TAB_DEPARTMENT.map((tab) => (
                   <TouchableOpacity
                     key={tab}
                     onPress={() => setDepartmentTab(tab)}
                   >
                     <Text
-                      className={`px-3 py-3 ${
+                      className={`rounded-full px-3 py-2.5 text-[14px] ${
                         departmentTab === tab
-                          ? 'rounded-lg bg-[#dbeafe] font-medium text-[#1E3A5F]'
-                          : 'font-medium text-gray-700'
+                          ? 'bg-primary-soft font-semibold text-primary'
+                          : 'font-medium text-text-tertiary'
                       }`}
                     >
                       {tab}
@@ -152,10 +163,10 @@ export default function ManagingNotificationSubscriptions() {
                 ))}
               </View>
             </View>
-            <Text className="mb-1 border-b border-gray-300" />
+            <Text className="mb-1 border-b border-divider" />
             {departmentTab && (
               <View className="mt-4">
-                <Text className="mb-2 text-lg font-semibold">
+                <Text className="mb-2 text-[15px] font-semibold text-text-primary">
                   {departmentTab}
                 </Text>
                 <View className="flex-row flex-wrap">
@@ -168,10 +179,10 @@ export default function ManagingNotificationSubscriptions() {
                       onPress={() => handleItemToggle(item.name)}
                     >
                       <Text
-                        className={`rounded-lg px-2 py-3 ${
+                        className={`rounded-full px-4 py-2.5 text-[14px] ${
                           selectedItems.includes(item.name)
-                            ? 'bg-[#bfdbfe] text-[#1E40AF]'
-                            : 'bg-gray-50 text-gray-700'
+                            ? 'bg-primary-soft font-semibold text-primary'
+                            : 'bg-bg text-text-secondary'
                         }`}
                       >
                         {item.name}
@@ -187,17 +198,16 @@ export default function ManagingNotificationSubscriptions() {
 
       <View className="mt-4 px-4">
         <TouchableOpacity
-          className={`rounded-lg border py-4 ${
-            hasChanges
-              ? 'border-deu-light-blue bg-deu-light-blue'
-              : 'border-gray-300 bg-gray-300'
+          className={`rounded-control py-4 ${
+            hasChanges ? 'bg-primary' : 'bg-bg'
           }`}
           onPress={handleSaveChanges}
           disabled={!hasChanges}
+          activeOpacity={0.8}
         >
           <Text
-            className={`text-center font-semibold ${
-              hasChanges ? 'text-white' : 'text-gray-500'
+            className={`text-center text-[16px] font-semibold ${
+              hasChanges ? 'text-white' : 'text-text-tertiary'
             }`}
           >
             {hasChanges

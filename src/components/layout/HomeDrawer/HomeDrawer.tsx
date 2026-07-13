@@ -12,6 +12,7 @@ import { View, Text, TouchableOpacity } from 'react-native'
 
 import EditingNotificationSubscriptions from '@/app/editing-notification-subscriptions'
 import { useBottomSheetBackdrop } from '@/components/ui/BottomSheetBackdropComponent/BottomSheetBackdropComponent'
+import { COLORS } from '@/constants/colors'
 import { useCategoryFilterStore } from '@/store/categoryFilterStore'
 import { useCategoryStore } from '@/store/categoryStore'
 import { Subscription } from '@/types/category.type'
@@ -68,69 +69,118 @@ export default function HomeDrawer({
   // 구독 아이템 렌더링 함수
   const renderSubscriptionItem = useCallback(
     (item: Subscription, index: number) => (
-      <TouchableOpacity
-        key={item.id}
-        className={`ml-5 w-full flex-row border-b border-gray-300 py-6 ${
-          index === subscribedCategories.length - 1 ? 'border-b-0' : ''
-        }`}
-        onPress={() => handleCategoryPress(item.name)}
-      >
-        <Text
-          className={`text-base font-semibold ${
-            selectedCategory === item.name ? 'text-blue-600' : 'text-gray-800'
+      <View key={item.id}>
+        {index > 0 && <View className="mx-3.5 h-[1px] bg-stroke" />}
+        <TouchableOpacity
+          className={`w-full flex-row items-center justify-between rounded-[10px] px-3.5 py-3 ${
+            selectedCategory === item.name ? 'bg-surface' : ''
           }`}
+          onPress={() => handleCategoryPress(item.name)}
+          activeOpacity={0.7}
         >
-          {item.name}
-        </Text>
-      </TouchableOpacity>
+          <Text
+            className={`text-[15px] ${
+              selectedCategory === item.name
+                ? 'font-semibold text-primary'
+                : 'font-medium text-text-secondary'
+            }`}
+          >
+            {item.name}
+          </Text>
+          {selectedCategory === item.name && (
+            <MaterialCommunityIcons
+              name="check"
+              size={18}
+              color={COLORS.primary}
+            />
+          )}
+        </TouchableOpacity>
+      </View>
     ),
-    [subscribedCategories.length, selectedCategory, handleCategoryPress]
+    [selectedCategory, handleCategoryPress]
   )
 
   return (
-    <View className="flex-1 bg-[#F0F0F0]">
+    <View className="flex-1 bg-surface">
       <DrawerContentScrollView>
         {/* === 상단 컨트롤 === */}
-        <View className="mb-3 mt-[-10px] w-full flex-row items-center justify-between px-4 py-2">
-          <Text className="text-2xl font-bold">공지 피드</Text>
-          <View className="flex-row items-center gap-7">
+        <View className="mt-[-10px] w-full flex-row items-center justify-between px-4 py-2 pb-4">
+          <Text className="text-[22px] font-bold text-text-primary">
+            공지 피드
+          </Text>
+          <View className="flex-row items-center gap-6">
             <TouchableOpacity onPress={handleManageNoticePress}>
-              <AntDesign name="plus-circle" size={24} color="#999999" />
+              <AntDesign
+                name="plus-circle"
+                size={22}
+                color={COLORS.textPrimary}
+              />
             </TouchableOpacity>
             <TouchableOpacity onPress={handleOpenPress}>
               <MaterialCommunityIcons
                 name="pencil-outline"
-                size={24}
-                color="#999999"
+                size={22}
+                color={COLORS.textPrimary}
               />
             </TouchableOpacity>
           </View>
         </View>
 
-        {/* === 추천 및 구독 섹션 === */}
-        <View className="w-full">
-          <View className="flex-col items-center overflow-hidden rounded-3xl border border-gray-300 bg-white">
-            <View className="w-full">
-              <TouchableOpacity
-                onPress={() => {
-                  clearCategory()
-                  navigation.dispatch(DrawerActions.closeDrawer())
-                }}
+        {/* 헤더 구분선 */}
+        <View className="h-[1px] w-full bg-stroke" />
+
+        {/* === 추천 섹션 === */}
+        <View className="w-full px-3 pt-4">
+          <TouchableOpacity
+            className={`w-full flex-row items-center justify-between rounded-control px-3.5 py-3.5 ${
+              !selectedCategory ? 'bg-primary-soft' : ''
+            }`}
+            onPress={() => {
+              clearCategory()
+              navigation.dispatch(DrawerActions.closeDrawer())
+            }}
+            activeOpacity={0.7}
+          >
+            <View className="flex-row items-center gap-2.5">
+              <MaterialCommunityIcons
+                name="star-four-points"
+                size={16}
+                color={!selectedCategory ? COLORS.primary : COLORS.textTertiary}
+              />
+              <Text
+                className={`text-[15px] ${
+                  !selectedCategory
+                    ? 'font-semibold text-primary'
+                    : 'font-medium text-text-primary'
+                }`}
               >
-                <Text
-                  className={`ml-5 w-full flex-row border-b border-gray-300 py-6 text-base font-semibold ${
-                    subscribedCategories.length === 0 ? 'border-b-0' : ''
-                  }`}
-                >
-                  추천
-                </Text>
-              </TouchableOpacity>
+                추천
+              </Text>
             </View>
-            <View className="w-full flex-col">
-              {subscribedCategories.map((item, index) =>
+            {!selectedCategory && (
+              <MaterialCommunityIcons
+                name="check"
+                size={18}
+                color={COLORS.primary}
+              />
+            )}
+          </TouchableOpacity>
+        </View>
+
+        {/* === 구독 섹션 (그룹 카드) === */}
+        <View className="w-full px-3 pt-3">
+          <View className="w-full rounded-card bg-bg p-1.5">
+            {subscribedCategories.length > 0 ? (
+              subscribedCategories.map((item, index) =>
                 renderSubscriptionItem(item, index)
-              )}
-            </View>
+              )
+            ) : (
+              <View className="px-3.5 py-3">
+                <Text className="text-[13px] text-text-tertiary">
+                  오른쪽 위 + 버튼으로 공지를 구독해보세요
+                </Text>
+              </View>
+            )}
           </View>
         </View>
       </DrawerContentScrollView>

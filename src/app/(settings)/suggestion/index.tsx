@@ -18,6 +18,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 
 import SettingDetailHeader from '@/components/layout/SettingDetailHeader/SettingDetailHeader'
 import { requireDb } from '@/config/firebaseConfig'
+import { COLORS } from '@/constants/colors'
 import { useInternetStatus } from '@/hooks/useInternetStatus'
 import { showInfoToast, showSuccessToast } from '@/utils/toastUtils'
 
@@ -28,8 +29,8 @@ const suggestionTypes = [
     renderIcon: (active: boolean) => (
       <MaterialCommunityIcons
         name="bug-outline"
-        size={36}
-        color={active ? '#1D4ED8' : '#111827'}
+        size={32}
+        color={active ? COLORS.primary : COLORS.textSecondary}
       />
     ),
   },
@@ -39,8 +40,8 @@ const suggestionTypes = [
     renderIcon: (active: boolean) => (
       <Ionicons
         name="bulb-outline"
-        size={36}
-        color={active ? '#1D4ED8' : '#111827'}
+        size={32}
+        color={active ? COLORS.primary : COLORS.textSecondary}
       />
     ),
   },
@@ -50,8 +51,8 @@ const suggestionTypes = [
     renderIcon: (active: boolean) => (
       <Ionicons
         name="color-palette-outline"
-        size={36}
-        color={active ? '#1D4ED8' : '#111827'}
+        size={32}
+        color={active ? COLORS.primary : COLORS.textSecondary}
       />
     ),
   },
@@ -61,8 +62,8 @@ const suggestionTypes = [
     renderIcon: (active: boolean) => (
       <Ionicons
         name="document-text-outline"
-        size={36}
-        color={active ? '#1D4ED8' : '#111827'}
+        size={32}
+        color={active ? COLORS.primary : COLORS.textSecondary}
       />
     ),
   },
@@ -117,7 +118,7 @@ export default function SuggestionScreen() {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-surface">
       <SettingDetailHeader title="건의하기" />
 
       <KeyboardAvoidingView
@@ -130,11 +131,11 @@ export default function SuggestionScreen() {
         >
           {step === 1 ? (
             <>
-              <View className="mb-4">
-                <Text className="text-base font-semibold text-deu-light-blue">
+              <View className="mb-6">
+                <Text className="text-[14px] font-semibold text-primary">
                   STEP 1
                 </Text>
-                <Text className="mt-1 text-2xl font-bold text-gray-900">
+                <Text className="mt-1 text-[22px] font-bold text-text-primary">
                   어떤 불편함을 겪으셨나요?
                 </Text>
               </View>
@@ -144,20 +145,20 @@ export default function SuggestionScreen() {
                 <View className="flex-row flex-wrap justify-between gap-y-3">
                   {suggestionTypes.map((type) => {
                     const active = selectedType === type.id
-                    const borderCls = active
-                      ? 'border-blue-500 bg-blue-50'
-                      : 'border-gray-200 bg-white'
-                    const textCls = active ? 'text-blue-700' : 'text-gray-900'
-                    // 좌측 상단(버그), 우측 하단(기타) 위치를 자연스러운 2x2로 배치
                     return (
                       <TouchableOpacity
                         key={type.id}
                         onPress={() => setSelectedType(type.id)}
-                        className={`h-32 w-[48%] items-center justify-center rounded-2xl border ${borderCls}`}
+                        activeOpacity={0.8}
+                        className={`h-32 w-[48%] items-center justify-center rounded-card ${
+                          active ? 'bg-primary-soft' : 'bg-bg'
+                        }`}
                       >
                         {type.renderIcon(active)}
                         <Text
-                          className={`mt-2 text-base font-semibold ${textCls}`}
+                          className={`mt-2 text-[15px] font-semibold ${
+                            active ? 'text-primary' : 'text-text-primary'
+                          }`}
                         >
                           {type.label}
                         </Text>
@@ -169,34 +170,36 @@ export default function SuggestionScreen() {
 
               {/* 다음 버튼 */}
               <TouchableOpacity
-                className={`mb-8 rounded-xl p-4 ${!selectedType ? 'bg-gray-300' : 'bg-deu-light-blue'}`}
+                className={`mb-8 rounded-control p-4 ${!selectedType ? 'bg-text-disabled' : 'bg-primary'}`}
                 disabled={!selectedType}
                 onPress={() => setStep(2)}
+                activeOpacity={0.8}
               >
-                <Text className="text-center text-lg font-semibold text-white">
+                <Text className="text-center text-[16px] font-semibold text-white">
                   다음
                 </Text>
               </TouchableOpacity>
             </>
           ) : (
             <>
-              <View className="mb-4">
-                <Text className="text-base font-semibold text-deu-light-blue">
+              <View className="mb-6">
+                <Text className="text-[14px] font-semibold text-primary">
                   STEP 2
                 </Text>
-                <Text className="mt-1 text-2xl font-bold text-gray-900">
+                <Text className="mt-1 text-[22px] font-bold text-text-primary">
                   자세한 내용을 입력해주세요.
                 </Text>
               </View>
 
               {/* 제목 입력 */}
               <View className="mb-6">
-                <Text className="mb-3 text-lg font-semibold text-gray-900">
+                <Text className="mb-3 text-[15px] font-semibold text-text-primary">
                   제목
                 </Text>
                 <TextInput
-                  className="rounded-xl border border-gray-200 bg-white p-4 text-base"
+                  className="rounded-control bg-bg p-4 text-base text-text-primary"
                   placeholder="제목을 입력해주세요 (최소 5자)"
+                  placeholderTextColor={COLORS.textTertiary}
                   value={title}
                   onChangeText={setTitle}
                   maxLength={100}
@@ -205,12 +208,13 @@ export default function SuggestionScreen() {
 
               {/* 내용 입력 */}
               <View className="mb-6">
-                <Text className="mb-3 text-lg font-semibold text-gray-900">
+                <Text className="mb-3 text-[15px] font-semibold text-text-primary">
                   내용
                 </Text>
                 <TextInput
-                  className="rounded-xl border border-gray-200 bg-white p-4 text-base"
+                  className="rounded-control bg-bg p-4 text-base text-text-primary"
                   placeholder="자세한 내용을 입력해주세요 (최소 5자)"
+                  placeholderTextColor={COLORS.textTertiary}
                   value={content}
                   onChangeText={setContent}
                   multiline
@@ -218,20 +222,20 @@ export default function SuggestionScreen() {
                   style={{ height: 150 }}
                   maxLength={1000}
                 />
-                <Text className="mt-2 text-right text-sm text-gray-500">
+                <Text className="mt-2 text-right text-[13px] text-text-tertiary">
                   {content.length}/1000
                 </Text>
               </View>
 
               {/* 전송 버튼 */}
               <TouchableOpacity
-                className={`mb-8 rounded-xl p-4 ${
+                className={`mb-8 rounded-control p-4 ${
                   isSubmitting ||
                   !selectedType ||
                   title.trim().length < 5 ||
                   content.trim().length < 5
-                    ? 'bg-gray-300'
-                    : 'bg-deu-light-blue'
+                    ? 'bg-text-disabled'
+                    : 'bg-primary'
                 }`}
                 onPress={handleSubmit}
                 disabled={
@@ -240,8 +244,9 @@ export default function SuggestionScreen() {
                   title.trim().length < 5 ||
                   content.trim().length < 5
                 }
+                activeOpacity={0.8}
               >
-                <Text className="text-center text-lg font-semibold text-white">
+                <Text className="text-center text-[16px] font-semibold text-white">
                   {isSubmitting ? '전송 중...' : '건의사항 전송'}
                 </Text>
               </TouchableOpacity>

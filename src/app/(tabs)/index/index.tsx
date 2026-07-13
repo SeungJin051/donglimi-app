@@ -17,6 +17,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { CenterAdCard } from '@/components/notice/CenterAdCard/CenterAdCard'
 import { NoticeContent } from '@/components/notice/NoticeContent/NoticeContent'
 import SwipeGuideHeader from '@/components/ui/SwipeGuideHeader/SwipeGuideHeader'
+import { COLORS } from '@/constants/colors'
 import { useFetchNotices } from '@/hooks/useFetchNotices'
 import { useInternetStatus } from '@/hooks/useInternetStatus'
 import { useNetworkGuard } from '@/hooks/useNetworkGuard'
@@ -192,11 +193,22 @@ export default function HomeScreen() {
     await refetch()
   })
 
-  // 로딩 중일 때 보여줄 화면
+  // 로딩 중일 때 보여줄 화면 (스켈레톤)
   if (isLoading) {
     return (
-      <SafeAreaView className="flex-1 items-center justify-center bg-white">
-        <ActivityIndicator size="large" color="#3B82F6" />
+      <SafeAreaView className="flex-1 bg-bg">
+        <View className="gap-2.5 px-4 pt-2">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <View key={i} className="h-[105px] rounded-card bg-surface p-4">
+              <View className="h-4 w-3/4 rounded-badge bg-bg" />
+              <View className="mt-2 h-4 w-1/2 rounded-badge bg-bg" />
+              <View className="mt-auto flex-row gap-1.5">
+                <View className="h-6 w-16 rounded-badge bg-bg" />
+                <View className="h-6 w-12 rounded-badge bg-bg" />
+              </View>
+            </View>
+          ))}
+        </View>
       </SafeAreaView>
     )
   }
@@ -204,19 +216,25 @@ export default function HomeScreen() {
   // 에러가 발생했을 때 보여줄 화면
   if (error && (!data || data.pages.length === 0)) {
     return (
-      <SafeAreaView className="flex-1 items-center justify-center bg-white px-8">
-        <Ionicons name="cloud-offline" size={48} color="#EF4444" />
-        <Text className="mt-4 text-lg font-semibold text-gray-900">
+      <SafeAreaView className="flex-1 items-center justify-center bg-bg px-8">
+        <View className="mb-4 h-16 w-16 items-center justify-center rounded-full bg-surface">
+          <Ionicons
+            name="cloud-offline"
+            size={30}
+            color={COLORS.textTertiary}
+          />
+        </View>
+        <Text className="text-[17px] font-bold text-text-primary">
           데이터를 불러올 수 없어요
         </Text>
-        <Text className="mt-1 text-center text-sm text-gray-500">
+        <Text className="mt-1 text-center text-[14px] text-text-tertiary">
           연결 상태를 확인한 뒤 다시 시도해 주세요.
         </Text>
         <View className="mt-6 w-full items-center">
           <View className="w-full max-w-[240px]">
             <Text
               onPress={handleRetry}
-              className="rounded-lg bg-deu-light-blue px-4 py-3 text-center text-white"
+              className="rounded-control bg-primary px-4 py-3.5 text-center text-[15px] font-semibold text-white"
             >
               다시 시도
             </Text>
@@ -228,10 +246,11 @@ export default function HomeScreen() {
 
   // 데이터 로딩이 완료되었을 때 공지사항 목록을 보여줍니다.
   return (
-    <View className="flex-1 bg-gray-50" collapsable={false}>
+    <View className="flex-1 bg-bg" collapsable={false}>
       <FlatList
         ref={homeScrollRef}
         data={listData}
+        contentContainerStyle={{ paddingTop: 10 }}
         contentInsetAdjustmentBehavior={
           Platform.OS === 'ios' ? 'automatic' : undefined
         }
@@ -246,8 +265,20 @@ export default function HomeScreen() {
         }
         // 데이터가 없을 때 표시될 컴포넌트
         ListEmptyComponent={
-          <View className="mt-20 flex-1 items-center justify-center">
-            <Text className="text-gray-500">표시할 공지사항이 없습니다.</Text>
+          <View className="mx-4 mt-4 items-center justify-center rounded-card bg-surface px-6 py-12">
+            <View className="mb-4 h-14 w-14 items-center justify-center rounded-full bg-bg">
+              <Ionicons
+                name="newspaper-outline"
+                size={26}
+                color={COLORS.textTertiary}
+              />
+            </View>
+            <Text className="text-[17px] font-bold text-text-primary">
+              표시할 공지사항이 없어요
+            </Text>
+            <Text className="mt-2 text-center text-[14px] leading-5 text-text-tertiary">
+              아래로 당겨서 새로고침해 보세요.
+            </Text>
           </View>
         }
         // 리스트 끝에서 화면 높이의 80% 지점에서 다음 페이지 로드
@@ -262,11 +293,11 @@ export default function HomeScreen() {
           <RefreshControl
             refreshing={isRefetching}
             onRefresh={handleRefresh}
-            colors={['#3B82F6']}
-            tintColor="#3B82F6"
+            colors={[COLORS.primary]}
+            tintColor={COLORS.primary}
             progressViewOffset={showSwipeGuide ? 60 : 0}
             title={isRefetching ? '새로고침 중...' : undefined}
-            titleColor="#6B7280"
+            titleColor={COLORS.textTertiary}
           />
         }
         // 다음 페이지 로딩 중일 때 하단에 로딩 표시
@@ -274,12 +305,12 @@ export default function HomeScreen() {
           isFetchingNextPage || showOfflineSnippet ? (
             <View className="items-center py-4">
               {isFetchingNextPage ? (
-                <ActivityIndicator size="small" color="#3B82F6" />
+                <ActivityIndicator size="small" color={COLORS.primary} />
               ) : (
                 <View className="w-full px-4">
-                  <View className="mb-3 h-24 w-full rounded-lg bg-gray-200" />
-                  <View className="mb-3 h-24 w-full rounded-lg bg-gray-200" />
-                  <View className="mb-3 h-24 w-full rounded-lg bg-gray-200" />
+                  <View className="mb-3 h-24 w-full rounded-card bg-surface opacity-60" />
+                  <View className="mb-3 h-24 w-full rounded-card bg-surface opacity-60" />
+                  <View className="mb-3 h-24 w-full rounded-card bg-surface opacity-60" />
                 </View>
               )}
             </View>

@@ -14,7 +14,7 @@ export function TabLayoutAndroid() {
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: TAB_ACTIVE_COLOR,
-        tabBarInactiveTintColor: isIos ? '#8E8E93' : '#999999',
+        tabBarInactiveTintColor: isIos ? '#8E8E93' : '#8B95A1',
         tabBarShowLabel: isIos,
         tabBarLabelStyle: isIos
           ? { fontSize: 10, fontWeight: '500', marginBottom: 2 }

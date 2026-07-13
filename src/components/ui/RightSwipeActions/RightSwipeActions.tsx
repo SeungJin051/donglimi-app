@@ -16,17 +16,17 @@ export default function RightSwipeActions({
   return (
     <TouchableOpacity
       onPress={onPress}
-      className={`mr-4 min-h-[105px] w-20 items-center justify-center rounded-r-lg ${
-        isDeleteAction ? 'bg-red-500' : 'bg-blue-500'
+      className={`min-h-[105px] w-20 items-center justify-center rounded-l-card ${
+        isDeleteAction ? 'bg-danger' : 'bg-primary'
       }`}
-      activeOpacity={0.7}
+      activeOpacity={0.8}
     >
       <Ionicons
         name={isDeleteAction ? 'trash-outline' : 'bookmark'}
         size={24}
         color="white"
       />
-      <Text className="mt-1 text-sm font-semibold text-white">
+      <Text className="mt-1 text-[13px] font-semibold text-white">
         {isDeleteAction ? '삭제' : '스크랩'}
       </Text>
     </TouchableOpacity>

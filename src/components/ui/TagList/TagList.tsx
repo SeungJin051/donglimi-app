@@ -1,6 +1,8 @@
 import { Ionicons } from '@expo/vector-icons'
 import { View, Text, TouchableOpacity } from 'react-native'
 
+import { COLORS } from '@/constants/colors'
+
 interface TagItem {
   id: string
   title: string
@@ -32,21 +34,27 @@ export function TagList({
           items.map((item) => (
             <View
               key={item.id}
-              className="flex flex-row items-center justify-center gap-1 rounded-full bg-blue-100 px-4 py-2 text-sm"
+              className="flex flex-row items-center justify-center gap-1 rounded-full bg-primary-soft px-4 py-2"
             >
               <TouchableOpacity>
-                <Text className="text-sm text-blue-700">{item.title}</Text>
+                <Text className="text-sm font-medium text-primary">
+                  {item.title}
+                </Text>
               </TouchableOpacity>
 
               <TouchableOpacity onPress={() => onRemove(item.id)}>
-                <Ionicons name="close-outline" size={16} color="#3B82F6" />
+                <Ionicons
+                  name="close-outline"
+                  size={16}
+                  color={COLORS.primary}
+                />
               </TouchableOpacity>
             </View>
           ))
         ) : (
-          <View className="flex flex-row items-center justify-center gap-1 rounded-full bg-gray-100 px-4 py-2 text-sm">
+          <View className="flex flex-row items-center justify-center gap-1 rounded-full bg-bg px-4 py-2">
             <TouchableOpacity>
-              <Text className="text-sm text-gray-500">{emptyText}</Text>
+              <Text className="text-sm text-text-tertiary">{emptyText}</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -56,11 +64,12 @@ export function TagList({
       {showAddButton && onAdd && (
         <View>
           <TouchableOpacity
-            className="flex-row items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white p-2"
+            className="flex-row items-center justify-center gap-2 rounded-control bg-bg p-3"
             onPress={onAdd}
+            activeOpacity={0.7}
           >
-            <Ionicons name="add" size={20} color="black" />
-            <Text>
+            <Ionicons name="add" size={18} color={COLORS.textSecondary} />
+            <Text className="text-[14px] font-semibold text-text-secondary">
               {items.length > 0
                 ? `${addButtonText} 수정`
                 : `${addButtonText} 추가`}
