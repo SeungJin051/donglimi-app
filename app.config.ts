@@ -3,7 +3,7 @@ import type { ExpoConfig } from 'expo/config'
 const config: ExpoConfig = {
   name: '동리미',
   slug: 'donglimi-app',
-  version: '1.9',
+  version: '1.8',
   orientation: 'portrait',
   icon: './src/assets/images/icon.png',
   scheme: 'donglimiapp',
