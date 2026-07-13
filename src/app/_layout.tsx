@@ -8,6 +8,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import Toast from 'react-native-toast-message'
 
+import { OpeningAdBottomSheet } from '@/components/ads/OpeningAdBottomSheet/OpeningAdBottomSheet'
 import { ErrorBoundary } from '@/components/layout/ErrorBoundary/ErrorBoundary'
 import HomeDrawer from '@/components/layout/HomeDrawer/HomeDrawer'
 import { RefetchOnReconnectBridge } from '@/components/network/RefetchOnReconnectBridge'
@@ -55,6 +56,7 @@ export default function RootLayout() {
                 />
               </Drawer>
               <Toast config={toastConfig} />
+              {isOnboardingComplete ? <OpeningAdBottomSheet /> : null}
             </BottomSheetModalProvider>
           </QueryClientProvider>
         </SafeAreaProvider>

@@ -4,7 +4,6 @@ import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { OfflineToastBridge } from '@/components/network/OfflineToastBridge'
 import { TabLayoutAndroid } from '@/components/tabs/TabLayoutAndroid'
 import { TabLayoutIos } from '@/components/tabs/TabLayoutIos'
-import { useTabSwitchAdOnPathname } from '@/hooks/useTabSwitchAdOnPathname'
 import { isIos26OrLater } from '@/utils/iosVersion'
 
 function TabNavigator() {
@@ -15,8 +14,6 @@ function TabNavigator() {
 }
 
 export default function TabLayout() {
-  useTabSwitchAdOnPathname()
-
   return (
     <SafeAreaProvider>
       <OfflineToastBridge />

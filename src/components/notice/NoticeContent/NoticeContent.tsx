@@ -1,4 +1,4 @@
-import { useRef, useMemo, useState, useEffect } from 'react'
+import { useRef, useMemo, useState } from 'react'
 
 import { Ionicons } from '@expo/vector-icons'
 import * as Haptics from 'expo-haptics'
@@ -23,11 +23,8 @@ import InAppBrowser from '@/components/ui/InAppBrowser/InAppBrowser'
 import RightSwipeActions from '@/components/ui/RightSwipeActions/RightSwipeActions'
 import { requireDb } from '@/config/firebaseConfig'
 import { useInternetStatus } from '@/hooks/useInternetStatus'
-import { useInterstitialAd } from '@/hooks/useInterstitialAd'
-import { useAdStore } from '@/store/adStore'
 import { useScrapStore } from '@/store/scrapStore'
 import { Notice } from '@/types/notice.type'
-import { canShowAd, canShowScrapAd } from '@/utils/adManager'
 import { getFormattedDate } from '@/utils/dateUtils'
 import { getDepartmentStyles } from '@/utils/departmentStyles'
 import { enqueueScrapDelta } from '@/utils/scrapSync'
@@ -47,22 +44,6 @@ export const NoticeContent = ({ item }: NoticeContentProps) => {
   // 인터넷 상태 (훅은 컴포넌트 최상위에서 호출)
   const { isOnline } = useInternetStatus()
 
-  // 광고 관련
-  const {
-    todayAdCount,
-    scrapActionCount,
-    incrementLinkCount,
-    incrementScrapActionCount,
-    increaseCount,
-    resetIfDateChanged,
-  } = useAdStore()
-  const { showAd } = useInterstitialAd()
-
-  // 날짜 체크 (마운트 시 1회)
-  useEffect(() => {
-    resetIfDateChanged()
-  }, [resetIfDateChanged])
-
   // 스와이프 참조
   const swipeableRef = useRef<SwipeableMethods>(null)
 
@@ -79,9 +60,6 @@ export const NoticeContent = ({ item }: NoticeContentProps) => {
   const handleAddScrap = async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
 
-    // 스크랩 액션 카운트 증가
-    incrementScrapActionCount()
-
     // 로컬 상태를 먼저 업데이트 (낙관적 UI)
     addScrap({ notice: item })
     swipeableRef.current?.close()
@@ -90,18 +68,6 @@ export const NoticeContent = ({ item }: NoticeContentProps) => {
       if (isOnline === false) {
         await enqueueScrapDelta(item.content_hash, 1)
         showSuccessToast('내 스크랩에 추가했어요')
-
-        // 광고 표시 판단
-        const shouldShow = canShowScrapAd({
-          scrapActionCount: scrapActionCount + 1,
-          todayCount: todayAdCount,
-        })
-        if (shouldShow) {
-          setTimeout(() => {
-            showAd()
-            increaseCount()
-          }, 500)
-        }
         return
       }
       // 서버에 업데이트 시도
@@ -133,18 +99,6 @@ export const NoticeContent = ({ item }: NoticeContentProps) => {
         })
       }
       showSuccessToast('내 스크랩에 추가했어요')
-
-      // 광고 표시 판단
-      const shouldShow = canShowScrapAd({
-        scrapActionCount: scrapActionCount + 1,
-        todayCount: todayAdCount,
-      })
-      if (shouldShow) {
-        setTimeout(() => {
-          showAd()
-          increaseCount()
-        }, 500)
-      }
     } catch (error) {
       // 서버 업데이트 실패!
       console.error('스크랩 추가 실패:', error)
@@ -162,9 +116,6 @@ export const NoticeContent = ({ item }: NoticeContentProps) => {
   const handleRemoveScrap = async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
 
-    // 스크랩 액션 카운트 증가
-    incrementScrapActionCount()
-
     // 로컬 상태 먼저 업데이트
     removeScrap({ notice: item })
     swipeableRef.current?.close()
@@ -173,18 +124,6 @@ export const NoticeContent = ({ item }: NoticeContentProps) => {
       if (isOnline === false) {
         await enqueueScrapDelta(item.content_hash, -1)
         showSuccessToast('내 스크랩에서 삭제했어요')
-
-        // 광고 표시 판단
-        const shouldShow = canShowScrapAd({
-          scrapActionCount: scrapActionCount + 1,
-          todayCount: todayAdCount,
-        })
-        if (shouldShow) {
-          setTimeout(() => {
-            showAd()
-            increaseCount()
-          }, 500)
-        }
         return
       }
       // 서버에 업데이트 시도
@@ -216,18 +155,6 @@ export const NoticeContent = ({ item }: NoticeContentProps) => {
         })
       }
       showSuccessToast('내 스크랩에서 삭제했어요')
-
-      // 광고 표시 판단
-      const shouldShow = canShowScrapAd({
-        scrapActionCount: scrapActionCount + 1,
-        todayCount: todayAdCount,
-      })
-      if (shouldShow) {
-        setTimeout(() => {
-          showAd()
-          increaseCount()
-        }, 500)
-      }
     } catch (error) {
       // 서버 업데이트 실패 시 롤백
       console.error('스크랩 삭제 실패:', error)
@@ -250,24 +177,9 @@ export const NoticeContent = ({ item }: NoticeContentProps) => {
   const handleOpenLink = () => {
     if (!item.link) return
 
-    // 링크 열람 카운트 증가
-    incrementLinkCount()
-
     // 도서관 사이트는 외부 브라우저로 바로 열기 (SSL 이슈)
     if (item.link.includes('lib.deu.ac.kr')) {
       WebBrowser.openBrowserAsync(item.link)
-      const { linkOpenCount: viewedAfter, todayAdCount: today } =
-        useAdStore.getState()
-      const shouldShow = canShowAd({
-        viewedCount: viewedAfter,
-        todayCount: today,
-      })
-      if (shouldShow) {
-        setTimeout(() => {
-          showAd()
-          increaseCount()
-        }, 500)
-      }
       return
     }
 
@@ -276,24 +188,8 @@ export const NoticeContent = ({ item }: NoticeContentProps) => {
     setBrowserVisible(true)
   }
 
-  // 브라우저 닫기 핸들러 (광고 로직 포함)
   const handleBrowserClose = () => {
     setBrowserVisible(false)
-
-    const { linkOpenCount: viewedAfter, todayAdCount: today } =
-      useAdStore.getState()
-    const shouldShow = canShowAd({
-      viewedCount: viewedAfter,
-      todayCount: today,
-    })
-
-    if (shouldShow) {
-      // UX 딜레이 (500ms)
-      setTimeout(() => {
-        showAd()
-        increaseCount() // 영구 저장
-      }, 500)
-    }
   }
 
   return (
